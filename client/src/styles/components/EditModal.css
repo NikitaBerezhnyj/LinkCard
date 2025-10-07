@@ -1,0 +1,276 @@
+@import url("../colors.css");
+
+.edit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.edit-modal-content {
+  background-color: var(--color-background-secondary);
+  color: var(--color-text);
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  min-height: 500px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.edit-modal-tabs {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.edit-modal-tab {
+  width: 100%;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 0 !important;
+}
+
+.edit-modal-tab.active {
+  background-color: var(--color-active);
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.edit-modal-link-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.edit-modal-link-header-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: var(--color-background-alt) !important;
+  border: 1px solid var(--color-border) !important;
+  transition: transform 0.5s ease !important;
+}
+
+.edit-modal-link-header-button:hover {
+  transform: scale(1.1);
+  text-decoration: underline;
+}
+
+.edit-modal-link-header-button svg {
+  margin-top: 2px;
+}
+
+.edit-modal-content h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.edit-modal-content label,
+.edit-modal-content h3 {
+  color: var(--color-text);
+  margin-bottom: 5px;
+}
+
+.edit-modal-content textarea {
+  width: 100%;
+  height: 60px;
+  padding: 8px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-background-secondary);
+  color: var(--color-text);
+  resize: none;
+}
+
+.link-edit-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.link-edit-item input[type="text"] {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-background-secondary);
+  color: var(--color-text);
+}
+
+.link-edit-item button {
+  background-color: var(--color-error);
+  color: var(--color-light);
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.link-edit-item button:hover {
+  background-color: var(--color-error);
+}
+
+.edit-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.edit-modal-button {
+  padding: 8px !important;
+  margin-bottom: 8px;
+}
+
+.edit-modal-move-button {
+  background-color: var(--color-success) !important;
+}
+
+.edit-modal-delete-button {
+  background-color: var(--color-error) !important;
+}
+
+.edit-modal-cancel-button {
+  background-color: var(--color-muted) !important;
+}
+
+.edit-modal-save-button {
+  background-color: var(--color-accent) !important;
+}
+
+.edit-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+}
+
+.edit-modal-image {
+  width: 50px;
+  margin-right: 16px !important;
+  transition: all 0.5s ease;
+  cursor: pointer;
+}
+
+.edit-modal-image:hover {
+  opacity: 0.75;
+}
+
+.edit-modal-bio-input {
+  width: 60%;
+}
+
+.edit-modal-file-input {
+  display: none;
+}
+
+/*  */
+
+.edit-modal-style-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: var(--color-background-secondary);
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+}
+
+.edit-modal-style-section input {
+  margin-bottom: 0 !important;
+}
+
+.edit-modal-style-section label {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--color-text);
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+.edit-modal-style-section label b {
+  margin-right: 10px;
+  color: var(--color-text-secondary);
+}
+
+.edit-modal-select {
+  padding: 5px;
+  background-color: var(--color-background-alt);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-secondary);
+  border-radius: 4px;
+  outline: none;
+}
+
+.edit-modal-select:hover {
+  border-color: var(--color-hover);
+}
+
+.edit-modal-style-section input[type="color"] {
+  margin-left: 10px;
+  cursor: pointer;
+  border: none;
+  width: 40px;
+  height: 25px;
+  border-radius: 4px;
+  outline: none;
+  padding: 1px;
+}
+
+.edit-modal-style-section input[type="radio"] {
+  margin-right: 5px;
+}
+
+.edit-modal-style-section div {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.edit-modal-style-section div label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.edit-modal-style-section input[type="file"] {
+  padding: 5px;
+  color: var(--color-muted);
+  background-color: var(--color-background-alt);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+}
+
+.edit-modal-style-section input[type="file"]::file-selector-button {
+  background-color: var(--color-accent);
+  color: var(--color-bright);
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.edit-modal-style-section input[type="file"]::file-selector-button:hover {
+  background-color: var(--color-hover);
+}
+
+.edit-modal-background-gradient {
+  display: flex;
+  /* align-items: center; */
+  flex-direction: column;
+}

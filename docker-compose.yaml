@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: linkcard_server
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    command: npm run dev
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - minio
+
+  mongo:
+    image: mongo:7.0
+    container_name: mongo
+    restart: always
+    ports:
+      - "${DB_PORT}:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      # Якщо ти не хочеш юзера зараз, залиш пусті
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_NAME}
+
+  mongo-express:
+    image: mongo-express:1.0.0
+    container_name: mongo_express
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: ${DB_HOST}
+      ME_CONFIG_BASICAUTH_USERNAME: ${DB_BASICAUTH_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${DB_BASICAUTH_PASSWORD}
+    depends_on:
+      - mongo
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "${MINIO_API_PORT}:9000"
+      - "${MINIO_WEB_PORT}:9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+volumes:
+  mongo_data:
+  minio_data:
