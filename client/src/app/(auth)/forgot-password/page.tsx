@@ -1,46 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 
-export default function RegisterPage() {
-  const router = useRouter();
-  const [username, setUsername] = useState("");
+export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage(null);
     setError(null);
 
-    const response = await authService.register({ username, email, password });
+    const response = await authService.forgotPassword({ email });
 
     if (response.error) {
       setError(response.error);
       return;
     }
 
-    router.push("/login");
+    setMessage(response.data?.message || "Check your email for instructions.");
   };
 
   return (
     <main style={{ padding: "2rem", maxWidth: "400px", margin: "0 auto" }}>
-      <h1>Register</h1>
+      <h1>Forgot Password</h1>
       <form
-        onSubmit={handleRegister}
+        onSubmit={handleSubmit}
         style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
       >
-        <Input
-          type="text"
-          label="Username"
-          value={username}
-          onChange={e => setUsername(e.target.value)}
-          required
-        />
         <Input
           type="email"
           label="Email"
@@ -48,16 +39,10 @@ export default function RegisterPage() {
           onChange={e => setEmail(e.target.value)}
           required
         />
-        <Input
-          type="password"
-          label="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-        />
         {error && <p style={{ color: "red" }}>{error}</p>}
+        {message && <p style={{ color: "green" }}>{message}</p>}
         <Button type="submit" variant="primary">
-          Register
+          Send Reset Link
         </Button>
       </form>
     </main>

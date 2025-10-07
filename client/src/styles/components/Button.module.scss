@@ -1,0 +1,58 @@
+@use "../variables" as *;
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  border-radius: $radius-sm;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-md;
+  transition:
+    background-color $transition-fast,
+    transform $transition-fast,
+    box-shadow $transition-fast;
+  box-shadow: $shadow-sm;
+
+  &:active {
+    transform: scale(0.97);
+    box-shadow: $shadow-sm;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: $color-surface;
+    color: $color-text-muted;
+  }
+}
+
+.primary {
+  background-color: $color-primary;
+  color: $color-text-primary;
+
+  &:hover {
+    background-color: $color-primary-hover;
+    box-shadow: $shadow-md;
+  }
+
+  &:active {
+    background-color: $color-primary-active;
+  }
+}
+
+.secondary {
+  background-color: $color-secondary;
+  color: $color-text-primary;
+
+  &:hover {
+    background-color: $color-secondary-hover;
+    box-shadow: $shadow-md;
+  }
+
+  &:active {
+    background-color: $color-secondary-active;
+  }
+}
