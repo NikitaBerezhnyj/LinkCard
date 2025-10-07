@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import styles from "@/styles/pages/Auth.module.scss";
 
 export default function ResetPasswordPage() {
-  const router = useRouter();
   const { token } = useParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,36 +34,45 @@ export default function ResetPasswordPage() {
     }
 
     setMessage(response.data?.message || "Password reset successful.");
-    setTimeout(() => router.push("/login"), 2000);
   };
 
   return (
-    <main style={{ padding: "2rem", maxWidth: "400px", margin: "0 auto" }}>
-      <h1>Reset Password</h1>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-      >
-        <Input
-          type="email"
-          label="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          type="password"
-          label="New Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-        />
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {message && <p style={{ color: "green" }}>{message}</p>}
-        <Button type="submit" variant="primary">
-          Reset Password
-        </Button>
-      </form>
+    <main className={styles.mainWrapper}>
+      <div className={styles.formContainer}>
+        <h1>Reset Password</h1>
+        <br />
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
+          <Input
+            type="email"
+            label="Email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            error={error && email === "" ? "Email is required" : undefined}
+            required
+          />
+          <Input
+            type="password"
+            label="New Password"
+            placeholder="Enter new password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            error={error && password === "" ? "Password is required" : undefined}
+            showPasswordToggle
+            required
+          />
+
+          {error && <p className={styles.errorMessage}>{error}</p>}
+          {message && <p className={styles.successMessage}>{message}</p>}
+
+          <Button type="submit" variant="primary">
+            Reset Password
+          </Button>
+        </form>
+      </div>
     </main>
   );
 }
