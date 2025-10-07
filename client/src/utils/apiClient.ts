@@ -99,5 +99,5 @@ export class ApiClient {
   }
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
 export const apiClient = new ApiClient(BASE_URL);

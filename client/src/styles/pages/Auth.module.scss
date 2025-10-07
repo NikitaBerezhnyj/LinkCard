@@ -1,0 +1,41 @@
+@use "../variables" as *;
+
+.mainWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: $spacing-lg;
+  background-color: $color-background-alt;
+  border-radius: $radius-md;
+  box-shadow: $shadow-md;
+}
+
+.errorMessage {
+  color: $color-error;
+}
+
+.successMessage {
+  color: $color-success;
+}
+
+.helperText {
+  font-size: $font-sm;
+  color: $color-text-secondary;
+  margin-bottom: 0.5rem;
+
+  a {
+    color: $color-primary;
+    text-decoration: none;
+
+    &:hover {
+      color: $color-primary-hover;
+    }
+  }
+}

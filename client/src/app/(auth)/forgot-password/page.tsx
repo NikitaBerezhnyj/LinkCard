@@ -4,6 +4,7 @@ import { useState } from "react";
 import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import styles from "@/styles/pages/Auth.module.scss";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -26,25 +27,36 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <main style={{ padding: "2rem", maxWidth: "400px", margin: "0 auto" }}>
-      <h1>Forgot Password</h1>
-      <form
-        onSubmit={handleSubmit}
-        style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
-      >
-        <Input
-          type="email"
-          label="Email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-        />
-        {error && <p style={{ color: "red" }}>{error}</p>}
-        {message && <p style={{ color: "green" }}>{message}</p>}
-        <Button type="submit" variant="primary">
-          Send Reset Link
-        </Button>
-      </form>
+    <main className={styles.mainWrapper}>
+      <div className={styles.formContainer}>
+        <h1>Forgot Password</h1>
+        <br />
+        <form
+          onSubmit={handleSubmit}
+          style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
+        >
+          <Input
+            type="email"
+            label="Email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            error={error && email === "" ? "Email is required" : undefined}
+            required
+          />
+
+          <p className={styles.helperText}>
+            Remembered your password? <a href="/login">Back to login</a>
+          </p>
+
+          {error && <p className={styles.errorMessage}>{error}</p>}
+          {message && <p className={styles.successMessage}>{message}</p>}
+
+          <Button type="submit" variant="primary">
+            Send Reset Link
+          </Button>
+        </form>
+      </div>
     </main>
   );
 }
