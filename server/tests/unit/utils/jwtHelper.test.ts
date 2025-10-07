@@ -1,4 +1,3 @@
-// tests/unit/jwtHelper.test.ts
 import * as jwtHelper from "../../../src/utils/jwtHelper";
 import jwt from "jsonwebtoken";
 

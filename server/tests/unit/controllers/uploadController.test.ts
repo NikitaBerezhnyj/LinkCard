@@ -3,7 +3,6 @@ import * as uploadController from "../../../src/controllers/uploadController";
 import { s3Client } from "../../../src/config/s3Config";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 
-// Мок AWS S3
 jest.mock("../../../src/config/s3Config", () => ({
   s3Client: { send: jest.fn() }
 }));
