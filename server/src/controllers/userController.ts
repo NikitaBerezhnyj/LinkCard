@@ -11,7 +11,7 @@ import {
   validatePassword
 } from "../validators/userValidation";
 import { generateAuthToken } from "../utils/jwtHelper";
-import { isValidPassword, getSaltRounds, hashUserPassword } from "../utils/authHelper";
+import { isValidPassword, getSaltRounds, hashUserPassword } from "../utils/passwordUtils";
 
 dotenv.config();
 
@@ -102,7 +102,7 @@ export const forgotPassword = async (req: Request, res: Response): Promise<Respo
     const resetToken = crypto.randomBytes(32).toString("hex");
     await ResetToken.create({ token: resetToken, userId: user._id });
 
-    const resetURL = `${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password/${resetToken}`;
+    const resetURL = `${process.env.CLIENT_URL || "http://localhost:3000"}/reset-password/${resetToken}`;
     await transporter.sendMail({
       to: email,
       subject: "Password Reset",
