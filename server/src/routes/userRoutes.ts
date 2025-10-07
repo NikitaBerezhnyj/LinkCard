@@ -11,11 +11,14 @@ import {
 
 const router = Router();
 
-router.post("/register", (req: Request, res: Response) => {
-  registerUser(req, res).catch(error => {
+router.post("/register", async (req: Request, res: Response) => {
+  console.log("Register route hit");
+  try {
+    await registerUser(req, res);
+  } catch (error) {
     console.error("Error in /register route:", error);
-    return res.status(500).send({ message: "Internal Server Error" });
-  });
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 router.post("/login", (req: Request, res: Response) => {

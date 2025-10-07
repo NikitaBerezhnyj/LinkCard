@@ -1,4 +1,5 @@
 @apiURL = http://localhost:5000/api
+@resetToken = e3a1d2a2ebc2c4766a26242cf8e3b49fbe52228605b190f8c447e9ec18e86c73
 
 ### HealthCheck
 GET {{apiURL}}/healthcheck
@@ -8,8 +9,8 @@ POST {{apiURL}}/register
 Content-Type: application/json
 
 {
-    "username": "NoName",
-    "email": "donthavenikname@gmail.com",
+    "username": "NikName",
+    "email": "kitnikita06@gmail.com",
     "password": "Nik_0402"
 }
 
@@ -22,7 +23,6 @@ Content-Type: application/json
     "password": "Nik_0402"
 }
 
-
 ### Надсилання листа, якщо забули пароль
 POST {{apiURL}}/password/forgot
 Content-Type: application/json
@@ -31,9 +31,8 @@ Content-Type: application/json
   "email": "kitnikita06@gmail.com"
 }
 
-
 ### Зміна пароля
-POST {{apiURL}}/password/reset/:token
+POST {{apiURL}}/password/reset/{{resetToken}}
 Content-Type: application/json
 
 {
@@ -42,7 +41,7 @@ Content-Type: application/json
 }
 
 ### Отримання інформації про користувача
-GET {{apiURL}}/user/Nikita
+GET {{apiURL}}/user/NikName
 
 ### Оновлення інформації користувача
 PUT {{apiURL}}/user/Nikita
@@ -57,8 +56,36 @@ Content-Type: application/json
     { "title": "Email", "url": "kitnikita06@gmail.com" },
     { "title": "GitHub Profile", "url": "https://github.com/exampleUser" },
     { "title": "LinkedIn Page", "url": "https://linkedin.com/in/exampleUser" }
-  ]
+  ],
+  "styles": {
+    "font": "Arial",
+    "fontSize": "18px",
+    "fontWeight": "500",
+    "textAlign": "left",
+    "text": "#ffffff",
+    "linkText": "#4aa3df",
+    "buttonText": "#000000",
+    "buttonBackground": "#ffcc00",
+    "buttonHoverText": "#ffffff",
+    "buttonHoverBackground": "#ff9900",
+    "border": "#cccccc",
+    "borderRadius": "10px",
+    "contentBackground": "#1f1f1f",
+    "contentPadding": "25px",
+    "contentGap": "15px",
+    "background": {
+      "type": "gradient",
+      "value": {
+        "color": "#000000",
+        "gradient": { "start": "#ff0000", "end": "#00ff00", "angle": "90deg" },
+        "image": "",
+        "position": "center",
+        "size": "cover",
+        "repeat": "no-repeat"
+      }
+    }
+  }
 }
 
 ### Видалення користувача
-DELETE  {{apiURL}}/user/NoName
+DELETE {{apiURL}}/user/NikName

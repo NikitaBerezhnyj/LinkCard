@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import crypto from "crypto";
+import { Request, Response } from "express";
 import { transporter } from "../config/mailConfig";
 import { ResetToken } from "../models/resetTokenModel";
-import { Request, Response } from "express";
 import { User } from "../models/userModel";
 import {
   validateRegistration,
@@ -11,224 +11,221 @@ import {
   validatePassword
 } from "../validators/userValidation";
 import { generateAuthToken } from "../utils/jwtHelper";
+import { isValidPassword, getSaltRounds, hashUserPassword } from "../utils/authHelper";
 
 dotenv.config();
 
 export const registerUser = async (req: Request, res: Response): Promise<Response> => {
+  const checkUserConflict = async (
+    email: string,
+    username: string
+  ): Promise<{ status: number; message: string } | null> => {
+    const [emailExists, usernameExists] = await Promise.all([
+      User.findOne({ email }),
+      User.findOne({ username })
+    ]);
+
+    if (emailExists) return { status: 409, message: "User with given email already exists!" };
+    if (usernameExists) return { status: 409, message: "User with given username already exists!" };
+    return null;
+  };
+
   try {
     const { error } = validateRegistration(req.body);
-    if (error) {
-      return res.status(400).send({ message: error.details[0].message });
+    if (error) return res.status(400).json({ message: error.details[0].message });
+
+    const { email, username, password } = req.body;
+
+    if (!isValidPassword(password)) {
+      return res.status(400).json({ message: "Password must be a non-empty string" });
     }
 
-    const userEmail = await User.findOne({ email: req.body.email });
-    if (userEmail) {
-      return res.status(409).send({ message: "User with given email already exists!" });
+    const conflict = await checkUserConflict(email, username);
+    if (conflict) return res.status(conflict.status).json({ message: conflict.message });
+
+    const saltRounds = getSaltRounds();
+    if (typeof saltRounds !== "number") {
+      return res.status(saltRounds.status).json({ message: saltRounds.message });
     }
 
-    const userUsername = await User.findOne({ username: req.body.username });
-    if (userUsername) {
-      return res.status(409).send({ message: "User with given username already exists!" });
-    }
-
-    const salt = await bcrypt.genSalt(Number(process.env.SALT));
-    const hashPassword = await bcrypt.hash(req.body.password, salt);
+    const hashedPassword = await hashUserPassword(password, saltRounds);
+    if (!hashedPassword) return res.status(500).json({ message: "Error hashing password" });
 
     const newUser = new User({
-      ...req.body,
-      password: hashPassword,
-      links: [{ title: "Email", url: req.body.email }]
+      username,
+      email,
+      password: hashedPassword,
+      links: [{ title: "Email", url: email }]
     });
 
     await newUser.save();
 
     const token = generateAuthToken(newUser.id.toString(), newUser.username);
 
-    return res.status(201).send({
-      token: token,
-      message: "User created successfully"
-    });
+    return res.status(201).json({ token, message: "User created successfully" });
   } catch (err) {
-    console.error("Error during user registration:", err);
-    return res.status(500).send({ message: "Internal Server Error" });
+    console.error("=== Error during user registration ===", err);
+    return res.status(500).json({
+      message: "Internal Server Error",
+      error: err instanceof Error ? err.message : String(err)
+    });
   }
 };
 
 export const loginUser = async (req: Request, res: Response): Promise<Response> => {
   try {
     const { error } = validateLogin(req.body);
-    if (error) {
-      return res.status(400).send({ message: error.details[0].message });
-    }
+    if (error) return res.status(400).json({ message: error.details[0].message });
 
-    const user = await User.findOne({ email: req.body.email });
-    if (!user) {
-      return res.status(401).send({ message: "Invalid Email or Password" });
-    }
+    const { email, password } = req.body;
 
-    const validPassword = await bcrypt.compare(req.body.password, user.password);
-    if (!validPassword) {
-      return res.status(401).send({ message: "Invalid Email or Password" });
-    }
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ message: "Invalid Email or Password" });
+
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) return res.status(401).json({ message: "Invalid Email or Password" });
 
     const token = generateAuthToken(user.id.toString(), user.username);
-    return res.status(200).send({
-      token: token,
-      message: "Logged in successfully"
-    });
+    return res.status(200).json({ token, message: "Logged in successfully" });
   } catch (err) {
     console.error("Error during user login:", err);
-    return res.status(500).send({ message: "Internal Server Error" });
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
-export const forgotPassword = async (req: Request, res: Response): Promise<void> => {
+export const forgotPassword = async (req: Request, res: Response): Promise<Response> => {
   const { email } = req.body;
-
   try {
     const user = await User.findOne({ email });
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     const resetToken = crypto.randomBytes(32).toString("hex");
     await ResetToken.create({ token: resetToken, userId: user._id });
 
-    const resetURL = `http://localhost:5173/reset-password/${resetToken}`;
+    const resetURL = `${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password/${resetToken}`;
     await transporter.sendMail({
       to: email,
       subject: "Password Reset",
-      text: `You requested a password reset. Please click the following link to reset your password: ${resetURL}`
+      text: `You requested a password reset. Click this link: ${resetURL}`
     });
 
-    res.status(200).json({ message: "Password reset email sent" });
+    return res.status(200).json({ message: "Password reset email sent" });
   } catch (error) {
     console.error("Error sending password reset email:", error);
-    res.status(500).json({ message: "Error sending password reset email" });
+    return res.status(500).json({ message: "Error sending password reset email" });
   }
 };
 
-export const resetPassword = async (req: Request, res: Response): Promise<void> => {
+export const resetPassword = async (req: Request, res: Response): Promise<Response> => {
   const { password } = req.body;
   const { token } = req.params;
 
-  if (!password) {
-    res.status(400).json({ message: "Password is required" });
-    return;
-  }
+  if (!password) return res.status(400).json({ message: "Password is required" });
 
   const { error } = validatePassword(password);
-  if (error) {
-    res.status(400).json({ message: error.details[0].message });
-    return;
-  }
+  if (error) return res.status(400).json({ message: error.details[0].message });
 
   try {
     const resetToken = await ResetToken.findOne({ token });
-    if (!resetToken) {
-      res.status(400).json({ message: "Invalid or expired token" });
-      return;
-    }
+    if (!resetToken) return res.status(400).json({ message: "Invalid or expired token" });
 
     const user = await User.findById(resetToken.userId);
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
 
     const isSamePassword = await bcrypt.compare(password, user.password);
-    if (isSamePassword) {
-      res.status(400).json({
-        message: "New password must be different from the current one."
-      });
-      return;
+    if (isSamePassword)
+      return res.status(400).json({ message: "New password must differ from current one." });
+
+    const saltRounds = getSaltRounds();
+    if (typeof saltRounds !== "number") {
+      return res.status(saltRounds.status).json({ message: saltRounds.message });
     }
 
-    const salt = await bcrypt.genSalt(Number(process.env.SALT));
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await hashUserPassword(password, saltRounds);
+    if (!hashedPassword) return res.status(500).json({ message: "Error hashing password" });
 
     user.password = hashedPassword;
     await user.save();
-
     await resetToken.deleteOne();
-    res.status(200).json({ message: "Password reset successful" });
+
+    return res.status(200).json({ message: "Password reset successful" });
   } catch (error) {
     console.error("Error resetting password:", error);
-    res.status(500).json({ message: "Error resetting password" });
+    return res.status(500).json({ message: "Error resetting password" });
   }
 };
 
-export const getUser = async (req: Request, res: Response): Promise<void> => {
+export const getUser = async (req: Request, res: Response): Promise<Response> => {
   const { username } = req.params;
-
   try {
     const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    const userInfo = {
-      id: user._id,
-      username: user.username,
-      email: user.email,
-      avatar: user.avatar,
-      bio: user.bio,
-      links: user.links,
-      styles: user.styles
-    };
-
-    res.status(200).json({ data: userInfo, message: "User info sent successfully" });
+    return res.status(200).json({
+      data: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+        bio: user.bio,
+        links: user.links,
+        styles: user.styles
+      },
+      message: "User info sent successfully"
+    });
   } catch (error) {
     console.error("Error retrieving user info:", error);
-    res.status(500).json({ message: "Error retrieving user info" });
+    return res.status(500).json({ message: "Error retrieving user info" });
   }
 };
 
-export const updateUser = async (req: Request, res: Response): Promise<void> => {
+export const updateUser = async (req: Request, res: Response): Promise<Response> => {
   const { username } = req.params;
-  const updatedData = req.body;
+  const update = req.body;
 
   try {
     const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
+    if (update.username) user.username = update.username;
+    if (update.email) user.email = update.email;
+    if (update.avatar) user.avatar = update.avatar;
+    if (update.bio) user.bio = update.bio;
+    if (update.links) user.links = update.links;
+
+    const currentStyles = JSON.parse(JSON.stringify(user.styles));
+    if (update.styles) {
+      user.styles = {
+        ...currentStyles,
+        ...update.styles,
+        background: {
+          ...currentStyles.background,
+          ...update.styles.background,
+          value: {
+            ...currentStyles.background.value,
+            ...(update.styles.background?.value || {})
+          }
+        }
+      };
     }
 
-    user.username = updatedData.username || user.username;
-    user.email = updatedData.email || user.email;
-    user.avatar = updatedData.avatar || user.avatar;
-    user.bio = updatedData.bio || user.bio;
-    user.links = updatedData.links || user.links;
-    user.styles = updatedData.styles || user.styles;
-
     await user.save();
-
-    res.status(200).json({ message: "User updated successfully", data: user });
+    return res.status(200).json({ message: "User updated successfully", data: user });
   } catch (error) {
     console.error("Error updating user:", error);
-    res.status(500).json({ message: "Error updating user" });
+    return res.status(500).json({ message: "Error updating user" });
   }
 };
 
-export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+export const deleteUser = async (req: Request, res: Response): Promise<Response> => {
   const { username } = req.params;
-
   try {
-    const result = await User.deleteOne({ username: username });
+    const result = await User.deleteOne({ username });
+    if (result.deletedCount === 0) return res.status(404).json({ message: "User not found" });
 
-    if (result.deletedCount === 0) {
-      res.status(404).json({ message: "User not found" });
-      return;
-    }
-
-    res.status(200).json({ message: "User deleted successfully" });
+    return res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     console.error("Error deleting user:", error);
-    res.status(500).json({ message: "Error deleting user" });
+    return res.status(500).json({ message: "Error deleting user" });
   }
 };
