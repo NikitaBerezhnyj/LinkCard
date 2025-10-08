@@ -19,7 +19,7 @@ export class ApiClient {
   }
 
   private async request<T, D = undefined>(
-    method: "get" | "post" | "put" | "delete",
+    method: "get" | "post" | "put" | "patch" | "delete",
     url: string,
     data?: D,
     config?: AxiosRequestConfig<D>
@@ -92,6 +92,14 @@ export class ApiClient {
 
   public put<T, D>(url: string, data?: D, config?: AxiosRequestConfig<D>): Promise<ApiResponse<T>> {
     return this.request<T, D>("put", url, data, config);
+  }
+
+  public patch<T, D>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig<D>
+  ): Promise<ApiResponse<T>> {
+    return this.request<T, D>("patch", url, data, config);
   }
 
   public delete<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
