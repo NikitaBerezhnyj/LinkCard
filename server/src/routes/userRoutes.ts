@@ -44,21 +44,21 @@ router.post("/password/reset/:token", (req: Request, res: Response) => {
 
 router.get("/user/:username", (req: Request, res: Response) => {
   getUser(req, res).catch(error => {
-    console.error("Error in /password/reset/:token route:", error);
+    console.error("Error in /user/:token route:", error);
     return res.status(500).send({ message: "Internal Server Error" });
   });
 });
 
-router.put("/user/:username", (req: Request, res: Response) => {
+router.patch("/user/:username", (req: Request, res: Response) => {
   updateUser(req, res).catch(error => {
-    console.error("Error in /password/reset/:token route:", error);
-    return res.status(500).send({ message: "Internal Server Error" });
+    console.error("Error in /user/:username PATCH route:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   });
 });
 
 router.delete("/user/:username", (req: Request, res: Response) => {
   deleteUser(req, res).catch(error => {
-    console.error("Error in /password/reset/:token route:", error);
+    console.error("Error in /delete/:username route:", error);
     return res.status(500).send({ message: "Internal Server Error" });
   });
 });

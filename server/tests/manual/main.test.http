@@ -9,8 +9,8 @@ POST {{apiURL}}/register
 Content-Type: application/json
 
 {
-    "username": "NikName",
-    "email": "kitnikita06@gmail.com",
+    "username": "NikitaBerezhnyj",
+    "email": "nikita.berezhnyj@gmail.com",
     "password": "Nik_0402"
 }
 
@@ -43,49 +43,41 @@ Content-Type: application/json
 ### Отримання інформації про користувача
 GET {{apiURL}}/user/NikName
 
-### Оновлення інформації користувача
-PUT {{apiURL}}/user/Nikita
+### Оновлення BIO
+PATCH {{apiURL}}/user/nik
 Content-Type: application/json
 
 {
-  "username": "Nikita",
-  "email": "kitnikita06@gmail.com",
-  "avatar": "http://192.168.0.106:3001/uploads/standard_avatar.jpg",
-  "bio": "This is a bio.",
+  "bio": "Updated bio: now more info about me."
+}
+
+### Оновлення одного елемента у links
+PATCH {{apiURL}}/user/nik
+Content-Type: application/json
+
+{
   "links": [
-    { "title": "Email", "url": "kitnikita06@gmail.com" },
-    { "title": "GitHub Profile", "url": "https://github.com/exampleUser" },
-    { "title": "LinkedIn Page", "url": "https://linkedin.com/in/exampleUser" }
-  ],
+    { "title": "Email", "url": "kitnikita06@gmail.com"},
+    { "title": "GitHub Profile", "url": "https://github.com/NikitaBerezhnyj" }
+  ]
+}
+
+### Оновлення стилів
+PATCH {{apiURL}}/user/nik
+Content-Type: application/json
+
+{
   "styles": {
-    "font": "Arial",
-    "fontSize": "18px",
-    "fontWeight": "500",
-    "textAlign": "left",
-    "text": "#ffffff",
-    "linkText": "#4aa3df",
-    "buttonText": "#000000",
-    "buttonBackground": "#ffcc00",
-    "buttonHoverText": "#ffffff",
-    "buttonHoverBackground": "#ff9900",
-    "border": "#cccccc",
-    "borderRadius": "10px",
-    "contentBackground": "#1f1f1f",
-    "contentPadding": "25px",
-    "contentGap": "15px",
+    "fontSize": "20px",
     "background": {
-      "type": "gradient",
       "value": {
-        "color": "#000000",
-        "gradient": { "start": "#ff0000", "end": "#00ff00", "angle": "90deg" },
-        "image": "",
-        "position": "center",
-        "size": "cover",
-        "repeat": "no-repeat"
+        "color": "#123456",
+        "gradient": { "start": "#abcdef", "end": "#fedcba", "angle": "45deg" }
       }
     }
   }
 }
+
 
 ### Видалення користувача
 DELETE {{apiURL}}/user/NikName

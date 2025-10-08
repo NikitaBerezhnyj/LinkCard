@@ -4,7 +4,7 @@ import crypto from "crypto";
 import { Request, Response } from "express";
 import { transporter } from "../config/mailConfig";
 import { ResetToken } from "../models/resetTokenModel";
-import { User } from "../models/userModel";
+import { User, IUser } from "../models/userModel";
 import {
   validateRegistration,
   validateLogin,
@@ -12,6 +12,7 @@ import {
 } from "../validators/userValidation";
 import { generateAuthToken } from "../utils/jwtHelper";
 import { isValidPassword, getSaltRounds, hashUserPassword } from "../utils/passwordUtils";
+import { deepMerge } from "../utils/deepMerge";
 
 dotenv.config();
 
@@ -181,35 +182,30 @@ export const getUser = async (req: Request, res: Response): Promise<Response> =>
 
 export const updateUser = async (req: Request, res: Response): Promise<Response> => {
   const { username } = req.params;
-  const update = req.body;
+  const updates: Partial<IUser> = req.body; // або Partial<typeof User.schema.obj>
 
   try {
     const user = await User.findOne({ username });
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (update.username) user.username = update.username;
-    if (update.email) user.email = update.email;
-    if (update.avatar) user.avatar = update.avatar;
-    if (update.bio) user.bio = update.bio;
-    if (update.links) user.links = update.links;
+    const allowedFields: (keyof IUser)[] = [
+      "username",
+      "email",
+      "avatar",
+      "bio",
+      "links",
+      "styles"
+    ];
+    const filteredUpdates: Partial<IUser> = {};
 
-    const currentStyles = JSON.parse(JSON.stringify(user.styles));
-    if (update.styles) {
-      user.styles = {
-        ...currentStyles,
-        ...update.styles,
-        background: {
-          ...currentStyles.background,
-          ...update.styles.background,
-          value: {
-            ...currentStyles.background.value,
-            ...(update.styles.background?.value || {})
-          }
-        }
-      };
+    for (const key of allowedFields) {
+      if (updates[key] !== undefined) filteredUpdates[key] = updates[key];
     }
 
+    deepMerge(user, filteredUpdates);
+
     await user.save();
+
     return res.status(200).json({ message: "User updated successfully", data: user });
   } catch (error) {
     console.error("Error updating user:", error);
