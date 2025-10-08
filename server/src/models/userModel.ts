@@ -61,19 +61,19 @@ const userSchema = new Schema<IUser>({
       default: "center"
     },
 
-    text: { type: String, default: "#e0e0e0" },
-    linkText: { type: String, default: "#4aa3df" },
-    buttonText: { type: String, default: "#ffffff" },
-    buttonBackground: { type: String, default: "#2a2a2a" },
-    buttonHoverText: { type: String, default: "#ffffff" },
-    buttonHoverBackground: { type: String, default: "#4a9bcf" },
+    text: { type: String, default: "#f3f4f6" },
+    linkText: { type: String, default: "#60a5fa" },
+    buttonText: { type: String, default: "#f3f4f6" },
+    buttonBackground: { type: String, default: "#181818" },
+    buttonHoverText: { type: String, default: "#f3f4f6" },
+    buttonHoverBackground: { type: String, default: "#60a5fa" },
 
-    border: { type: String, default: "#dddddd" },
-    borderRadius: { type: String, default: "8px" },
+    border: { type: String, default: "#2c2c2c" },
+    borderRadius: { type: String, default: "10px" },
 
-    contentBackground: { type: String, default: "#1f1f1f" },
-    contentPadding: { type: String, default: "20px" },
-    contentGap: { type: String, default: "12px" },
+    contentBackground: { type: String, default: "#1e1e1e" },
+    contentPadding: { type: String, default: "24px" },
+    contentGap: { type: String, default: "16px" },
 
     background: {
       type: {
@@ -82,10 +82,10 @@ const userSchema = new Schema<IUser>({
         default: "color"
       },
       value: {
-        color: { type: String, default: "#121212" },
+        color: { type: String, default: "#181818" },
         gradient: {
-          start: { type: String, default: "#6ab6e2" },
-          end: { type: String, default: "#4a9bcf" },
+          start: { type: String, default: "#1e1e1e" },
+          end: { type: String, default: "#181818" },
           angle: { type: String, default: "135deg" }
         },
         image: { type: String, default: "" },
