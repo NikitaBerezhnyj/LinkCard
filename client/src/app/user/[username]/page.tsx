@@ -178,9 +178,17 @@ export default function UserPage() {
               <h1 style={textStyle}>QR code</h1>
               <div
                 className={styles.qrCodeContainer}
-                style={{ borderColor: s.buttonHoverBackground }}
+                style={{
+                  borderColor: s.buttonHoverBackground,
+                  backgroundColor: s.contentBackground
+                }}
               >
-                <QRCode value={currentUrl} bgColor="#ffffff" fgColor="#000000" size={200} />
+                <QRCode
+                  value={currentUrl}
+                  bgColor={s.text}
+                  fgColor={s.contentBackground}
+                  size={200}
+                />
               </div>
               <p className={styles.qrText} style={textStyle}>
                 Scan to open this profile
