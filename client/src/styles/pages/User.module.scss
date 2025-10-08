@@ -1,0 +1,164 @@
+@import "@/styles/variables.scss";
+
+.mainWrapper {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $spacing-lg;
+  background-color: $color-background;
+  perspective: 1000px;
+}
+
+.cardContainer {
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s $transition-medium;
+
+  &.flipped {
+    transform: rotateY(180deg);
+  }
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  min-height: 400px; // додано мінімальну висоту
+  transform-style: preserve-3d;
+}
+
+.cardFace {
+  position: absolute;
+  width: 100%;
+  min-height: 400px; // така ж мінімальна висота
+  backface-visibility: hidden; // це ключове правило
+  -webkit-backface-visibility: hidden; // для Safari
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  transition: background-color $transition-medium;
+}
+
+.front {
+  // прибрали z-index
+  transform: rotateY(0deg); // явно вказуємо початкову позицію
+}
+
+.back {
+  transform: rotateY(180deg);
+  justify-content: center;
+}
+
+.qrButton {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text-secondary;
+  font-size: 1.5rem;
+  transition: color $transition-fast;
+  z-index: 10; // додано для кнопки
+
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+.qrWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+
+  h1 {
+    color: $color-text-primary; // додано для видимості тексту
+    margin-bottom: $spacing-md;
+  }
+}
+
+.qrText {
+  color: $color-text-muted;
+  font-size: $font-sm;
+  margin-top: $spacing-sm;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: $radius-full;
+  object-fit: cover;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: $spacing-sm;
+
+  .linkBlock {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-sm;
+    background-color: $color-background-alt;
+    text-decoration: none;
+    transition:
+      background-color $transition-fast,
+      color $transition-fast;
+
+    &:hover {
+      background-color: $color-primary;
+      color: $color-text-primary;
+
+      .linkIcon {
+        color: $color-text-primary;
+      }
+    }
+
+    .linkIcon {
+      margin-right: $spacing-md;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .linkTitle {
+      flex: 1;
+      font-weight: 500;
+    }
+  }
+}
+
+.loading,
+.error {
+  text-align: center;
+  font-size: $font-lg;
+  color: $color-text-secondary;
+}
+
+.qrCodeContainer {
+  background-color: #ffffff;
+  padding: $spacing-md;
+  border-radius: $radius-md;
+}
+
+.avatarPlaceholder {
+  width: 120px;
+  height: 120px;
+  color: $color-text-muted;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 120px;
+}
