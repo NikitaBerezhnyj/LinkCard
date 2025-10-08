@@ -1,5 +1,6 @@
 import cors from "cors";
-import express, { Express } from "express";
+import path from "path";
+import express, { Express, Request, Response } from "express";
 import userRoutes from "../routes/userRoutes";
 import uploadRoutes from "../routes/uploadRoutes";
 import healthRoutes from "../routes/healthRoutes";
@@ -37,6 +38,13 @@ const createServer = (): Express => {
     })
   );
   app.use(express.json());
+
+  const publicPath = path.join(__dirname, "../public");
+  app.use(express.static(publicPath));
+
+  app.get("/", (_req: Request, res: Response) => {
+    res.sendFile(path.join(publicPath, "index.html"));
+  });
 
   app.use("/api", healthRoutes);
   app.use("/api", userRoutes);
