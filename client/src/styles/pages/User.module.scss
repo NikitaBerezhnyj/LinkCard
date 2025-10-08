@@ -25,16 +25,16 @@
 .card {
   position: relative;
   width: 100%;
-  min-height: 400px; // додано мінімальну висоту
+  min-height: 400px;
   transform-style: preserve-3d;
 }
 
 .cardFace {
   position: absolute;
   width: 100%;
-  min-height: 400px; // така ж мінімальна висота
-  backface-visibility: hidden; // це ключове правило
-  -webkit-backface-visibility: hidden; // для Safari
+  min-height: 400px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   background-color: $color-surface;
   border: 1px solid $color-border;
   border-radius: $radius-md;
@@ -47,8 +47,7 @@
 }
 
 .front {
-  // прибрали z-index
-  transform: rotateY(0deg); // явно вказуємо початкову позицію
+  transform: rotateY(0deg);
 }
 
 .back {
@@ -66,7 +65,7 @@
   color: $color-text-secondary;
   font-size: 1.5rem;
   transition: color $transition-fast;
-  z-index: 10; // додано для кнопки
+  z-index: 10;
 
   &:hover {
     color: $color-primary;
@@ -80,7 +79,7 @@
   gap: $spacing-sm;
 
   h1 {
-    color: $color-text-primary; // додано для видимості тексту
+    color: $color-text-primary;
     margin-bottom: $spacing-md;
   }
 }
@@ -126,13 +125,13 @@
     }
 
     .linkIcon {
-      margin-right: $spacing-md;
       font-size: 1.5rem;
       display: flex;
       align-items: center;
     }
 
     .linkTitle {
+      text-align: left;
       flex: 1;
       font-weight: 500;
     }
@@ -150,6 +149,7 @@
   background-color: #ffffff;
   padding: $spacing-md;
   border-radius: $radius-md;
+  border: 1px solid $color-border;
 }
 
 .avatarPlaceholder {
