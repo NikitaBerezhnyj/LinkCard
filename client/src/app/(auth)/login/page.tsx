@@ -6,6 +6,7 @@ import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
+import { validateEmail } from "@/utils/validations";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +17,22 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!email) {
+      setError("Email is required.");
+      return;
+    }
+
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setError(emailError);
+      return;
+    }
+
+    if (!password) {
+      setError("Password is required.");
+      return;
+    }
 
     const response = await authService.login({ email, password });
 

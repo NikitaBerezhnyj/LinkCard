@@ -6,6 +6,7 @@ import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
+import { validateUsername, validateEmail, validatePassword } from "@/utils/validations";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -17,6 +18,36 @@ export default function RegisterPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    if (!username) {
+      setError("Username is required.");
+      return;
+    }
+
+    if (!email) {
+      setError("Email is required.");
+      return;
+    }
+
+    if (!password) {
+      setError("Password is required.");
+      return;
+    }
+
+    const usernameError = validateUsername(username);
+    if (usernameError) {
+      return setError(usernameError);
+    }
+
+    const emailError = validateEmail(email);
+    if (emailError) {
+      return setError(emailError);
+    }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      return setError(passwordError);
+    }
 
     const response = await authService.register({ username, email, password });
 

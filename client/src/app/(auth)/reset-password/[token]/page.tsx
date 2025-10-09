@@ -6,6 +6,7 @@ import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
+import { validatePassword } from "@/utils/validations";
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
@@ -18,6 +19,16 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError(null);
     setMessage(null);
+
+    if (!password) {
+      setError("Password is required.");
+      return;
+    }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      return setError(passwordError);
+    }
 
     const tokenStr = Array.isArray(token) ? token[0] : token;
 

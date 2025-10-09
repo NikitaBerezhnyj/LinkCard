@@ -5,6 +5,7 @@ import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
+import { validateEmail } from "@/utils/validations";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -15,6 +16,17 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setMessage(null);
     setError(null);
+
+    if (!email) {
+      setError("Email is required.");
+      return;
+    }
+
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setError(emailError);
+      return;
+    }
 
     const response = await authService.forgotPassword({ email });
 
