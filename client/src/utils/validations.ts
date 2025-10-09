@@ -26,3 +26,21 @@ export const isPhone = (value: string) => {
   const clean = value.replace(/[\s()-]/g, "");
   return clean.startsWith("+") || clean.startsWith("tel:") || /^\d{7,15}$/.test(clean);
 };
+
+export const validateLink = (link: string): string | null => {
+  if (!link) return "Link is required.";
+
+  const trimmed = link.trim();
+
+  if (emailRegex.test(trimmed)) return null;
+
+  if (isPhone(trimmed)) return null;
+
+  const normalized = trimmed.startsWith("http") ? trimmed : `https://${trimmed}`;
+  try {
+    new URL(normalized);
+    return null;
+  } catch {
+    return "Please enter a valid URL, email, or phone number.";
+  }
+};
