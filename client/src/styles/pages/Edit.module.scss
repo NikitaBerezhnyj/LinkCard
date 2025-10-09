@@ -1,0 +1,253 @@
+@import "@/styles/variables.scss";
+
+.mainWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: $spacing-lg;
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: $spacing-xl;
+  background-color: $color-background-alt;
+  border-radius: $radius-md;
+  box-shadow: $shadow-md;
+
+  h1 {
+    color: $color-text-primary;
+    margin-bottom: $spacing-lg;
+    text-align: center;
+  }
+
+  h3 {
+    color: $color-text-primary;
+    font-size: $font-lg;
+    margin-top: $spacing-xl;
+    margin-bottom: $spacing-md;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: $spacing-sm;
+  margin-bottom: $spacing-lg;
+  border-bottom: 1px solid $color-border;
+}
+
+.tab {
+  flex: 1;
+  padding: $spacing-md;
+  background: none;
+  border: none;
+  color: $color-text-secondary;
+  font-size: $font-md;
+  cursor: pointer;
+  transition: all $transition-fast;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+
+  &:hover {
+    color: $color-text-primary;
+  }
+
+  &.active {
+    color: $color-primary;
+    border-bottom-color: $color-primary;
+  }
+}
+
+.content {
+  margin-bottom: $spacing-lg;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+
+  label {
+    color: $color-text-secondary;
+    font-size: $font-sm;
+    font-weight: 500;
+  }
+}
+
+.select {
+  padding: $spacing-sm $spacing-md;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  color: $color-text-primary;
+  font-size: $font-md;
+  cursor: pointer;
+  transition: border-color $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+.colorInput {
+  width: 100%;
+  height: 50px;
+  padding: $spacing-xs;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: border-color $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary;
+  }
+}
+
+.colorValue {
+  font-size: $font-sm;
+  color: $color-text-muted;
+  font-family: monospace;
+}
+
+.linksSection {
+  margin-top: $spacing-md;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-md;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background-color: $color-primary;
+  color: $color-text-primary;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: $font-sm;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+
+  &:hover {
+    background-color: $color-primary-hover;
+  }
+
+  svg {
+    font-size: $font-md;
+  }
+}
+
+.linkItem {
+  width: 100%;
+  display: flex;
+  gap: $spacing-sm;
+  align-items: flex-start;
+  margin-bottom: $spacing-xs;
+
+  div {
+    width: 100%;
+  }
+}
+
+.linkInputs {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-xs;
+}
+
+.deleteBtn {
+  padding: $spacing-sm;
+  background-color: $color-error;
+  color: $color-text-primary;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: background-color $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+
+  &:hover {
+    background-color: darken($color-error, 10%);
+  }
+
+  svg {
+    font-size: $font-md;
+  }
+}
+
+.templatesSection {
+  margin-bottom: $spacing-lg;
+
+  h3 {
+    margin-top: 0;
+  }
+}
+
+.templateGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-sm;
+}
+
+.templateBtn {
+  padding: $spacing-sm;
+  background-color: $color-background;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  font-size: $font-sm;
+  cursor: pointer;
+  transition: all $transition-fast;
+  text-transform: capitalize;
+
+  &:hover {
+    background-color: $color-surface;
+    border-color: $color-primary;
+  }
+}
+
+@media (max-width: 768px) {
+  .mainWrapper {
+    padding: $spacing-md;
+  }
+
+  .formContainer {
+    padding: $spacing-lg;
+  }
+
+  .templateGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .linkInputs {
+    width: 100%;
+  }
+
+  .deleteBtn {
+    margin-top: 0;
+  }
+}

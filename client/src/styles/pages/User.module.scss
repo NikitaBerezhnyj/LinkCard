@@ -55,10 +55,28 @@
   justify-content: center;
 }
 
-.qrButton {
+.topButtons {
   position: absolute;
   top: $spacing-sm;
   right: $spacing-sm;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text-secondary;
+  font-size: 1.5rem;
+  transition: color $transition-fast;
+  z-index: 10;
+  display: flex;
+  gap: $spacing-sm;
+  align-items: center;
+  flex-direction: column;
+
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+.qrButton {
   background: none;
   border: none;
   cursor: pointer;

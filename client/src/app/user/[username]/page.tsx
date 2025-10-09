@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { userService } from "@/services/UserService";
@@ -10,9 +11,11 @@ import { FiLink, FiMail } from "react-icons/fi";
 import { FaFacebook, FaTwitter, FaTelegram, FaGithub, FaUserCircle } from "react-icons/fa";
 import { BsQrCode } from "react-icons/bs";
 import { FaRegAddressCard } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
 import QRCode from "react-qr-code";
 
 export default function UserPage() {
+  const router = useRouter();
   const { username } = useParams();
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
@@ -111,15 +114,26 @@ export default function UserPage() {
         <div className={styles.card}>
           {/* FRONT */}
           <div className={`${styles.cardFace} ${styles.front}`} style={cardStyle}>
-            <button
-              className={styles.qrButton}
-              onClick={() => setFlipped(true)}
-              style={qrButtonStyle}
-              onMouseEnter={e => Object.assign(e.currentTarget.style, qrButtonHoverStyle)}
-              onMouseLeave={e => Object.assign(e.currentTarget.style, qrButtonStyle)}
-            >
-              <BsQrCode />
-            </button>
+            <div className={styles.topButtons}>
+              <button
+                className={styles.qrButton}
+                onClick={() => setFlipped(true)}
+                style={qrButtonStyle}
+                onMouseEnter={e => Object.assign(e.currentTarget.style, qrButtonHoverStyle)}
+                onMouseLeave={e => Object.assign(e.currentTarget.style, qrButtonStyle)}
+              >
+                <BsQrCode />
+              </button>
+              <button
+                className={styles.qrButton}
+                onClick={() => router.push(`${window.location.pathname}/edit`)}
+                style={qrButtonStyle}
+                onMouseEnter={e => Object.assign(e.currentTarget.style, qrButtonHoverStyle)}
+                onMouseLeave={e => Object.assign(e.currentTarget.style, qrButtonStyle)}
+              >
+                <MdEdit />
+              </button>
+            </div>
 
             {user.avatar ? (
               <Image
@@ -165,15 +179,17 @@ export default function UserPage() {
 
           {/* BACK */}
           <div className={`${styles.cardFace} ${styles.back}`} style={cardStyle}>
-            <button
-              className={styles.qrButton}
-              onClick={() => setFlipped(false)}
-              style={qrButtonStyle}
-              onMouseEnter={e => Object.assign(e.currentTarget.style, qrButtonHoverStyle)}
-              onMouseLeave={e => Object.assign(e.currentTarget.style, qrButtonStyle)}
-            >
-              <FaRegAddressCard />
-            </button>
+            <div className={styles.topButtons}>
+              <button
+                className={styles.qrButton}
+                onClick={() => setFlipped(false)}
+                style={qrButtonStyle}
+                onMouseEnter={e => Object.assign(e.currentTarget.style, qrButtonHoverStyle)}
+                onMouseLeave={e => Object.assign(e.currentTarget.style, qrButtonStyle)}
+              >
+                <FaRegAddressCard />
+              </button>
+            </div>
             <div className={styles.qrWrapper}>
               <h1 style={textStyle}>QR code</h1>
               <div
