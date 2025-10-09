@@ -20,7 +20,6 @@ type TabType = "profile" | "styles";
 export default function UserEditPage() {
   const [activeTab, setActiveTab] = useState<TabType>("profile");
 
-  // Profile data
   const [username, setUsername] = useState("john_doe");
   const [email, setEmail] = useState("john@example.com");
   const [links, setLinks] = useState<{ title: string; url: string }[]>([
@@ -28,7 +27,6 @@ export default function UserEditPage() {
     { title: "Twitter", url: "https://twitter.com/johndoe" }
   ]);
 
-  // Styles data
   const [userStyles, setUserStyles] = useState<IUser["styles"]>(templates.dracula);
 
   const handleAddLink = () => {
@@ -45,17 +43,23 @@ export default function UserEditPage() {
     setLinks(newLinks);
   };
 
-  const handleStyleChange = (path: string, value: any) => {
+  const handleStyleChange = (path: string, value: string | number) => {
     setUserStyles(prev => {
-      const newStyles = JSON.parse(JSON.stringify(prev));
+      const newStyles = { ...prev };
+
       const keys = path.split(".");
-      let current = newStyles;
+      let current: unknown = newStyles;
 
       for (let i = 0; i < keys.length - 1; i++) {
-        current = current[keys[i]];
+        if (typeof current === "object" && current !== null) {
+          current = (current as Record<string, unknown>)[keys[i]];
+        }
       }
 
-      current[keys[keys.length - 1]] = value;
+      if (typeof current === "object" && current !== null) {
+        (current as Record<string, string | number>)[keys[keys.length - 1]] = value;
+      }
+
       return newStyles;
     });
   };

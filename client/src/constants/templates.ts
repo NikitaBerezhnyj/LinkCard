@@ -1,4 +1,3 @@
-// src/styles/templates/userTemplates.ts
 import { IUser } from "@/types/IUser";
 
 export const lightTheme: IUser["styles"] = {
