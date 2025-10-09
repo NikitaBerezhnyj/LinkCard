@@ -13,6 +13,7 @@ import { BsQrCode } from "react-icons/bs";
 import { FaRegAddressCard } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import QRCode from "react-qr-code";
+import { authService } from "@/services/AuthService";
 
 export default function UserPage() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function UserPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
 
   const getLinkIcon = (url: string) => {
     const lower = url.toLowerCase();
@@ -39,15 +41,32 @@ export default function UserPage() {
     const usernameStr = Array.isArray(username) ? username[0] : username;
     if (!usernameStr) return;
 
-    setLoading(true);
-    userService
-      .getUser(usernameStr)
-      .then(res => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+
+        const res = await userService.getUser(usernameStr);
         if (!res.data) throw new Error("User not found");
-        setUser(res.data?.data);
-      })
-      .catch(() => setError("Failed to load user."))
-      .finally(() => setLoading(false));
+
+        const userData = res.data.data;
+        setUser(userData);
+
+        const currentUser = (await authService.getCurrentUser()) as IUser | null;
+
+        if (currentUser && currentUser.username === userData.username) {
+          setIsOwner(true);
+        } else {
+          setIsOwner(false);
+        }
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load user.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
   }, [username]);
 
   if (loading) return <p className={styles.loading}>Loading...</p>;
@@ -124,15 +143,17 @@ export default function UserPage() {
               >
                 <BsQrCode />
               </button>
-              <button
-                className={styles.qrButton}
-                onClick={() => router.push(`${window.location.pathname}/edit`)}
-                style={qrButtonStyle}
-                onMouseEnter={e => Object.assign(e.currentTarget.style, qrButtonHoverStyle)}
-                onMouseLeave={e => Object.assign(e.currentTarget.style, qrButtonStyle)}
-              >
-                <MdEdit />
-              </button>
+              {isOwner && (
+                <button
+                  className={styles.qrButton}
+                  onClick={() => router.push(`${window.location.pathname}/edit`)}
+                  style={qrButtonStyle}
+                  onMouseEnter={e => Object.assign(e.currentTarget.style, qrButtonHoverStyle)}
+                  onMouseLeave={e => Object.assign(e.currentTarget.style, qrButtonStyle)}
+                >
+                  <MdEdit />
+                </button>
+              )}
             </div>
 
             {user.avatar ? (

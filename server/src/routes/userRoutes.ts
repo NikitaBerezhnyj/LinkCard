@@ -46,6 +46,15 @@ router.post("/password/reset/:token", (req: Request, res: Response) => {
 
 router.post("/logout", logoutUser);
 
+router.get("/user/profile", authMiddleware, (req: AuthRequest, res: Response) => {
+  try {
+    res.status(200).json({ data: req.user });
+  } catch (error) {
+    console.error("Error in /user/profile route:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 router.get("/user/:username", (req: Request, res: Response) => {
   getUser(req, res).catch(error => {
     console.error("Error in /user/:token route:", error);

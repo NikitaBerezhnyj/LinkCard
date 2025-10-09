@@ -17,5 +17,16 @@ export const authService = {
     apiClient.post<{ message: string }, { email: string; password: string }>(
       `/password/reset/${token}`,
       data
-    )
+    ),
+
+  getCurrentUser: async () => {
+    try {
+      const response = await apiClient.get<{ data: unknown }>("/user/profile");
+      return response.data?.data ?? null;
+    } catch {
+      return null;
+    }
+  },
+
+  logout: () => apiClient.post<{ message: string }, void>("/logout")
 };

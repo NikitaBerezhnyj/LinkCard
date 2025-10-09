@@ -1,5 +1,6 @@
 import cors from "cors";
 import path from "path";
+import cookieParser from "cookie-parser";
 import express, { Express, Request, Response } from "express";
 import userRoutes from "../routes/userRoutes";
 import uploadRoutes from "../routes/uploadRoutes";
@@ -41,6 +42,7 @@ const createServer = (): Express => {
   );
 
   app.use(express.json());
+  app.use(cookieParser());
 
   const publicPath = path.join(__dirname, "../public");
   app.use(express.static(publicPath));
