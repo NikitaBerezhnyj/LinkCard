@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { transporter } from "../config/mailConfig";
 import { ResetToken } from "../models/resetTokenModel";
 import { User, IUser } from "../models/userModel";
@@ -13,8 +13,16 @@ import {
 import { generateAuthToken } from "../utils/jwtHelper";
 import { isValidPassword, getSaltRounds, hashUserPassword } from "../utils/passwordUtils";
 import { deepMerge } from "../utils/deepMerge";
+import { AuthRequest } from "../middleware/authMiddleware";
 
 dotenv.config();
+
+const makeCookieOptions = () => ({
+  httpOnly: true,
+  secure: false, // коли перейдемо на prod треба поставити true
+  sameSite: "lax" as const,
+  maxAge: 30 * 24 * 60 * 60 * 1000
+});
 
 export const registerUser = async (req: Request, res: Response): Promise<Response> => {
   const checkUserConflict = async (
@@ -63,6 +71,14 @@ export const registerUser = async (req: Request, res: Response): Promise<Respons
 
     const token = generateAuthToken(newUser.id.toString(), newUser.username);
 
+    const origin = req.headers.origin as string | undefined;
+    const isBrowser = origin && origin.includes(process.env.ORIGIN_WEBSITE || "");
+
+    if (isBrowser) {
+      res.cookie("token", token, makeCookieOptions());
+      return res.status(201).json({ message: "User created successfully" });
+    }
+
     return res.status(201).json({ token, message: "User created successfully" });
   } catch (err) {
     console.error("=== Error during user registration ===", err);
@@ -87,6 +103,15 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
     if (!validPassword) return res.status(401).json({ message: "Invalid Email or Password" });
 
     const token = generateAuthToken(user.id.toString(), user.username);
+
+    const origin = req.headers.origin as string | undefined;
+    const isBrowser = origin && origin.includes(process.env.ORIGIN_WEBSITE || "");
+
+    if (isBrowser) {
+      res.cookie("token", token, makeCookieOptions());
+      return res.status(200).json({ message: "Logged in successfully" });
+    }
+
     return res.status(200).json({ token, message: "Logged in successfully" });
   } catch (err) {
     console.error("Error during user login:", err);
@@ -156,6 +181,20 @@ export const resetPassword = async (req: Request, res: Response): Promise<Respon
   }
 };
 
+export const logoutUser: RequestHandler = (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax"
+    });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.error("Error during logout:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export const getUser = async (req: Request, res: Response): Promise<Response> => {
   const { username } = req.params;
   try {
@@ -180,9 +219,14 @@ export const getUser = async (req: Request, res: Response): Promise<Response> =>
   }
 };
 
-export const updateUser = async (req: Request, res: Response): Promise<Response> => {
+export const updateUser = async (req: AuthRequest, res: Response): Promise<Response> => {
   const { username } = req.params;
-  const updates: Partial<IUser> = req.body; // або Partial<typeof User.schema.obj>
+
+  if (req.user?.username !== username) {
+    return res.status(403).json({ message: "Forbidden: cannot edit other user's profile" });
+  }
+
+  const updates: Partial<IUser> = req.body;
 
   try {
     const user = await User.findOne({ username });
@@ -213,8 +257,13 @@ export const updateUser = async (req: Request, res: Response): Promise<Response>
   }
 };
 
-export const deleteUser = async (req: Request, res: Response): Promise<Response> => {
+export const deleteUser = async (req: AuthRequest, res: Response): Promise<Response> => {
   const { username } = req.params;
+
+  if (req.user?.username !== username) {
+    return res.status(403).json({ message: "Forbidden: cannot delete other user's profile" });
+  }
+
   try {
     const result = await User.deleteOne({ username });
     if (result.deletedCount === 0) return res.status(404).json({ message: "User not found" });

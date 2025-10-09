@@ -1,5 +1,6 @@
 @apiURL = http://localhost:5000/api
 @resetToken = e3a1d2a2ebc2c4766a26242cf8e3b49fbe52228605b190f8c447e9ec18e86c73
+@jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGU1M2Y2NzQ5M2U0NTczZDEwN2UxZjYiLCJ1c2VybmFtZSI6Im5payIsImlhdCI6MTc2MDAwMTE3NCwiZXhwIjoxNzYwNjA1OTc0fQ.GM88WEp92ezVBRbKwYSqTZMW9CkSsPlrc7QpMW5_M5A
 
 ### HealthCheck
 GET {{apiURL}}/healthcheck
@@ -41,19 +42,21 @@ Content-Type: application/json
 }
 
 ### Отримання інформації про користувача
-GET {{apiURL}}/user/NikName
+GET {{apiURL}}/user/nik
 
 ### Оновлення BIO
 PATCH {{apiURL}}/user/nik
 Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
 
 {
-  "bio": "Updated bio: now more info about me."
+  "bio": "Name is nik..."
 }
 
 ### Оновлення одного елемента у links
 PATCH {{apiURL}}/user/nik
 Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
 
 {
   "links": [
@@ -65,6 +68,7 @@ Content-Type: application/json
 ### Оновлення стилів
 PATCH {{apiURL}}/user/nik
 Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
 
 {
   "styles": {
@@ -78,6 +82,6 @@ Content-Type: application/json
   }
 }
 
-
 ### Видалення користувача
 DELETE {{apiURL}}/user/NikName
+Authorization: Bearer {{jwtToken}}

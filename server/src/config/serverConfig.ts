@@ -26,17 +26,20 @@ const createServer = (): Express => {
     process.exit(1);
   }
 
-  const allowedOrigins = [process.env.ORIGIN_WEBSITE, "*"].filter((origin): origin is string =>
-    Boolean(origin)
-  );
+  const allowedOrigins = [process.env.ORIGIN_WEBSITE].filter(Boolean) as string[];
 
   app.use(
     cors({
-      origin: allowedOrigins,
+      origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error("CORS origin denied"));
+      },
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
       credentials: true
     })
   );
+
   app.use(express.json());
 
   const publicPath = path.join(__dirname, "../public");
