@@ -7,13 +7,13 @@ import Image from "next/image";
 import { userService } from "@/services/UserService";
 import { IUser } from "@/types/IUser";
 import styles from "@/styles/pages/User.module.scss";
-import { FiLink, FiMail } from "react-icons/fi";
-import { FaFacebook, FaTwitter, FaTelegram, FaGithub, FaUserCircle } from "react-icons/fa";
 import { BsQrCode } from "react-icons/bs";
 import { FaRegAddressCard } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import QRCode from "react-qr-code";
 import { authService } from "@/services/AuthService";
+import { FaUserCircle } from "react-icons/fa";
+import { getLinkIcon, getNormalizedLink } from "@/utils/linkUtils";
 
 export default function UserPage() {
   const router = useRouter();
@@ -23,19 +23,6 @@ export default function UserPage() {
   const [error, setError] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
-
-  const getLinkIcon = (url: string) => {
-    const lower = url.toLowerCase();
-    if (lower.includes("@") && !lower.startsWith("http")) return <FiMail />;
-    try {
-      const hostname = new URL(url).hostname.replace("www.", "");
-      if (hostname.includes("facebook")) return <FaFacebook />;
-      if (hostname.includes("twitter")) return <FaTwitter />;
-      if (hostname.includes("telegram")) return <FaTelegram />;
-      if (hostname.includes("github")) return <FaGithub />;
-    } catch {}
-    return <FiLink />;
-  };
 
   useEffect(() => {
     const usernameStr = Array.isArray(username) ? username[0] : username;
@@ -176,25 +163,26 @@ export default function UserPage() {
             {user.bio && <p style={textStyle}>{user.bio}</p>}
 
             <div className={styles.links}>
-              {user.links.map((link, idx) => (
-                <a
-                  key={idx}
-                  href={
-                    link.url.includes("@") && !link.url.startsWith("http")
-                      ? `mailto:${link.url}`
-                      : link.url
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.linkBlock}
-                  style={linkStyle}
-                  onMouseEnter={e => Object.assign(e.currentTarget.style, linkHoverStyle)}
-                  onMouseLeave={e => Object.assign(e.currentTarget.style, linkStyle)}
-                >
-                  <span className={styles.linkTitle}>{link.title || link.url}</span>
-                  <span className={styles.linkIcon}>{getLinkIcon(link.url)}</span>
-                </a>
-              ))}
+              {user.links.map((link, idx) => {
+                const url = link.url.trim();
+                const normalizedUrl = getNormalizedLink(url);
+
+                return (
+                  <a
+                    key={idx}
+                    href={normalizedUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.linkBlock}
+                    style={linkStyle}
+                    onMouseEnter={e => Object.assign(e.currentTarget.style, linkHoverStyle)}
+                    onMouseLeave={e => Object.assign(e.currentTarget.style, linkStyle)}
+                  >
+                    <span className={styles.linkTitle}>{link.title || link.url}</span>
+                    <span className={styles.linkIcon}>{getLinkIcon(url)}</span>
+                  </a>
+                );
+              })}
             </div>
           </div>
 

@@ -21,3 +21,8 @@ export const validatePassword = (password: string): string | null => {
     return "Password must be at least 8 characters long, contain one uppercase letter, one number, and one special character.";
   return null;
 };
+
+export const isPhone = (value: string) => {
+  const clean = value.replace(/[\s()-]/g, "");
+  return clean.startsWith("+") || clean.startsWith("tel:") || /^\d{7,15}$/.test(clean);
+};
