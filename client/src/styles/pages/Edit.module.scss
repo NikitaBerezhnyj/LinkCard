@@ -5,42 +5,36 @@
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: $spacing-lg;
+  padding: $spacing-md;
 }
 
 .formContainer {
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
-  padding: $spacing-xl;
+  padding: $spacing-lg;
   background-color: $color-background-alt;
   border-radius: $radius-md;
   box-shadow: $shadow-md;
 
   h1 {
     color: $color-text-primary;
-    margin-bottom: $spacing-lg;
-    text-align: center;
-  }
-
-  h3 {
-    color: $color-text-primary;
-    font-size: $font-lg;
-    margin-top: $spacing-xl;
     margin-bottom: $spacing-md;
+    text-align: center;
+    font-size: $font-xl;
   }
 }
 
 .tabs {
   display: flex;
-  gap: $spacing-sm;
-  margin-bottom: $spacing-lg;
+  gap: 0;
+  margin-bottom: $spacing-md;
   border-bottom: 1px solid $color-border;
 }
 
 .tab {
   flex: 1;
-  padding: $spacing-md;
+  padding: $spacing-sm $spacing-md;
   background: none;
   border: none;
   color: $color-text-secondary;
@@ -61,13 +55,37 @@
 }
 
 .content {
-  margin-bottom: $spacing-lg;
+  margin-bottom: $spacing-md;
 }
 
 .section {
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: $spacing-sm;
+}
+
+.subsection {
+  padding: $spacing-md 0;
+  border-bottom: 1px solid $color-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.subsectionTitle {
+  display: block;
+  color: $color-text-primary;
+  font-size: $font-md;
+  font-weight: 600;
+  margin-bottom: $spacing-sm;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: $spacing-sm;
+  margin-bottom: $spacing-xs;
 }
 
 .formGroup {
@@ -83,12 +101,12 @@
 }
 
 .select {
-  padding: $spacing-sm $spacing-md;
+  padding: $spacing-xs $spacing-sm;
   background-color: $color-background;
   border: 1px solid $color-border;
   border-radius: $radius-sm;
   color: $color-text-primary;
-  font-size: $font-md;
+  font-size: $font-sm;
   cursor: pointer;
   transition: border-color $transition-fast;
 
@@ -98,10 +116,16 @@
   }
 }
 
+.colorWrapper {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
 .colorInput {
-  width: 100%;
-  height: 50px;
-  padding: $spacing-xs;
+  width: 40px;
+  height: 32px;
+  padding: 2px;
   background-color: $color-background;
   border: 1px solid $color-border;
   border-radius: $radius-sm;
@@ -115,36 +139,47 @@
 }
 
 .colorValue {
-  font-size: $font-sm;
+  font-size: $font-xs;
   color: $color-text-muted;
   font-family: monospace;
 }
 
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-sm;
+}
+
 .linksSection {
-  margin-top: $spacing-md;
+  padding: $spacing-md 0;
+  border-top: 1px solid $color-border;
 }
 
 .sectionHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-sm;
 
-  h3 {
-    margin: 0;
+  label {
+    color: $color-text-primary;
+    font-size: $font-md;
+    font-weight: 600;
   }
 }
 
 .addBtn {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
-  padding: $spacing-xs $spacing-md;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   background-color: $color-primary;
   color: $color-text-primary;
   border: none;
   border-radius: $radius-sm;
-  font-size: $font-sm;
+  font-size: $font-md;
   cursor: pointer;
   transition: background-color $transition-fast;
 
@@ -158,26 +193,14 @@
 }
 
 .linkItem {
-  width: 100%;
-  display: flex;
-  gap: $spacing-sm;
-  align-items: flex-start;
-  margin-bottom: $spacing-xs;
-
-  div {
-    width: 100%;
-  }
-}
-
-.linkInputs {
-  flex: 1;
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 1fr 1fr 40px;
   gap: $spacing-xs;
+  margin-bottom: $spacing-xs;
 }
 
 .deleteBtn {
-  padding: $spacing-sm;
+  padding: 0;
   background-color: $color-error;
   color: $color-text-primary;
   border: none;
@@ -187,7 +210,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
+  width: 40px;
   height: 40px;
 
   &:hover {
@@ -199,27 +222,19 @@
   }
 }
 
-.templatesSection {
-  margin-bottom: $spacing-lg;
-
-  h3 {
-    margin-top: 0;
-  }
-}
-
 .templateGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $spacing-sm;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $spacing-xs;
 }
 
 .templateBtn {
-  padding: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
   background-color: $color-background;
   color: $color-text-primary;
   border: 1px solid $color-border;
   border-radius: $radius-sm;
-  font-size: $font-sm;
+  font-size: $font-xs;
   cursor: pointer;
   transition: all $transition-fast;
   text-transform: capitalize;
@@ -232,22 +247,91 @@
 
 @media (max-width: 768px) {
   .mainWrapper {
-    padding: $spacing-md;
+    padding: $spacing-sm;
   }
 
   .formContainer {
-    padding: $spacing-lg;
+    padding: $spacing-md;
   }
 
   .templateGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .colorGrid {
     grid-template-columns: 1fr;
   }
 
-  .linkInputs {
-    width: 100%;
+  .formRow {
+    grid-template-columns: 1fr;
   }
 
-  .deleteBtn {
-    margin-top: 0;
+  .linkItem {
+    grid-template-columns: 1fr;
+    gap: $spacing-xs;
   }
+}
+
+.accordion {
+  margin-bottom: $spacing-md;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background-color: $color-background-alt;
+  box-shadow: $shadow-sm;
+
+  .accordionHeader {
+    width: 100%;
+    padding: $spacing-sm $spacing-md;
+    text-align: left;
+    font-weight: 600;
+    color: $color-text-primary;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background-color: $color-background;
+    border: none;
+    outline: none;
+    transition:
+      background-color $transition-medium,
+      color $transition-medium;
+
+    &:hover {
+      background-color: $color-surface;
+    }
+
+    svg {
+      transition: transform 0.3s ease;
+    }
+  }
+
+  .accordionContent {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition:
+      max-height 0.3s ease,
+      opacity 0.3s ease,
+      padding 0.3s ease;
+    padding: 0 $spacing-md;
+  }
+
+  &.open {
+    .accordionHeader svg {
+      transform: rotate(180deg);
+    }
+
+    .accordionContent {
+      max-height: 2000px;
+      opacity: 1;
+      padding: $spacing-md $spacing-md;
+    }
+  }
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
 }

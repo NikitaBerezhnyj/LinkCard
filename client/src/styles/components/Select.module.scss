@@ -1,0 +1,61 @@
+@use "../variables" as *;
+
+.selectWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.label {
+  color: $color-text-secondary;
+  font-size: $font-sm;
+  font-weight: 500;
+}
+
+.selectContainer {
+  position: relative;
+}
+
+.select {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  padding-right: 2.5rem; // місце для стрілки
+  border-radius: $radius-sm;
+  border: 1px solid $color-border;
+  font-size: $font-md;
+  color: $color-text-primary;
+  background-color: $color-surface;
+  cursor: pointer;
+  transition:
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+
+  /* Прибираємо дефолтний браузерний вигляд */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3);
+    outline: none;
+  }
+}
+
+.selectArrow {
+  position: absolute;
+  right: $spacing-md;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; // щоб не перекривав клік по select
+  color: $color-text-secondary;
+}
+
+.error {
+  border-color: $color-error;
+}
+
+.errorMessage {
+  color: $color-error;
+  font-size: $font-sm;
+}

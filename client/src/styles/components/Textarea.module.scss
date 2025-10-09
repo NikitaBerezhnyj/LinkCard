@@ -1,0 +1,51 @@
+@use "../variables" as *;
+
+.textareaWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.textareaContainer {
+  position: relative;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 100px;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border;
+  font-size: $font-md;
+  color: $color-text-primary;
+  background-color: $color-surface;
+  resize: none; // 🔒 забороняємо resize
+  transition:
+    border-color $transition-fast,
+    box-shadow $transition-fast;
+
+  &:focus {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.3);
+    outline: none;
+  }
+
+  &::placeholder {
+    color: $color-text-muted;
+  }
+}
+
+.charCount {
+  align-self: flex-end;
+  font-size: $font-sm;
+  color: $color-text-muted;
+}
+
+.error {
+  border-color: $color-error;
+}
+
+.errorMessage {
+  color: $color-error;
+  font-size: $font-sm;
+}
