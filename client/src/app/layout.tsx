@@ -12,6 +12,7 @@ import {
   merriweather
 } from "@/constants/fonts";
 import "./globals.scss";
+import { Toaster } from "react-hot-toast";
 
 export const metadata: Metadata = {
   title: "LinkCard",
@@ -29,6 +30,16 @@ export default function RootLayout({
         className={`${roboto.variable} ${inter.variable} ${openSans.variable} ${shadowsIntoLight.variable} ${raleway.variable} ${montserrat.variable} ${barrio.variable} ${delius.variable} ${audiowide.variable} ${merriweather.variable}`}
       >
         {children}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: "#181818",
+              color: "#f3f4f6",
+              border: "1px solid #2c2c2c"
+            }
+          }}
+        />
       </body>
     </html>
   );

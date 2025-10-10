@@ -2,7 +2,7 @@
 
 // TODO:
 // - [x] 1. Додати кнопку для видалення акаунту;
-// - [ ] 2. Додати можливість зміни паролю (через окрему сторінку, куди веде кнопка);
+// - [x] 2. Додати можливість зміни паролю (через окрему сторінку, куди веде кнопка);
 // - [x] 3. Додати збереження змін на сервері (додати запит через сервіс);
 // - [x] 4. Додати валідацію полів (email, url, обов'язкові поля);
 // - [x] 5. Додати завантаження початкових даних користувача з сервера;
@@ -41,6 +41,7 @@ import { authService } from "@/services/AuthService";
 import { validateEmail, validateUsername, validateLink } from "@/utils/validations";
 import type { AxiosError } from "axios";
 import * as fonts from "@/constants/fonts";
+import { toast } from "react-hot-toast";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -151,6 +152,21 @@ export default function UserEditPage() {
 
     fetchUserData();
   }, [usernameParam]);
+
+  const handlePasswordResetRequest = async () => {
+    try {
+      if (!email) {
+        setEmailError("Email не може бути порожнім.");
+        return;
+      }
+
+      await authService.forgotPassword({ email });
+      toast.success("Інструкцію для зміни пароля надіслано на вашу пошту.");
+    } catch {
+      console.error("Password reset request failed");
+      toast.error("Не вдалося надіслати лист. Спробуйте пізніше.");
+    }
+  };
 
   const handleAddLink = () => {
     setLinks([...links, { title: "", url: "" }]);
@@ -449,6 +465,7 @@ export default function UserEditPage() {
                 placeholder="Your username"
                 error={usernameError || undefined}
               />
+
               <Input
                 type="email"
                 label="Email"
@@ -460,6 +477,13 @@ export default function UserEditPage() {
                 placeholder="your@email.com"
                 error={emailError || undefined}
               />
+
+              <div className={styles.passwordSection}>
+                <button className={styles.changePasswordBtn} onClick={handlePasswordResetRequest}>
+                  Змінити пароль
+                </button>
+              </div>
+
               <Textarea
                 label="Bio"
                 placeholder="Tell something about yourself..."

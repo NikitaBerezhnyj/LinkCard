@@ -141,3 +141,10 @@ hr {
     color: $color-warning;
   }
 }
+
+.toast {
+  background: $color-background-alt;
+  color: $color-text-primary;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+}
