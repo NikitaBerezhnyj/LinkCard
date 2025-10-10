@@ -69,7 +69,7 @@ export const registerUser = async (req: Request, res: Response): Promise<Respons
 
     await newUser.save();
 
-    const token = generateAuthToken(newUser.id.toString(), newUser.username);
+    const token = generateAuthToken(newUser.id.toString());
 
     const origin = req.headers.origin as string | undefined;
     const isBrowser = origin && origin.includes(process.env.ORIGIN_WEBSITE || "");
@@ -102,7 +102,7 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
     const validPassword = await bcrypt.compare(password, user.password);
     if (!validPassword) return res.status(401).json({ message: "Invalid Email or Password" });
 
-    const token = generateAuthToken(user.id.toString(), user.username);
+    const token = generateAuthToken(user.id.toString());
 
     const origin = req.headers.origin as string | undefined;
     const isBrowser = origin && origin.includes(process.env.ORIGIN_WEBSITE || "");
@@ -222,15 +222,15 @@ export const getUser = async (req: Request, res: Response): Promise<Response> =>
 export const updateUser = async (req: AuthRequest, res: Response): Promise<Response> => {
   const { username } = req.params;
 
-  if (req.user?.username !== username) {
-    return res.status(403).json({ message: "Forbidden: cannot edit other user's profile" });
-  }
-
   const updates: Partial<IUser> = req.body;
 
   try {
     const user = await User.findOne({ username });
     if (!user) return res.status(404).json({ message: "User not found" });
+
+    if (req.user?._id !== user.id.toString()) {
+      return res.status(403).json({ message: "Forbidden: cannot edit other user's profile" });
+    }
 
     const allowedFields: (keyof IUser)[] = [
       "username",
@@ -260,14 +260,15 @@ export const updateUser = async (req: AuthRequest, res: Response): Promise<Respo
 export const deleteUser = async (req: AuthRequest, res: Response): Promise<Response> => {
   const { username } = req.params;
 
-  if (req.user?.username !== username) {
-    return res.status(403).json({ message: "Forbidden: cannot delete other user's profile" });
-  }
-
   try {
-    const result = await User.deleteOne({ username });
-    if (result.deletedCount === 0) return res.status(404).json({ message: "User not found" });
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).json({ message: "User not found" });
 
+    if (req.user?._id !== user.id.toString()) {
+      return res.status(403).json({ message: "Forbidden: cannot delete other user's profile" });
+    }
+
+    await User.deleteOne({ _id: user._id });
     return res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     console.error("Error deleting user:", error);

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 
 export interface AuthRequest extends Request {
-  user?: { _id: string; username: string };
+  user?: { _id: string };
 }
 
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction): void => {
@@ -23,8 +23,8 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
   }
 
   try {
-    const decoded = jwt.verify(token, secret) as { _id: string; username: string };
-    req.user = decoded;
+    const decoded = jwt.verify(token, secret) as { userId: string };
+    req.user = { _id: decoded.userId };
     next();
   } catch (err: unknown) {
     console.error("JWT verification failed:", err);
