@@ -82,6 +82,16 @@ Authorization: Bearer {{jwtToken}}
   }
 }
 
+### 
+PATCH {{apiURL}}/user/nik
+Content-Type: application/json
+Authorization: Bearer {{jwtToken}}
+
+{
+  "username": "NikName",
+  "email": "kitnikita06@gmail"
+}
+
 ### Видалення користувача
 DELETE {{apiURL}}/user/NikName
 Authorization: Bearer {{jwtToken}}

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "../config/s3Config";
+import { optimizeImage } from "../utils/imageProcessor";
 
 const validateMIMEType = async (
   mimetype: string,
@@ -35,8 +36,13 @@ export const uploadAvatar = async (req: Request, res: Response): Promise<void> =
       return;
     }
 
-    const key = `avatars/${req.file.originalname}`;
-    await uploadFileToS3(req.file.buffer, key);
+    const optimizedBuffer = await optimizeImage(req.file.buffer, {
+      type: "avatar",
+      mimetype: req.file.mimetype
+    });
+
+    const key = `avatars/${req.file.originalname.split(".")[0]}.webp`;
+    await uploadFileToS3(optimizedBuffer, key);
 
     res.status(200).json({
       filePath: `http://${process.env.SERVER_HOST}:${process.env.MINIO_WEB_PORT}/bucket/${key}`
@@ -63,8 +69,13 @@ export const uploadBackground = async (req: Request, res: Response): Promise<voi
       return;
     }
 
+    const optimizedBuffer = await optimizeImage(req.file.buffer, {
+      type: "background",
+      mimetype: req.file.mimetype
+    });
+
     const key = `backgrounds/${req.file.originalname}`;
-    await uploadFileToS3(req.file.buffer, key);
+    await uploadFileToS3(optimizedBuffer, key);
 
     res.status(200).json({
       filePath: `http://${process.env.SERVER_HOST}:${process.env.MINIO_WEB_PORT}/bucket/${key}`
