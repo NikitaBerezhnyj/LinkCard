@@ -1,12 +1,12 @@
 "use client";
 
 // TODO:
-// - [ ] 1. Додати кнопку для видалення акаунту;
+// - [x] 1. Додати кнопку для видалення акаунту;
 // - [ ] 2. Додати можливість зміни паролю (через окрему сторінку, куди веде кнопка);
 // - [ ] 3. Додати збереження змін на сервері (додати запит через сервіс);
 // - [ ] 4. Додати валідацію полів (email, url, обов'язкові поля);
 // - [ ] 5. Додати завантаження початкових даних користувача з сервера;
-// - [ ] 6. Додати кнопку Logout;
+// - [x] 6. Додати кнопку Logout;
 
 // UX/UI improvements:
 // - [x] 1. Додати підтвердження перед видаленням посилання;
@@ -27,8 +27,15 @@ import ConfirmModal from "@/components/modals/ConfirmModal";
 import { IoIosArrowDown } from "react-icons/io";
 import Textarea from "@/components/ui/Textarea";
 import { useRouter } from "next/navigation";
+import { userService } from "@/services/UserService";
+import { authService } from "@/services/AuthService";
 
 type TabType = "profile" | "styles";
+type ConfirmAction =
+  | { type: "deleteLink"; payload: number }
+  | { type: "cancelChanges" }
+  | { type: "logout" }
+  | { type: "deleteAccount" };
 
 export default function UserEditPage() {
   const router = useRouter();
@@ -40,38 +47,114 @@ export default function UserEditPage() {
     { title: "GitHub", url: "https://github.com/johndoe" },
     { title: "Twitter", url: "https://twitter.com/johndoe" }
   ]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [linkToDelete, setLinkToDelete] = useState<number | null>(null);
-  const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const [openSection, setOpenSection] = useState<string>("Background");
+  const [openSection, setOpenSection] = useState<string>("Colors");
   const [userStyles, setUserStyles] = useState<IUser["styles"]>(templates.dracula);
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    action?: ConfirmAction;
+  }>({ isOpen: false });
+
+  const modalConfig = {
+    deleteLink: {
+      title: "Видалити посилання?",
+      message: "Це посилання буде видалене без можливості відновлення.",
+      confirmText: "Так, видалити",
+      cancelText: "Скасувати"
+    },
+    cancelChanges: {
+      title: "Скасувати зміни?",
+      message: "Усі незбережені зміни будуть втрачені.",
+      confirmText: "Так, скасувати",
+      cancelText: "Повернутись"
+    },
+    logout: {
+      title: "Вийти з акаунту?",
+      message: "Ви справді хочете вийти з акаунту?",
+      confirmText: "Так, вийти",
+      cancelText: "Скасувати"
+    },
+    deleteAccount: {
+      title: "Видалити акаунт?",
+      message: "Ваш акаунт буде безповоротно видалено. Ви впевнені?",
+      confirmText: "Так, видалити",
+      cancelText: "Скасувати"
+    }
+  } as const;
 
   const handleAddLink = () => {
     setLinks([...links, { title: "", url: "" }]);
   };
 
-  const handleRemoveLink = (index: number) => {
-    setLinkToDelete(index);
-    setShowDeleteModal(true);
+  const handleDeleteLink = (index: number) => {
+    setLinks(prev => prev.filter((_, i) => i !== index));
+    closeConfirmModal();
   };
 
-  const confirmDeleteLink = () => {
-    if (linkToDelete !== null) {
-      setLinks(links.filter((_, i) => i !== linkToDelete));
-      setLinkToDelete(null);
+  const openConfirmModal = (action: ConfirmAction) => {
+    setConfirmModal({ isOpen: true, action });
+  };
+
+  const closeConfirmModal = () => {
+    setConfirmModal({ isOpen: false });
+  };
+
+  const handleConfirm = async () => {
+    const action = confirmModal.action;
+    if (!action) return;
+
+    switch (action.type) {
+      case "deleteLink":
+        handleDeleteLink(action.payload);
+        break;
+      case "cancelChanges":
+        handleCancelChanges();
+        break;
+      case "logout":
+        await handleLogout();
+        break;
+      case "deleteAccount":
+        await handleDeleteAccount();
+        break;
     }
-    setShowDeleteModal(false);
   };
 
-  const cancelDeleteLink = () => {
-    setLinkToDelete(null);
-    setShowDeleteModal(false);
+  const handleRemoveLink = (index: number) => {
+    openConfirmModal({ type: "deleteLink", payload: index });
   };
 
   const handleLinkChange = (index: number, field: "title" | "url", value: string) => {
     const newLinks = [...links];
     newLinks[index][field] = value;
     setLinks(newLinks);
+  };
+
+  const handleLogoutClick = () => {
+    openConfirmModal({ type: "logout" });
+  };
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      router.push("/");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+    closeConfirmModal();
+  };
+
+  const handleDeleteAccountClick = () => {
+    openConfirmModal({ type: "deleteAccount" });
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await userService.deleteUser(username);
+      await authService.logout();
+      router.push("/login");
+    } catch (error) {
+      console.error("Account deletion failed:", error);
+    }
+    closeConfirmModal();
   };
 
   const handleStyleChange = (path: string, value: string | number) => {
@@ -136,17 +219,13 @@ export default function UserEditPage() {
     }
   };
 
+  const handleCancelChangesClick = () => {
+    openConfirmModal({ type: "cancelChanges" });
+  };
+
   const handleCancelChanges = () => {
-    setIsCancelModalOpen(true);
-  };
-
-  const confirmCancelChanges = () => {
-    setIsCancelModalOpen(false);
     router.push(`/user/${username}`);
-  };
-
-  const cancelCancelChanges = () => {
-    setIsCancelModalOpen(false);
+    closeConfirmModal();
   };
 
   return (
@@ -226,10 +305,10 @@ export default function UserEditPage() {
                 ))}
 
                 <div className={styles.actionsSection}>
-                  <Button className={styles.logoutBtn} onClick={() => {}}>
+                  <Button className={styles.logoutBtn} onClick={handleLogoutClick}>
                     Вийти з акаунту
                   </Button>
-                  <Button className={styles.deleteAccountBtn} onClick={() => {}}>
+                  <Button className={styles.deleteAccountBtn} onClick={handleDeleteAccountClick}>
                     Видалити акаунт
                   </Button>
                 </div>
@@ -543,28 +622,21 @@ export default function UserEditPage() {
           <Button type="button" variant="primary" onClick={handleAccept}>
             Accept Changes
           </Button>
-          <Button type="button" variant="secondary" onClick={handleCancelChanges}>
+          <Button type="button" variant="secondary" onClick={handleCancelChangesClick}>
             Cancel
           </Button>
         </div>
       </div>
       <ConfirmModal
-        isOpen={showDeleteModal}
-        onConfirm={confirmDeleteLink}
-        onCancel={cancelDeleteLink}
-        title="Видалити посилання?"
-        message="Це посилання буде видалене без можливості відновлення."
-        confirmText="Так, видалити"
-        cancelText="Скасувати"
-      />
-      <ConfirmModal
-        isOpen={isCancelModalOpen}
-        onConfirm={confirmCancelChanges}
-        onCancel={cancelCancelChanges}
-        title="Скасувати зміни?"
-        message="Усі незбережені зміни будуть втрачені."
-        confirmText="Так, скасувати"
-        cancelText="Повернутись"
+        isOpen={confirmModal.isOpen}
+        onConfirm={handleConfirm}
+        onCancel={closeConfirmModal}
+        title={confirmModal.action ? modalConfig[confirmModal.action.type].title : ""}
+        message={confirmModal.action ? modalConfig[confirmModal.action.type].message : ""}
+        confirmText={confirmModal.action ? modalConfig[confirmModal.action.type].confirmText : "OK"}
+        cancelText={
+          confirmModal.action ? modalConfig[confirmModal.action.type].cancelText : "Cancel"
+        }
       />
     </main>
   );
