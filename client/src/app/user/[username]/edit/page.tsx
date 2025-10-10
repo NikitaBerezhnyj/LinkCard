@@ -31,6 +31,7 @@ import Textarea from "@/components/ui/Textarea";
 import { useRouter } from "next/navigation";
 import { userService } from "@/services/UserService";
 import { authService } from "@/services/AuthService";
+import { validateEmail, validateUsername, validateLink } from "@/utils/validations";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -44,15 +45,15 @@ export default function UserEditPage() {
   const params = useParams();
   const usernameParam = params?.username as string;
   const [activeTab, setActiveTab] = useState<TabType>("profile");
-  const [username, setUsername] = useState("john_doe");
-  const [email, setEmail] = useState("john@example.com");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
-  const [links, setLinks] = useState<{ title: string; url: string }[]>([
-    { title: "GitHub", url: "https://github.com/johndoe" },
-    { title: "Twitter", url: "https://twitter.com/johndoe" }
-  ]);
+  const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
+  const [usernameError, setUsernameError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [linkErrors, setLinkErrors] = useState<(string | null)[]>([]);
   const [openSection, setOpenSection] = useState<string>("Colors");
-  const [userStyles, setUserStyles] = useState<IUser["styles"]>(templates.dracula);
+  const [userStyles, setUserStyles] = useState<IUser["styles"]>(templates.darkTheme);
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     action?: ConfirmAction;
@@ -153,9 +154,19 @@ export default function UserEditPage() {
   };
 
   const handleLinkChange = (index: number, field: "title" | "url", value: string) => {
-    const newLinks = [...links];
-    newLinks[index][field] = value;
-    setLinks(newLinks);
+    setLinks(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+
+    if (field === "url") {
+      setLinkErrors(prev => {
+        const updated = [...prev];
+        updated[index] = null;
+        return updated;
+      });
+    }
   };
 
   const handleLogoutClick = () => {
@@ -224,6 +235,22 @@ export default function UserEditPage() {
 
   const handleAccept = () => {
     if (activeTab === "profile") {
+      const usernameValidation = validateUsername(username);
+      const emailValidation = validateEmail(email);
+      const linksValidation = links.map(link => validateLink(link.url ?? ""));
+
+      setUsernameError(usernameValidation);
+      setEmailError(emailValidation);
+      setLinkErrors(linksValidation);
+
+      const hasErrors =
+        usernameValidation || emailValidation || linksValidation.some(error => error !== null);
+
+      if (hasErrors) {
+        console.warn("Validation failed");
+        return;
+      }
+
       console.log("Profile Data:", { username, email, links });
     } else {
       const formattedStyles = {
@@ -285,15 +312,23 @@ export default function UserEditPage() {
                 type="text"
                 label="Username"
                 value={username}
-                onChange={e => setUsername(e.target.value)}
+                onChange={e => {
+                  setUsername(e.target.value);
+                  if (usernameError) setUsernameError(null);
+                }}
                 placeholder="Your username"
+                error={usernameError || undefined}
               />
               <Input
                 type="email"
                 label="Email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={e => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError(null);
+                }}
                 placeholder="your@email.com"
+                error={emailError || undefined}
               />
               <Textarea
                 label="Bio"
@@ -310,6 +345,7 @@ export default function UserEditPage() {
                     <FiPlus />
                   </button>
                 </div>
+
                 {links.map((link, index) => (
                   <div key={index} className={styles.linkItem}>
                     <Input
@@ -323,6 +359,7 @@ export default function UserEditPage() {
                       placeholder="URL"
                       value={link.url}
                       onChange={e => handleLinkChange(index, "url", e.target.value)}
+                      error={linkErrors[index] || undefined}
                     />
                     <button
                       className={styles.deleteBtn}

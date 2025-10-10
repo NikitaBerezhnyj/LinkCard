@@ -33,12 +33,17 @@ export const validateLink = (link: string): string | null => {
   const trimmed = link.trim();
 
   if (emailRegex.test(trimmed)) return null;
-
   if (isPhone(trimmed)) return null;
 
   const normalized = trimmed.startsWith("http") ? trimmed : `https://${trimmed}`;
+
   try {
-    new URL(normalized);
+    const url = new URL(normalized);
+
+    if (!url.hostname.includes(".")) {
+      return "Please enter a valid URL, email, or phone number.";
+    }
+
     return null;
   } catch {
     return "Please enter a valid URL, email, or phone number.";
