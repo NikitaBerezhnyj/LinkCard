@@ -3,8 +3,8 @@
 // TODO:
 // - [x] 1. Додати кнопку для видалення акаунту;
 // - [ ] 2. Додати можливість зміни паролю (через окрему сторінку, куди веде кнопка);
-// - [ ] 3. Додати збереження змін на сервері (додати запит через сервіс);
-// - [ ] 4. Додати валідацію полів (email, url, обов'язкові поля);
+// - [x] 3. Додати збереження змін на сервері (додати запит через сервіс);
+// - [x] 4. Додати валідацію полів (email, url, обов'язкові поля);
 // - [x] 5. Додати завантаження початкових даних користувача з сервера;
 // - [x] 6. Додати кнопку Logout;
 
@@ -39,12 +39,18 @@ type ConfirmAction =
   | { type: "cancelChanges" }
   | { type: "logout" }
   | { type: "deleteAccount" };
+type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>;
+    }
+  : T;
 
 export default function UserEditPage() {
   const router = useRouter();
   const params = useParams();
   const usernameParam = params?.username as string;
   const [activeTab, setActiveTab] = useState<TabType>("profile");
+  const [originalUserData, setOriginalUserData] = useState<IUser | null>(null);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
@@ -99,6 +105,7 @@ export default function UserEditPage() {
           return;
         }
 
+        setOriginalUserData(userData);
         setUsername(userData.username);
         setEmail(userData.email);
         setBio(userData.bio || "");
@@ -233,46 +240,117 @@ export default function UserEditPage() {
     }
   };
 
-  const handleAccept = () => {
-    if (activeTab === "profile") {
-      const usernameValidation = validateUsername(username);
-      const emailValidation = validateEmail(email);
-      const linksValidation = links.map(link => validateLink(link.url ?? ""));
+  const getChangedFields = (
+    original: Record<string, unknown> | null | undefined,
+    current: Record<string, unknown>
+  ): DeepPartial<typeof current> | undefined => {
+    if (!original || typeof original !== "object" || Array.isArray(original)) {
+      return current;
+    }
 
-      setUsernameError(usernameValidation);
-      setEmailError(emailValidation);
-      setLinkErrors(linksValidation);
+    const changes: Record<string, unknown> = {};
 
-      const hasErrors =
-        usernameValidation || emailValidation || linksValidation.some(error => error !== null);
+    for (const key in current) {
+      if (!Object.prototype.hasOwnProperty.call(current, key)) continue;
 
-      if (hasErrors) {
-        console.warn("Validation failed");
-        return;
-      }
+      const origValue = original[key];
+      const currValue = current[key];
 
-      console.log("Profile Data:", { username, email, links });
-    } else {
-      const formattedStyles = {
-        ...userStyles,
-        fontSize: formatUnitValue(userStyles.fontSize, "px"),
-        borderRadius: formatUnitValue(userStyles.borderRadius, "px"),
-        contentPadding: formatUnitValue(userStyles.contentPadding, "px"),
-        contentGap: formatUnitValue(userStyles.contentGap, "px"),
-        background: {
-          ...userStyles.background,
-          value: {
-            ...userStyles.background.value,
-            gradient: userStyles.background.value.gradient
-              ? {
-                  ...userStyles.background.value.gradient,
-                  angle: formatUnitValue(userStyles.background.value.gradient.angle, "deg")
-                }
-              : undefined
-          }
+      if (Array.isArray(currValue)) {
+        if (JSON.stringify(origValue) !== JSON.stringify(currValue)) {
+          changes[key] = currValue;
         }
-      };
-      console.log("Styles Data:", formattedStyles);
+      } else if (typeof currValue === "object" && currValue !== null) {
+        const nestedChanges = getChangedFields(
+          origValue as Record<string, unknown>,
+          currValue as Record<string, unknown>
+        );
+        if (nestedChanges && Object.keys(nestedChanges).length > 0) {
+          changes[key] = nestedChanges;
+        }
+      } else {
+        if (origValue !== currValue) {
+          changes[key] = currValue;
+        }
+      }
+    }
+
+    return Object.keys(changes).length > 0 ? changes : undefined;
+  };
+
+  const handleAccept = async () => {
+    if (!originalUserData) {
+      console.error("Original user data is not loaded");
+      return;
+    }
+
+    const usernameValidation =
+      username !== originalUserData.username ? validateUsername(username) : null;
+    const emailValidation = email !== originalUserData.email ? validateEmail(email) : null;
+    const linksValidation =
+      JSON.stringify(links) !== JSON.stringify(originalUserData.links)
+        ? links.map(link => validateLink(link.url ?? ""))
+        : [];
+
+    setUsernameError(usernameValidation);
+    setEmailError(emailValidation);
+    setLinkErrors(linksValidation);
+
+    const hasErrors =
+      usernameValidation || emailValidation || linksValidation.some(error => error !== null);
+
+    if (hasErrors) {
+      console.warn("Validation failed");
+      return;
+    }
+
+    const formattedStyles = {
+      ...userStyles,
+      fontSize: formatUnitValue(userStyles.fontSize, "px"),
+      borderRadius: formatUnitValue(userStyles.borderRadius, "px"),
+      contentPadding: formatUnitValue(userStyles.contentPadding, "px"),
+      contentGap: formatUnitValue(userStyles.contentGap, "px"),
+      background: {
+        ...userStyles.background,
+        value: {
+          ...userStyles.background.value,
+          gradient: userStyles.background.value.gradient
+            ? {
+                ...userStyles.background.value.gradient,
+                angle: formatUnitValue(userStyles.background.value.gradient.angle, "deg")
+              }
+            : undefined
+        }
+      }
+    };
+
+    const currentData = {
+      username,
+      email,
+      bio,
+      links,
+      styles: formattedStyles
+    };
+
+    const changes = getChangedFields(
+      originalUserData as unknown as Record<string, unknown>,
+      currentData
+    );
+
+    if (!changes) {
+      console.log("No changes to save");
+      return;
+    }
+
+    console.log("Changed fields to send:", changes);
+
+    try {
+      await userService.updateUser(usernameParam, changes);
+      console.log("User updated successfully");
+
+      setOriginalUserData({ ...originalUserData, ...currentData });
+    } catch (error) {
+      console.error("Failed to update user:", error);
     }
   };
 
