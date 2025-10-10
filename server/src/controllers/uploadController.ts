@@ -28,7 +28,7 @@ export const uploadAvatar = async (req: Request, res: Response): Promise<void> =
 
   try {
     const validationResult = await validateMIMEType(req.file.mimetype, {
-      allowMimeTypes: ["image/jpeg", "image/png"]
+      allowMimeTypes: ["image/jpeg", "image/png", "image/webp"]
     });
 
     if (!validationResult.ok) {
@@ -45,7 +45,7 @@ export const uploadAvatar = async (req: Request, res: Response): Promise<void> =
     await uploadFileToS3(optimizedBuffer, key);
 
     res.status(200).json({
-      filePath: `http://${process.env.SERVER_HOST}:${process.env.MINIO_WEB_PORT}/bucket/${key}`
+      filePath: `http://localhost:${process.env.MINIO_API_PORT}/${process.env.MINIO_BUCKET}/${key}`
     });
   } catch (error) {
     console.error("Error uploading avatar to MinIO:", error);
@@ -61,7 +61,7 @@ export const uploadBackground = async (req: Request, res: Response): Promise<voi
 
   try {
     const validationResult = await validateMIMEType(req.file.mimetype, {
-      allowMimeTypes: ["image/jpeg", "image/png"]
+      allowMimeTypes: ["image/jpeg", "image/png", "image/webp"]
     });
 
     if (!validationResult.ok) {
@@ -78,7 +78,7 @@ export const uploadBackground = async (req: Request, res: Response): Promise<voi
     await uploadFileToS3(optimizedBuffer, key);
 
     res.status(200).json({
-      filePath: `http://${process.env.SERVER_HOST}:${process.env.MINIO_WEB_PORT}/bucket/${key}`
+      filePath: `http://localhost:${process.env.MINIO_API_PORT}/${process.env.MINIO_BUCKET}/${key}`
     });
   } catch (error) {
     console.error("Error uploading background to MinIO:", error);

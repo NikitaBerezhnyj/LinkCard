@@ -7,7 +7,7 @@
 // - [x] 4. Додати валідацію полів (email, url, обов'язкові поля);
 // - [x] 5. Додати завантаження початкових даних користувача з сервера;
 // - [x] 6. Додати кнопку Logout;
-// - [ ] 7. Додати можливість зміни аватарки;
+// - [x] 7. Додати можливість зміни аватарки;
 // - [ ] 8. Покращити вигляд сторінки
 // - [x] 9. Після змін користувача, редірект на профіль, щоб було зрозуміло, що все пройшо нормально
 // - [x] 10. Після змін користувача, редірект на новий URL (якщо змінився username)
@@ -42,6 +42,9 @@ import { validateEmail, validateUsername, validateLink } from "@/utils/validatio
 import type { AxiosError } from "axios";
 import * as fonts from "@/constants/fonts";
 import { toast } from "react-hot-toast";
+import { uploadService } from "@/services/UploadService";
+import Image from "next/image";
+import { FaUserCircle } from "react-icons/fa";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -61,6 +64,8 @@ export default function UserEditPage() {
   const usernameParam = params?.username as string;
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [originalUserData, setOriginalUserData] = useState<IUser | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
@@ -152,6 +157,26 @@ export default function UserEditPage() {
 
     fetchUserData();
   }, [usernameParam]);
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      const response = await uploadService.uploadAvatar(file);
+      const newUrl = response.data?.filePath; // або response.data.data.url — залежно від твоєї відповіді сервера
+      if (newUrl) {
+        setAvatarUrl(newUrl);
+        toast.success("Аватарку оновлено!");
+      }
+    } catch (error) {
+      console.error("Avatar upload failed:", error);
+      toast.error("Не вдалося завантажити аватарку.");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   const handlePasswordResetRequest = async () => {
     try {
@@ -380,13 +405,17 @@ export default function UserEditPage() {
       }
     };
 
-    const currentData = {
+    const currentData: Partial<IUser> = {
       username,
       email,
       bio,
       links,
       styles: formattedStyles
     };
+
+    if (avatarUrl && avatarUrl !== originalUserData.avatar) {
+      currentData.avatar = avatarUrl;
+    }
 
     const changes = getChangedFields(
       originalUserData as unknown as Record<string, unknown>,
@@ -454,6 +483,34 @@ export default function UserEditPage() {
         <div className={styles.content}>
           {activeTab === "profile" ? (
             <div className={styles.section}>
+              <div className={styles.avatarContainer}>
+                <label htmlFor="avatarInput" className={styles.avatarLabel}>
+                  {isUploading ? (
+                    <div className={styles.avatarLoading}>...</div>
+                  ) : avatarUrl ? (
+                    <Image
+                      src={avatarUrl}
+                      alt={username || "User avatar"}
+                      width={120}
+                      height={120}
+                      unoptimized={true}
+                      className={styles.avatarImage}
+                    />
+                  ) : (
+                    <FaUserCircle className={styles.avatarPlaceholder} />
+                  )}
+                  <div className={styles.avatarOverlay}>Змінити</div>
+                </label>
+
+                <input
+                  id="avatarInput"
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={handleAvatarChange}
+                />
+              </div>
+
               <Input
                 type="text"
                 label="Username"

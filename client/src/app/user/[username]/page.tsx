@@ -159,10 +159,10 @@ export default function UserPage() {
                 alt={user.username}
                 width={150}
                 height={150}
+                unoptimized={true}
                 className={styles.avatar}
                 style={{
-                  ...(s.border && { border: `2px solid ${s.border}` }),
-                  ...(s.borderRadius && { borderRadius: s.borderRadius })
+                  ...(s.border && { border: `2px solid ${s.border}` })
                 }}
               />
             ) : (
