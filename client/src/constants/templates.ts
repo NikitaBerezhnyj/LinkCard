@@ -62,36 +62,36 @@ export const blueSky: IUser["styles"] = {
   background: {
     type: "gradient",
     value: {
-      gradient: { start: "#dbeafe", end: "#93c5fd", angle: "135deg" },
-      color: "#f9fafb",
+      gradient: { start: "#dbeafe", end: "#93c5fd", angle: "145deg" },
+      color: "#f0f9ff",
       image: "",
       position: "center",
       size: "cover",
       repeat: "no-repeat"
     }
   },
-  font: "Roboto",
-  fontSize: "16px",
-  fontWeight: "400",
+  font: "Inter",
+  fontSize: "17px",
+  fontWeight: "500",
   textAlign: "center",
-  text: "#111827",
-  linkText: "#2563eb",
+  text: "#1e293b",
+  linkText: "#1d4ed8",
   buttonText: "#ffffff",
   buttonBackground: "#3b82f6",
   buttonHoverText: "#ffffff",
-  buttonHoverBackground: "#2563eb",
-  border: "#d1d5db",
-  borderRadius: "8px",
-  contentBackground: "#ffffff",
-  contentPadding: "20px",
-  contentGap: "12px"
+  buttonHoverBackground: "#1e40af",
+  border: "#93c5fd",
+  borderRadius: "12px",
+  contentBackground: "#e0f2fe",
+  contentPadding: "22px",
+  contentGap: "14px"
 };
 
 export const pinkMarshmallow: IUser["styles"] = {
   background: {
     type: "gradient",
     value: {
-      gradient: { start: "#fbcfe8", end: "#f9a8d4", angle: "135deg" },
+      gradient: { start: "#fbcfe8", end: "#f9a8d4", angle: "120deg" },
       color: "#fce7f3",
       image: "",
       position: "center",
@@ -99,28 +99,28 @@ export const pinkMarshmallow: IUser["styles"] = {
       repeat: "no-repeat"
     }
   },
-  font: "Roboto",
-  fontSize: "16px",
+  font: "Shadows Into Light",
+  fontSize: "18px",
   fontWeight: "400",
   textAlign: "center",
-  text: "#1f2937",
-  linkText: "#ec4899",
+  text: "#3b185f",
+  linkText: "#db2777",
   buttonText: "#ffffff",
-  buttonBackground: "#db2777",
+  buttonBackground: "#ec4899",
   buttonHoverText: "#ffffff",
   buttonHoverBackground: "#be185d",
-  border: "#e11d48",
-  borderRadius: "8px",
+  border: "#db2777",
+  borderRadius: "16px",
   contentBackground: "#fce7f3",
-  contentPadding: "20px",
-  contentGap: "12px"
+  contentPadding: "24px",
+  contentGap: "16px"
 };
 
 export const warmGradient: IUser["styles"] = {
   background: {
     type: "gradient",
     value: {
-      gradient: { start: "#fed7aa", end: "#fca5a5", angle: "135deg" },
+      gradient: { start: "#fed7aa", end: "#fca5a5", angle: "140deg" },
       color: "#fff7ed",
       image: "",
       position: "center",
@@ -128,28 +128,28 @@ export const warmGradient: IUser["styles"] = {
       repeat: "no-repeat"
     }
   },
-  font: "Roboto",
+  font: "Raleway",
   fontSize: "16px",
-  fontWeight: "400",
+  fontWeight: "500",
   textAlign: "center",
-  text: "#111827",
+  text: "#78350f",
   linkText: "#b45309",
   buttonText: "#ffffff",
   buttonBackground: "#f97316",
   buttonHoverText: "#ffffff",
   buttonHoverBackground: "#c2410c",
   border: "#d97706",
-  borderRadius: "8px",
-  contentBackground: "#fff7ed",
+  borderRadius: "10px",
+  contentBackground: "#ffedd5",
   contentPadding: "20px",
-  contentGap: "12px"
+  contentGap: "14px"
 };
 
 export const mintFresh: IUser["styles"] = {
   background: {
     type: "gradient",
     value: {
-      gradient: { start: "#bbf7d0", end: "#86efac", angle: "135deg" },
+      gradient: { start: "#bbf7d0", end: "#86efac", angle: "150deg" },
       color: "#d1fae5",
       image: "",
       position: "center",
@@ -157,21 +157,21 @@ export const mintFresh: IUser["styles"] = {
       repeat: "no-repeat"
     }
   },
-  font: "Roboto",
+  font: "Open Sans",
   fontSize: "16px",
-  fontWeight: "400",
+  fontWeight: "600",
   textAlign: "center",
-  text: "#065f46",
-  linkText: "#10b981",
+  text: "#064e3b",
+  linkText: "#059669",
   buttonText: "#ffffff",
-  buttonBackground: "#059669",
+  buttonBackground: "#10b981",
   buttonHoverText: "#ffffff",
   buttonHoverBackground: "#047857",
-  border: "#064e3b",
-  borderRadius: "8px",
+  border: "#065f46",
+  borderRadius: "12px",
   contentBackground: "#d1fae5",
-  contentPadding: "20px",
-  contentGap: "12px"
+  contentPadding: "22px",
+  contentGap: "14px"
 };
 
 export const dracula: IUser["styles"] = {
@@ -187,18 +187,18 @@ export const dracula: IUser["styles"] = {
     }
   },
   font: "Fira Code",
-  fontSize: "16px",
+  fontSize: "15px",
   fontWeight: "400",
   textAlign: "center",
   text: "#f8f8f2",
-  linkText: "#6272a4",
+  linkText: "#8be9fd",
   buttonText: "#f8f8f2",
-  buttonBackground: "#44475a",
+  buttonBackground: "#6272a4",
   buttonHoverText: "#f8f8f2",
-  buttonHoverBackground: "#6272a4",
-  border: "#6272a4",
+  buttonHoverBackground: "#50fa7b",
+  border: "#44475a",
   borderRadius: "8px",
-  contentBackground: "#282a36",
+  contentBackground: "#1e1e2f",
   contentPadding: "20px",
   contentGap: "12px"
 };
@@ -207,7 +207,7 @@ export const solarizedLight: IUser["styles"] = {
   background: {
     type: "gradient",
     value: {
-      gradient: { start: "#fdf6e3", end: "#eee8d5", angle: "135deg" },
+      gradient: { start: "#fdf6e3", end: "#eee8d5", angle: "145deg" },
       color: "#fdf6e3",
       image: "",
       position: "center",
@@ -215,28 +215,28 @@ export const solarizedLight: IUser["styles"] = {
       repeat: "no-repeat"
     }
   },
-  font: "Roboto",
+  font: "Montserrat",
   fontSize: "16px",
-  fontWeight: "400",
+  fontWeight: "500",
   textAlign: "center",
-  text: "#657b83",
+  text: "#586e75",
   linkText: "#268bd2",
   buttonText: "#ffffff",
   buttonBackground: "#2aa198",
   buttonHoverText: "#ffffff",
   buttonHoverBackground: "#238b8b",
   border: "#586e75",
-  borderRadius: "8px",
+  borderRadius: "10px",
   contentBackground: "#fdf6e3",
   contentPadding: "20px",
-  contentGap: "12px"
+  contentGap: "14px"
 };
 
 export const sunsetGlow: IUser["styles"] = {
   background: {
     type: "gradient",
     value: {
-      gradient: { start: "#ffedd5", end: "#fecaca", angle: "135deg" },
+      gradient: { start: "#ffedd5", end: "#fecaca", angle: "130deg" },
       color: "#fff1f0",
       image: "",
       position: "center",
@@ -244,8 +244,8 @@ export const sunsetGlow: IUser["styles"] = {
       repeat: "no-repeat"
     }
   },
-  font: "Roboto",
-  fontSize: "16px",
+  font: "Audiowide",
+  fontSize: "17px",
   fontWeight: "400",
   textAlign: "center",
   text: "#7f1d1d",
@@ -255,10 +255,10 @@ export const sunsetGlow: IUser["styles"] = {
   buttonHoverText: "#ffffff",
   buttonHoverBackground: "#b91c1c",
   border: "#991b1b",
-  borderRadius: "8px",
+  borderRadius: "12px",
   contentBackground: "#fff1f0",
-  contentPadding: "20px",
-  contentGap: "12px"
+  contentPadding: "22px",
+  contentGap: "14px"
 };
 
 export const oceanBreeze: IUser["styles"] = {
@@ -273,7 +273,7 @@ export const oceanBreeze: IUser["styles"] = {
       repeat: "no-repeat"
     }
   },
-  font: "Roboto",
+  font: "Delius",
   fontSize: "16px",
   fontWeight: "400",
   textAlign: "center",
@@ -284,8 +284,8 @@ export const oceanBreeze: IUser["styles"] = {
   buttonHoverText: "#ffffff",
   buttonHoverBackground: "#1e40af",
   border: "#1e40af",
-  borderRadius: "8px",
+  borderRadius: "10px",
   contentBackground: "#e0f2fe",
   contentPadding: "20px",
-  contentGap: "12px"
+  contentGap: "14px"
 };
