@@ -335,3 +335,13 @@
   margin-bottom: 0.5rem;
   line-height: 1.4;
 }
+
+.errorMessage {
+  color: $color-error;
+  background-color: lighten($color-error, 40%);
+  border: 1px solid darken($color-error, 10%);
+  padding: $spacing-sm;
+  border-radius: $radius-sm;
+  margin-bottom: $spacing-md;
+  text-align: center;
+}

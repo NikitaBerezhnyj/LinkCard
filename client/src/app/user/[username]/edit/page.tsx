@@ -39,6 +39,7 @@ import { useRouter } from "next/navigation";
 import { userService } from "@/services/UserService";
 import { authService } from "@/services/AuthService";
 import { validateEmail, validateUsername, validateLink } from "@/utils/validations";
+import type { AxiosError } from "axios";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -71,6 +72,7 @@ export default function UserEditPage() {
     isOpen: boolean;
     action?: ConfirmAction;
   }>({ isOpen: false });
+  const [error, setError] = useState<string | null>(null);
 
   const modalConfig = {
     deleteLink: {
@@ -334,6 +336,8 @@ export default function UserEditPage() {
       return;
     }
 
+    setError(null);
+
     const formattedStyles = {
       ...userStyles,
       fontSize: formatUnitValue(userStyles.fontSize, "px"),
@@ -381,8 +385,18 @@ export default function UserEditPage() {
       setOriginalUserData({ ...originalUserData, ...currentData });
 
       router.push(`/user/${username}`);
-    } catch (error) {
-      console.error("Failed to update user:", error);
+    } catch (err: unknown) {
+      console.error("Failed to update user:", err);
+
+      const axiosError = err as AxiosError<{ message: string }>;
+
+      if (axiosError.response?.data?.message) {
+        setError(axiosError.response.data.message);
+      } else if (axiosError.message) {
+        setError(axiosError.message);
+      } else {
+        setError("Не вдалося оновити дані користувача. Спробуйте пізніше.");
+      }
     }
   };
 
@@ -794,6 +808,8 @@ export default function UserEditPage() {
             </div>
           )}
         </div>
+
+        {error && <div className={styles.errorMessage}>{error}</div>}
 
         <div>
           <Button type="button" variant="primary" onClick={handleAccept}>
