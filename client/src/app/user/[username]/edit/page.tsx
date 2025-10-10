@@ -5,7 +5,7 @@
 // - [ ] 2. Додати можливість зміни паролю (через окрему сторінку, куди веде кнопка);
 // - [ ] 3. Додати збереження змін на сервері (додати запит через сервіс);
 // - [ ] 4. Додати валідацію полів (email, url, обов'язкові поля);
-// - [ ] 5. Додати завантаження початкових даних користувача з сервера;
+// - [x] 5. Додати завантаження початкових даних користувача з сервера;
 // - [x] 6. Додати кнопку Logout;
 
 // UX/UI improvements:
@@ -15,6 +15,8 @@
 // - [x] 4. Додати можливість скасування змін перед збереженням;
 
 import { useState } from "react";
+import { useEffect } from "react";
+import { useParams } from "next/navigation";
 import styles from "@/styles/pages/Edit.module.scss";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
@@ -39,6 +41,8 @@ type ConfirmAction =
 
 export default function UserEditPage() {
   const router = useRouter();
+  const params = useParams();
+  const usernameParam = params?.username as string;
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [username, setUsername] = useState("john_doe");
   const [email, setEmail] = useState("john@example.com");
@@ -80,6 +84,32 @@ export default function UserEditPage() {
       cancelText: "Скасувати"
     }
   } as const;
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        if (!usernameParam) return;
+
+        const response = await userService.getUser(usernameParam);
+        const userData = response?.data?.data as IUser | undefined;
+
+        if (!userData) {
+          console.warn("No user data received from server");
+          return;
+        }
+
+        setUsername(userData.username);
+        setEmail(userData.email);
+        setBio(userData.bio || "");
+        setLinks(userData.links || []);
+        setUserStyles(userData.styles || templates.dracula);
+      } catch (error) {
+        console.error("Failed to fetch user data:", error);
+      }
+    };
+
+    fetchUserData();
+  }, [usernameParam]);
 
   const handleAddLink = () => {
     setLinks([...links, { title: "", url: "" }]);
@@ -148,7 +178,7 @@ export default function UserEditPage() {
 
   const handleDeleteAccount = async () => {
     try {
-      await userService.deleteUser(username);
+      await userService.deleteUser(usernameParam);
       await authService.logout();
       router.push("/login");
     } catch (error) {
