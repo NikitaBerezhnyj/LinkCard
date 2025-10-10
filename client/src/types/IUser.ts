@@ -53,3 +53,9 @@ export interface IUserResponse {
   message: string;
   data: IUser;
 }
+
+export interface IUserProfileResponse {
+  id: string;
+  username: string;
+  email: string;
+}

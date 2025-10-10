@@ -195,6 +195,24 @@ export const logoutUser: RequestHandler = (req, res) => {
   }
 };
 
+export const getProfile = async (req: AuthRequest, res: Response): Promise<Response> => {
+  try {
+    if (!req.user?._id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const user = await User.findById(req.user._id).select(
+      "_id username email avatar bio links styles"
+    );
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    return res.status(200).json({ data: user });
+  } catch (error) {
+    console.error("Error retrieving profile:", error);
+    return res.status(500).json({ message: "Error retrieving profile" });
+  }
+};
+
 export const getUser = async (req: Request, res: Response): Promise<Response> => {
   const { username } = req.params;
   try {

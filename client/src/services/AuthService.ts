@@ -1,5 +1,6 @@
 import { apiClient } from "@/utils/apiClient";
 import { IAuthResponse, IRegisterRequest, ILoginRequest } from "@/types/IAuth";
+import { IUserProfileResponse } from "@/types/IUser";
 
 export const authService = {
   healthCheck: () => apiClient.get<{ status: string }>("/healthcheck"),
@@ -21,7 +22,7 @@ export const authService = {
 
   getCurrentUser: async () => {
     try {
-      const response = await apiClient.get<{ data: unknown }>("/user/profile");
+      const response = await apiClient.get<{ data: IUserProfileResponse }>("/user/profile");
       return response.data?.data ?? null;
     } catch {
       return null;

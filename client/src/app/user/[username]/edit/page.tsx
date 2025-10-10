@@ -7,6 +7,13 @@
 // - [x] 4. Додати валідацію полів (email, url, обов'язкові поля);
 // - [x] 5. Додати завантаження початкових даних користувача з сервера;
 // - [x] 6. Додати кнопку Logout;
+// - [ ] 7. Додати можливість зміни аватарки;
+// - [ ] 8. Покращити вигляд сторінки
+// - [ ] 9. Після змін користувача, редірект на профіль, щоб було зрозуміло, що все пройшо нормально
+// - [ ] 10. Після змін користувача, редірект на новий URL (якщо змінився username)
+// - [ ] 11. Додати якусь обробку на сервер (можливо якщо змінюється username відправляти новий jwt токен з новим username) щоб сайт досі вважав користувача авторизованим, але зі змінений username
+// - [ ] 13. Додати підтримку шрифтів, які можна обрати
+// - [ ] 14. Додати можливість завантажувати зображення для бекграунду, або давати на них посилання, якщо воно вже є десь в інтернеті
 
 // UX/UI improvements:
 // - [x] 1. Додати підтвердження перед видаленням посилання;
@@ -91,6 +98,29 @@ export default function UserEditPage() {
       cancelText: "Скасувати"
     }
   } as const;
+
+  useEffect(() => {
+    const checkUserAccess = async () => {
+      try {
+        const profileResponse = await authService.getCurrentUser();
+        const currentUsername = profileResponse?.username;
+
+        if (!currentUsername) {
+          router.push("/login");
+          return;
+        }
+
+        if (currentUsername !== usernameParam) {
+          router.replace(`/user/${usernameParam}`);
+        }
+      } catch (error) {
+        console.error("Failed to check user access:", error);
+        router.push("/login");
+      }
+    };
+
+    checkUserAccess();
+  }, [usernameParam, router]);
 
   useEffect(() => {
     const fetchUserData = async () => {
