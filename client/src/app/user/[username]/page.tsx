@@ -14,6 +14,7 @@ import QRCode from "react-qr-code";
 import { authService } from "@/services/AuthService";
 import { FaUserCircle } from "react-icons/fa";
 import { getLinkIcon, getNormalizedLink } from "@/utils/linkUtils";
+import * as fonts from "@/constants/fonts";
 
 export default function UserPage() {
   const router = useRouter();
@@ -56,10 +57,19 @@ export default function UserPage() {
     fetchUserData();
   }, [username]);
 
+  function getFontClassName(fontName?: string): string | undefined {
+    if (!fontName) return undefined;
+    const key = fontName.replace(/\s+/g, "").toLowerCase();
+    const fontObj = (fonts as Record<string, { className: string }>)[key];
+    return fontObj?.className;
+  }
+
   if (loading) return <p className={styles.loading}>Loading...</p>;
   if (error || !user) return <p className={styles.error}>{error || "User not found."}</p>;
 
   const s = user.styles || {};
+
+  const fontClassName = getFontClassName(s.font);
 
   const backgroundStyle: React.CSSProperties = s.background
     ? s.background.type === "color"
@@ -115,7 +125,7 @@ export default function UserPage() {
       : `https://linkcard.vercel.app/${username}`;
 
   return (
-    <main className={styles.mainWrapper} style={backgroundStyle}>
+    <main className={`${styles.mainWrapper} ${fontClassName || ""}`} style={backgroundStyle}>
       <div className={`${styles.cardContainer} ${flipped ? styles.flipped : ""}`}>
         <div className={styles.card}>
           {/* FRONT */}

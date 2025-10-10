@@ -12,7 +12,7 @@
 // - [x] 9. Після змін користувача, редірект на профіль, щоб було зрозуміло, що все пройшо нормально
 // - [x] 10. Після змін користувача, редірект на новий URL (якщо змінився username)
 // - [x] 11. Додати якусь обробку на сервер (можливо якщо змінюється username відправляти новий jwt токен з новим username) щоб сайт досі вважав користувача авторизованим, але зі змінений username
-// - [ ] 13. Додати підтримку шрифтів, які можна обрати
+// - [x] 13. Додати підтримку шрифтів, які можна обрати
 // - [ ] 14. Додати можливість завантажувати зображення для бекграунду, або давати на них посилання, якщо воно вже є десь в інтернеті
 
 // UX/UI improvements:
@@ -40,6 +40,7 @@ import { userService } from "@/services/UserService";
 import { authService } from "@/services/AuthService";
 import { validateEmail, validateUsername, validateLink } from "@/utils/validations";
 import type { AxiosError } from "axios";
+import * as fonts from "@/constants/fonts";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -236,6 +237,11 @@ export default function UserEditPage() {
     }
     closeConfirmModal();
   };
+
+  const fontOptions = Object.keys(fonts).map(key => {
+    const label = key.replace(/([A-Z])/g, " $1").replace(/^./, str => str.toUpperCase());
+    return { value: label, label };
+  });
 
   const handleStyleChange = (path: string, value: string | number) => {
     setUserStyles(prev => {
@@ -692,12 +698,7 @@ export default function UserEditPage() {
                               label="Font"
                               value={userStyles.font}
                               onChange={e => handleStyleChange("font", e.target.value)}
-                              options={[
-                                { value: "Roboto", label: "Roboto" },
-                                { value: "Fira Code", label: "Fira Code" },
-                                { value: "Arial", label: "Arial" },
-                                { value: "Georgia", label: "Georgia" }
-                              ]}
+                              options={fontOptions}
                             />
                             <Input
                               type="number"

@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
-import { Roboto } from "next/font/google";
+import {
+  roboto,
+  inter,
+  openSans,
+  shadowsIntoLight,
+  raleway,
+  montserrat,
+  barrio,
+  delius,
+  audiowide,
+  merriweather
+} from "@/constants/fonts";
 import "./globals.scss";
-
-const roboto = Roboto({
-  subsets: ["latin"],
-  weight: ["400", "500", "700"],
-  variable: "--font-roboto"
-});
 
 export const metadata: Metadata = {
   title: "LinkCard",
@@ -20,7 +25,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${roboto.variable}`}>{children}</body>
+      <body
+        className={`${roboto.variable} ${inter.variable} ${openSans.variable} ${shadowsIntoLight.variable} ${raleway.variable} ${montserrat.variable} ${barrio.variable} ${delius.variable} ${audiowide.variable} ${merriweather.variable}`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
