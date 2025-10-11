@@ -1,5 +1,24 @@
 @import "@/styles/variables.scss";
 
+.logoLink {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  z-index: 10;
+  background-color: transparent;
+
+  &:hover {
+    opacity: 0.8;
+    transform: scale(1.03);
+  }
+}
+
 .mainWrapper {
   min-height: 100vh;
   display: flex;

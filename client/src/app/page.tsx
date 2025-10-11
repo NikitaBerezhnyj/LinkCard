@@ -35,7 +35,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Header isAuth={!!user} />
+      <Header />
       <main className={styles.homeWrapper}>
         {/* Hero Section */}
         <section className={`${styles.section} ${styles.hero}`}>

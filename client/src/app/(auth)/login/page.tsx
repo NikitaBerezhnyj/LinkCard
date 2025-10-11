@@ -7,12 +7,15 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
 import { validateEmail } from "@/utils/validations";
+import { useUserStore } from "@/store/userStore";
 
 export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+
+  const { setUser } = useUserStore();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +43,15 @@ export default function LoginPage() {
       setError(response.error);
       return;
     }
+
+    const userResponse = await authService.getCurrentUser();
+
+    if (!userResponse || !userResponse.username) {
+      setError("Не вдалося отримати дані користувача.");
+      return;
+    }
+
+    setUser(userResponse.username);
 
     router.push("/");
   };

@@ -46,6 +46,7 @@ import { toast } from "react-hot-toast";
 import { uploadService } from "@/services/UploadService";
 import Image from "next/image";
 import { FaUserCircle } from "react-icons/fa";
+import { useUserStore } from "@/store/userStore";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -84,6 +85,8 @@ export default function UserEditPage() {
     action?: ConfirmAction;
   }>({ isOpen: false });
   const [error, setError] = useState<string | null>(null);
+
+  const { logout } = useUserStore();
 
   const modalConfig = {
     deleteLink: {
@@ -270,6 +273,7 @@ export default function UserEditPage() {
   const handleLogout = async () => {
     try {
       await authService.logout();
+      logout();
       router.push("/");
     } catch (error) {
       console.error("Logout failed:", error);
@@ -285,6 +289,7 @@ export default function UserEditPage() {
     try {
       await userService.deleteUser(usernameParam);
       await authService.logout();
+      logout();
       router.push("/login");
     } catch (error) {
       console.error("Account deletion failed:", error);

@@ -15,6 +15,7 @@ import { authService } from "@/services/AuthService";
 import { FaUserCircle } from "react-icons/fa";
 import { getLinkIcon, getNormalizedLink } from "@/utils/linkUtils";
 import * as fonts from "@/constants/fonts";
+import Link from "next/link";
 
 export default function UserPage() {
   const router = useRouter();
@@ -126,6 +127,9 @@ export default function UserPage() {
 
   return (
     <main className={`${styles.mainWrapper} ${fontClassName || ""}`} style={backgroundStyle}>
+      <Link href="/" className={styles.logoLink} style={{ color: s.text }}>
+        LinkCard
+      </Link>
       <div className={`${styles.cardContainer} ${flipped ? styles.flipped : ""}`}>
         <div className={styles.card}>
           {/* FRONT */}
