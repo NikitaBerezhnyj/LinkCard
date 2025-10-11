@@ -1,0 +1,127 @@
+@use "../variables" as *;
+
+.header {
+  width: 100%;
+  background: $color-background;
+  color: $color-text-primary;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid $color-border;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: $shadow-sm;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.logo {
+  font-size: $font-xl;
+  font-weight: 600;
+  color: $color-primary;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-primary-hover;
+  }
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+
+  .link {
+    color: $color-text-secondary;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color $transition-fast;
+
+    &:hover {
+      color: $color-primary-hover;
+    }
+
+    &.active {
+      color: $color-primary;
+    }
+  }
+
+  .loginButton,
+  .profileButton {
+    background: $color-primary;
+    color: #000;
+    padding: $spacing-sm $spacing-md;
+    border-radius: $radius-md;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background $transition-fast;
+
+    &:hover {
+      background: $color-primary-hover;
+    }
+
+    &:active {
+      background: $color-primary-active;
+    }
+  }
+}
+
+.burger {
+  display: none;
+  background: none;
+  border: none;
+  color: $color-text-primary;
+  cursor: pointer;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: $color-primary;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav {
+    position: absolute;
+    top: 70px;
+    right: 0;
+    background: $color-background-alt;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    padding: $spacing-md $spacing-lg;
+    border-top: 1px solid $color-border;
+    display: none;
+    box-shadow: $shadow-md;
+
+    &.open {
+      display: flex;
+      animation: fadeIn $transition-medium;
+    }
+
+    .link {
+      width: 100%;
+      padding: $spacing-sm 0;
+    }
+  }
+
+  .burger {
+    display: block;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

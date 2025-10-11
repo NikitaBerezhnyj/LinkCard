@@ -1,0 +1,59 @@
+@use "../variables" as *;
+
+.footer {
+  background: $color-background;
+  color: $color-text-secondary;
+  padding: $spacing-xl;
+  text-align: center;
+  border-top: 1px solid $color-border;
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-md;
+
+    p {
+      margin: 0;
+      font-size: $font-sm;
+      color: $color-text-muted;
+    }
+
+    .links {
+      display: flex;
+      gap: $spacing-lg;
+
+      a {
+        color: $color-text-secondary;
+        text-decoration: none;
+        font-size: $font-md;
+        transition: color $transition-fast;
+
+        &:hover {
+          color: $color-primary;
+        }
+
+        &:active {
+          color: $color-primary-active;
+        }
+      }
+    }
+  }
+}
+
+/* Адаптивність */
+@media (max-width: 600px) {
+  .footer {
+    padding: $spacing-lg;
+
+    .links {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: $spacing-md;
+    }
+
+    p {
+      font-size: $font-xs;
+    }
+  }
+}

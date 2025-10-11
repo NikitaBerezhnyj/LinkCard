@@ -1,0 +1,145 @@
+@use "../variables" as *;
+
+.homeWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+.section {
+  width: 100%;
+  min-height: 100vh;
+  padding: $spacing-xxl $spacing-lg;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.hero {
+  background: linear-gradient(135deg, $color-background, $color-background-alt);
+  color: $color-text-primary;
+
+  .content {
+    max-width: 800px;
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: $spacing-md;
+
+      span {
+        color: $color-primary;
+      }
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: $color-text-secondary;
+      margin-bottom: $spacing-lg;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: $spacing-md;
+      flex-wrap: wrap;
+    }
+  }
+}
+
+.features {
+  background: $color-surface;
+  color: $color-text-primary;
+  flex-direction: column;
+
+  h2 {
+    font-size: 2.2rem;
+    margin-bottom: $spacing-xxl;
+  }
+
+  .featuresGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: $spacing-xl;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .featureCard {
+    background: $color-background-alt;
+    border-radius: $radius-lg;
+    padding: $spacing-xl;
+    transition:
+      transform $transition-medium,
+      box-shadow $transition-medium;
+    box-shadow: $shadow-sm;
+
+    &:hover {
+      transform: translateY(-6px);
+      box-shadow: $shadow-md;
+    }
+
+    h3 {
+      margin: $spacing-md 0;
+      font-size: $font-xl;
+      color: $color-text-primary;
+    }
+
+    p {
+      color: $color-text-muted;
+      font-size: $font-md;
+    }
+
+    svg {
+      color: $color-primary;
+    }
+  }
+}
+
+.cta {
+  background: linear-gradient(135deg, $color-primary, $color-primary-active);
+  color: $color-text-primary;
+
+  .ctaContent {
+    max-width: 700px;
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: $spacing-md;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: $spacing-lg;
+      opacity: 0.9;
+    }
+
+    button {
+      background: $color-background;
+      color: $color-text-primary;
+      border: 1px solid $color-border;
+      padding: $spacing-sm $spacing-lg;
+      border-radius: $radius-md;
+      transition: background $transition-fast;
+
+      &:hover {
+        background: $color-surface;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .hero .content h1 {
+    font-size: 2.2rem;
+  }
+
+  .features h2 {
+    font-size: 1.8rem;
+  }
+
+  .cta h2 {
+    font-size: 2rem;
+  }
+}
