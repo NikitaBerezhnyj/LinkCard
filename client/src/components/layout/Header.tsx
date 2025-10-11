@@ -3,8 +3,11 @@
 import Link from "next/link";
 import styles from "@/styles/components/Header.module.scss";
 import { useUserStore } from "@/store/userStore";
+import { useAuthValidation } from "@/hooks/useAuthValidation";
 
 export default function Header() {
+  useAuthValidation();
+
   const { username, isAuth } = useUserStore();
 
   return (
