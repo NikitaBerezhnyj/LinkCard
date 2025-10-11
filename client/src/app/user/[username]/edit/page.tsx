@@ -1,51 +1,39 @@
 "use client";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
+import { toast } from "react-hot-toast";
+import {
+  FiTrash2,
+  FiUser,
+  FiLink,
+  FiAlertTriangle,
+  FiUpload,
+  FiKey,
+  FiLogOut,
+  FiImage,
+  FiInfo
+} from "react-icons/fi";
+import { IoMdDocument } from "react-icons/io";
+import { FaPlus, FaUserCircle } from "react-icons/fa";
+import { IoIosArrowDown } from "react-icons/io";
+import type { AxiosError } from "axios";
 
-// TODO:
-// - [x] 1. Додати кнопку для видалення акаунту;
-// - [x] 2. Додати можливість зміни паролю (через окрему сторінку, куди веде кнопка);
-// - [x] 3. Додати збереження змін на сервері (додати запит через сервіс);
-// - [x] 4. Додати валідацію полів (email, url, обов'язкові поля);
-// - [x] 5. Додати завантаження початкових даних користувача з сервера;
-// - [x] 6. Додати кнопку Logout;
-// - [x] 7. Додати можливість зміни аватарки;
-// - [ ] 8. Покращити вигляд сторінки
-// - [x] 9. Після змін користувача, редірект на профіль, щоб було зрозуміло, що все пройшо нормально
-// - [x] 10. Після змін користувача, редірект на новий URL (якщо змінився username)
-// - [x] 11. Додати якусь обробку на сервер (можливо якщо змінюється username відправляти новий jwt токен з новим username) щоб сайт досі вважав користувача авторизованим, але зі змінений username
-// - [x] 13. Додати підтримку шрифтів, які можна обрати
-// - [x] 14. Додати можливість завантажувати зображення для бекграунду
-// - [ ] 15. Покращити дизайн головної сторінки, щоб він був залежним від того чи авторизований користувач (ну і в принципі зробити її функціональною)
-
-// UX/UI improvements:
-// - [x] 1. Додати підтвердження перед видаленням посилання;
-// - [x] 2. Зробити всі категорії стилів згортальними (accordion);
-// - [x] 3. Min/Max значення для числових полів стилів;
-// - [x] 4. Додати можливість скасування змін перед збереженням;
-
-import { useState } from "react";
-import { useEffect } from "react";
-import { useParams } from "next/navigation";
 import styles from "@/styles/pages/Edit.module.scss";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
-import { IUser } from "@/types/IUser";
-import { FiTrash2, FiPlus } from "react-icons/fi";
-import * as templates from "@/constants/templates";
-import { formatUnitValue, parseUnitValue } from "@/utils/styleFormatter";
-import ConfirmModal from "@/components/modals/ConfirmModal";
-import { IoIosArrowDown } from "react-icons/io";
 import Textarea from "@/components/ui/Textarea";
-import { useRouter } from "next/navigation";
+import ConfirmModal from "@/components/modals/ConfirmModal";
+
+import { IUser } from "@/types/IUser";
+import * as templates from "@/constants/templates";
+import * as fonts from "@/constants/fonts";
+import { formatUnitValue, parseUnitValue } from "@/utils/styleFormatter";
+import { validateEmail, validateUsername, validateLink } from "@/utils/validations";
 import { userService } from "@/services/UserService";
 import { authService } from "@/services/AuthService";
-import { validateEmail, validateUsername, validateLink } from "@/utils/validations";
-import type { AxiosError } from "axios";
-import * as fonts from "@/constants/fonts";
-import { toast } from "react-hot-toast";
 import { uploadService } from "@/services/UploadService";
-import Image from "next/image";
-import { FaUserCircle } from "react-icons/fa";
 import { useUserStore } from "@/store/userStore";
 
 type TabType = "profile" | "styles";
@@ -54,39 +42,39 @@ type ConfirmAction =
   | { type: "cancelChanges" }
   | { type: "logout" }
   | { type: "deleteAccount" };
-type DeepPartial<T> = T extends object
-  ? {
-      [P in keyof T]?: DeepPartial<T[P]>;
-    }
-  : T;
+
+type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
 
 export default function UserEditPage() {
   const router = useRouter();
   const params = useParams();
   const usernameParam = params?.username as string;
+  const { logout } = useUserStore();
+
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [originalUserData, setOriginalUserData] = useState<IUser | null>(null);
+
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [bio, setBio] = useState("");
   const [links, setLinks] = useState<{ title: string; url: string }[]>([]);
+
   const [usernameError, setUsernameError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
   const [linkErrors, setLinkErrors] = useState<(string | null)[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
   const [openSection, setOpenSection] = useState<string>("Colors");
   const [userStyles, setUserStyles] = useState<IUser["styles"]>(templates.darkTheme);
-  const [backgroundUrl, setBackgroundUrl] = useState<string | null>(
-    userStyles.background.type === "image" ? userStyles.background.value.image || null : null
-  );
+  const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
+  const [isUploadingBackground, setIsUploadingBackground] = useState(false);
+
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     action?: ConfirmAction;
   }>({ isOpen: false });
-  const [error, setError] = useState<string | null>(null);
-
-  const { logout } = useUserStore();
 
   const modalConfig = {
     deleteLink: {
@@ -108,9 +96,9 @@ export default function UserEditPage() {
       cancelText: "Скасувати"
     },
     deleteAccount: {
-      title: "Видалити акаунт?",
-      message: "Ваш акаунт буде безповоротно видалено. Ви впевнені?",
-      confirmText: "Так, видалити",
+      title: "Видалити акаунт назавжди?",
+      message: "Ваш акаунт і всі дані будуть безповоротно видалені. Цю дію не можна скасувати!",
+      confirmText: "Так, видалити назавжди",
       cancelText: "Скасувати"
     }
   } as const;
@@ -157,6 +145,8 @@ export default function UserEditPage() {
         setBio(userData.bio || "");
         setLinks(userData.links || []);
         setUserStyles(userData.styles || templates.dracula);
+        setAvatarUrl(userData.avatar || null);
+        setBackgroundUrl(userData.styles.background.value.image || null);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
       }
@@ -165,23 +155,20 @@ export default function UserEditPage() {
     fetchUserData();
   }, [usernameParam]);
 
-  useEffect(() => {
-    if (!originalUserData) return;
-    setAvatarUrl(originalUserData.avatar || null);
-
-    if (originalUserData.styles.background.type === "image") {
-      setBackgroundUrl(originalUserData.styles.background.value.image || null);
-    }
-  }, [originalUserData]);
-
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Файл занадто великий. Максимум 5MB");
+      return;
+    }
+
     try {
-      setIsUploading(true);
+      setIsUploadingAvatar(true);
       const response = await uploadService.uploadAvatar(file);
       const newUrl = response.data?.filePath;
+
       if (newUrl) {
         setAvatarUrl(newUrl);
         toast.success("Аватарку оновлено!");
@@ -190,7 +177,34 @@ export default function UserEditPage() {
       console.error("Avatar upload failed:", error);
       toast.error("Не вдалося завантажити аватарку.");
     } finally {
-      setIsUploading(false);
+      setIsUploadingAvatar(false);
+    }
+  };
+
+  const handleBackgroundUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Файл занадто великий. Максимум 10MB");
+      return;
+    }
+
+    try {
+      setIsUploadingBackground(true);
+      const response = await uploadService.uploadBackground(file);
+      const newUrl = response.data?.filePath;
+
+      if (newUrl) {
+        setBackgroundUrl(newUrl);
+        handleStyleChange("background.value.image", newUrl);
+        toast.success("Фон оновлено!");
+      }
+    } catch (error) {
+      console.error("Background upload failed:", error);
+      toast.error("Не вдалося завантажити фон.");
+    } finally {
+      setIsUploadingBackground(false);
     }
   };
 
@@ -218,6 +232,26 @@ export default function UserEditPage() {
     closeConfirmModal();
   };
 
+  const handleRemoveLink = (index: number) => {
+    openConfirmModal({ type: "deleteLink", payload: index });
+  };
+
+  const handleLinkChange = (index: number, field: "title" | "url", value: string) => {
+    setLinks(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+
+    if (field === "url") {
+      setLinkErrors(prev => {
+        const updated = [...prev];
+        updated[index] = null;
+        return updated;
+      });
+    }
+  };
+
   const openConfirmModal = (action: ConfirmAction) => {
     setConfirmModal({ isOpen: true, action });
   };
@@ -243,26 +277,6 @@ export default function UserEditPage() {
       case "deleteAccount":
         await handleDeleteAccount();
         break;
-    }
-  };
-
-  const handleRemoveLink = (index: number) => {
-    openConfirmModal({ type: "deleteLink", payload: index });
-  };
-
-  const handleLinkChange = (index: number, field: "title" | "url", value: string) => {
-    setLinks(prev => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], [field]: value };
-      return updated;
-    });
-
-    if (field === "url") {
-      setLinkErrors(prev => {
-        const updated = [...prev];
-        updated[index] = null;
-        return updated;
-      });
     }
   };
 
@@ -306,7 +320,6 @@ export default function UserEditPage() {
     setUserStyles(prev => {
       const keys = path.split(".");
       const newStyles = { ...prev };
-
       let current: Record<string, unknown> = newStyles as unknown as Record<string, unknown>;
 
       for (let i = 0; i < keys.length - 1; i++) {
@@ -315,7 +328,6 @@ export default function UserEditPage() {
       }
 
       current[keys[keys.length - 1]] = value;
-
       return newStyles;
     });
   };
@@ -333,29 +345,10 @@ export default function UserEditPage() {
       sunsetGlow: templates.sunsetGlow,
       oceanBreeze: templates.oceanBreeze
     };
+
     if (templateMap[templateName]) {
       setUserStyles(templateMap[templateName]);
-    }
-  };
-
-  const handleBackgroundUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setIsUploading(true);
-      const response = await uploadService.uploadBackground(file);
-      const newUrl = response.data?.filePath;
-      if (newUrl) {
-        setBackgroundUrl(newUrl);
-        handleStyleChange("background.value.image", newUrl);
-        toast.success("Фон оновлено!");
-      }
-    } catch (error) {
-      console.error("Background upload failed:", error);
-      toast.error("Не вдалося завантажити фон.");
-    } finally {
-      setIsUploading(false);
+      toast.success(`Шаблон "${templateName}" застосовано`);
     }
   };
 
@@ -419,14 +412,13 @@ export default function UserEditPage() {
       usernameValidation || emailValidation || linksValidation.some(error => error !== null);
 
     if (hasErrors) {
-      console.warn("Validation failed");
+      toast.error("Будь ласка, виправте помилки у формі");
       return;
     }
 
     setError(null);
 
     const formattedBackground = { ...userStyles.background.value };
-
     if (backgroundUrl !== userStyles.background.value.image) {
       formattedBackground.image = backgroundUrl ?? undefined;
     }
@@ -469,22 +461,17 @@ export default function UserEditPage() {
     );
 
     if (!changes) {
-      console.log("No changes to save");
+      toast.success("Немає змін для збереження");
       return;
     }
 
-    console.log("Changed fields to send:", changes);
-
     try {
       await userService.updateUser(usernameParam, changes);
-      console.log("User updated successfully");
-
+      toast.success("Профіль успішно оновлено!");
       setOriginalUserData({ ...originalUserData, ...currentData });
-
       router.push(`/user/${username}`);
     } catch (err: unknown) {
       console.error("Failed to update user:", err);
-
       const axiosError = err as AxiosError<{ message: string }>;
 
       if (axiosError.response?.data?.message) {
@@ -509,132 +496,215 @@ export default function UserEditPage() {
   return (
     <main className={styles.mainWrapper}>
       <div className={styles.formContainer}>
-        <h1>Edit Profile</h1>
+        <h1>Редагування профілю</h1>
 
         <div className={styles.tabs}>
           <button
             className={`${styles.tab} ${activeTab === "profile" ? styles.active : ""}`}
             onClick={() => setActiveTab("profile")}
           >
-            Profile
+            Профіль
           </button>
           <button
             className={`${styles.tab} ${activeTab === "styles" ? styles.active : ""}`}
             onClick={() => setActiveTab("styles")}
           >
-            Styles
+            Стилі
           </button>
         </div>
 
         <div className={styles.content}>
           {activeTab === "profile" ? (
             <div className={styles.section}>
-              <div className={styles.avatarContainer}>
-                <label htmlFor="avatarInput" className={styles.avatarLabel}>
-                  {isUploading ? (
-                    <div className={styles.avatarLoading}>...</div>
-                  ) : avatarUrl ? (
-                    <Image
-                      src={avatarUrl}
-                      alt={username || "User avatar"}
-                      width={120}
-                      height={120}
-                      unoptimized={true}
-                      className={styles.avatarImage}
-                    />
-                  ) : (
-                    <FaUserCircle className={styles.avatarPlaceholder} />
-                  )}
-                  <div className={styles.avatarOverlay}></div>
-                </label>
-
-                <input
-                  id="avatarInput"
-                  type="file"
-                  accept="image/*"
-                  style={{ display: "none" }}
-                  onChange={handleAvatarChange}
-                />
-              </div>
-
-              <Input
-                type="text"
-                label="Username"
-                value={username}
-                onChange={e => {
-                  setUsername(e.target.value);
-                  if (usernameError) setUsernameError(null);
-                }}
-                placeholder="Your username"
-                error={usernameError || undefined}
-              />
-
-              <Input
-                type="email"
-                label="Email"
-                value={email}
-                onChange={e => {
-                  setEmail(e.target.value);
-                  if (emailError) setEmailError(null);
-                }}
-                placeholder="your@email.com"
-                error={emailError || undefined}
-              />
-
-              <div className={styles.passwordSection}>
-                <button className={styles.changePasswordBtn} onClick={handlePasswordResetRequest}>
-                  Змінити пароль
-                </button>
-              </div>
-
-              <Textarea
-                label="Bio"
-                placeholder="Tell something about yourself..."
-                value={bio}
-                onChange={e => setBio(e.target.value)}
-                maxCharacters={200}
-              />
-
-              <div className={styles.linksSection}>
-                <div className={styles.sectionHeader}>
-                  <label>Links</label>
-                  <button className={styles.addBtn} onClick={handleAddLink}>
-                    <FiPlus />
-                  </button>
+              <div className={`${styles.profileCard}`}>
+                <div className={styles.cardHeader}>
+                  <h2>
+                    <FiUser />
+                    Аватар
+                  </h2>
                 </div>
+                <div className={styles.cardContent}>
+                  <div className={styles.avatarSection}>
+                    <div className={styles.avatarContainer}>
+                      <label htmlFor="avatarInput" className={styles.avatarLabel}>
+                        {isUploadingAvatar ? (
+                          <div className={styles.avatarLoading}>
+                            <FiUpload />
+                            Завантаження...
+                          </div>
+                        ) : avatarUrl ? (
+                          <Image
+                            src={avatarUrl}
+                            alt={username || "User avatar"}
+                            width={140}
+                            height={140}
+                            unoptimized={true}
+                            className={styles.avatarImage}
+                          />
+                        ) : (
+                          <FaUserCircle className={styles.avatarPlaceholder} />
+                        )}
+                        <div className={styles.avatarOverlay}>
+                          <FiUpload />
+                        </div>
+                      </label>
+                      <input
+                        id="avatarInput"
+                        type="file"
+                        accept="image/*"
+                        style={{ display: "none" }}
+                        onChange={handleAvatarChange}
+                      />
+                    </div>
+                    <p className={styles.avatarHint}>JPG, PNG або GIF. Максимум 5MB</p>
+                  </div>
+                </div>
+              </div>
 
-                {links.map((link, index) => (
-                  <div key={index} className={styles.linkItem}>
+              <div className={styles.profileCard}>
+                <div className={styles.cardHeader}>
+                  <h2>
+                    <IoMdDocument /> Основна інформація
+                  </h2>
+                </div>
+                <div className={styles.cardContent}>
+                  <div className={styles.basicInfoGrid}>
                     <Input
                       type="text"
-                      placeholder="Title"
-                      value={link.title}
-                      onChange={e => handleLinkChange(index, "title", e.target.value)}
+                      label="Ім'я користувача"
+                      value={username}
+                      onChange={e => {
+                        setUsername(e.target.value);
+                        if (usernameError) setUsernameError(null);
+                      }}
+                      placeholder="your_username"
+                      error={usernameError || undefined}
                     />
                     <Input
-                      type="text"
-                      placeholder="URL"
-                      value={link.url}
-                      onChange={e => handleLinkChange(index, "url", e.target.value)}
-                      error={linkErrors[index] || undefined}
+                      type="email"
+                      label="Email"
+                      value={email}
+                      onChange={e => {
+                        setEmail(e.target.value);
+                        if (emailError) setEmailError(null);
+                      }}
+                      placeholder="your@email.com"
+                      error={emailError || undefined}
                     />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.profileCard}>
+                <div className={styles.cardHeader}>
+                  <h2>
+                    <FiKey />
+                    Безпека
+                  </h2>
+                </div>
+                <div className={styles.cardContent}>
+                  <div className={styles.passwordSection}>
+                    <p className={styles.hint}>Натисніть, щоб отримати лист для зміни пароля</p>
+                    <span className={styles.passwordLabel}>Пароль</span>
                     <button
-                      className={styles.deleteBtn}
-                      onClick={() => handleRemoveLink(index)}
-                      title="Delete link"
+                      className={styles.changePasswordBtn}
+                      onClick={handlePasswordResetRequest}
                     >
-                      <FiTrash2 />
+                      Змінити пароль
                     </button>
                   </div>
-                ))}
+                </div>
+              </div>
 
-                <div className={styles.actionsSection}>
-                  <Button className={styles.logoutBtn} onClick={handleLogoutClick}>
-                    Вийти з акаунту
-                  </Button>
-                  <Button className={styles.deleteAccountBtn} onClick={handleDeleteAccountClick}>
-                    Видалити акаунт
-                  </Button>
+              <div className={styles.profileCard}>
+                <div className={styles.cardHeader}>
+                  <h2>
+                    <FiInfo /> Про себе
+                  </h2>
+                </div>
+                <div className={styles.cardContent}>
+                  <div className={styles.bioSection}>
+                    <Textarea
+                      label="Біографія"
+                      placeholder="Розкажіть про себе..."
+                      value={bio}
+                      onChange={e => setBio(e.target.value)}
+                      maxCharacters={200}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles.profileCard}>
+                <div className={styles.cardHeader}>
+                  <h2>
+                    <FiLink />
+                    Посилання
+                  </h2>
+                </div>
+                <div className={styles.cardContent}>
+                  <div className={styles.linksSection}>
+                    <div className={styles.linksHeader}>
+                      <h3>Соціальні мережі та сайти</h3>
+                      <button className={styles.addBtn} onClick={handleAddLink}>
+                        <FaPlus />
+                      </button>
+                    </div>
+                    {links.length > 0 ? (
+                      <div className={styles.linksList}>
+                        {links.map((link, index) => (
+                          <div key={index} className={styles.linkItem}>
+                            <Input
+                              type="text"
+                              placeholder="Назва (напр. GitHub)"
+                              value={link.title}
+                              onChange={e => handleLinkChange(index, "title", e.target.value)}
+                            />
+                            <Input
+                              type="text"
+                              placeholder="https://example.com"
+                              value={link.url}
+                              onChange={e => handleLinkChange(index, "url", e.target.value)}
+                              error={linkErrors[index] || undefined}
+                            />
+                            <button
+                              className={styles.deleteBtn}
+                              onClick={() => handleRemoveLink(index)}
+                              title="Видалити посилання"
+                            >
+                              <FiTrash2 />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={styles.emptyLinks}>Ви ще не додали жодного посилання</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className={`${styles.profileCard} ${styles.dangerZone}`}>
+                <div className={styles.cardHeader}>
+                  <h2>
+                    <FiAlertTriangle />
+                    Небезпечна зона
+                  </h2>
+                </div>
+                <div className={styles.cardContent}>
+                  <div className={styles.dangerActions}>
+                    <button className={styles.dangerBtn} onClick={handleLogoutClick}>
+                      <FiLogOut />
+                      Вийти з акаунту
+                    </button>
+                    <button
+                      className={`${styles.dangerBtn} ${styles.deleteAccount}`}
+                      onClick={handleDeleteAccountClick}
+                    >
+                      <FiTrash2 />
+                      Видалити акаунт назавжди
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -642,7 +712,6 @@ export default function UserEditPage() {
             <div className={styles.section}>
               {["Templates", "Background", "Typography", "Colors", "Layout"].map(section => {
                 const isOpen = openSection === section;
-
                 return (
                   <div key={section} className={`${styles.accordion} ${isOpen ? styles.open : ""}`}>
                     <button
@@ -652,13 +721,11 @@ export default function UserEditPage() {
                       {section}
                       <IoIosArrowDown />
                     </button>
-
                     <div className={styles.accordionContent}>
                       {section === "Templates" && (
                         <>
                           <p className={styles.hint}>
-                            Selecting a template will replace all current styles with the styles of
-                            the selected template.
+                            Вибір шаблону замінить усі поточні стилі на стилі обраного шаблону
                           </p>
                           <div className={styles.templateGrid}>
                             {Object.keys(templates).map(key => (
@@ -678,13 +745,13 @@ export default function UserEditPage() {
                         <>
                           <div className={styles.formRow}>
                             <Select
-                              label="Type"
+                              label="Тип"
                               value={userStyles.background.type}
                               onChange={e => handleStyleChange("background.type", e.target.value)}
                               options={[
-                                { value: "color", label: "Color" },
-                                { value: "gradient", label: "Gradient" },
-                                { value: "image", label: "Image" }
+                                { value: "color", label: "Колір" },
+                                { value: "gradient", label: "Градієнт" },
+                                { value: "image", label: "Зображення" }
                               ]}
                             />
                           </div>
@@ -692,7 +759,7 @@ export default function UserEditPage() {
                           {userStyles.background.type === "color" && (
                             <div className={styles.formRow}>
                               <div className={styles.formGroup}>
-                                <label>Color</label>
+                                <label>Колір фону</label>
                                 <div className={styles.colorWrapper}>
                                   <input
                                     type="color"
@@ -714,7 +781,7 @@ export default function UserEditPage() {
                             <>
                               <div className={styles.formRow}>
                                 <div className={styles.formGroup}>
-                                  <label>Start</label>
+                                  <label>Початковий колір</label>
                                   <div className={styles.colorWrapper}>
                                     <input
                                       type="color"
@@ -733,7 +800,7 @@ export default function UserEditPage() {
                                   </div>
                                 </div>
                                 <div className={styles.formGroup}>
-                                  <label>End</label>
+                                  <label>Кінцевий колір</label>
                                   <div className={styles.colorWrapper}>
                                     <input
                                       type="color"
@@ -758,7 +825,7 @@ export default function UserEditPage() {
                                   min={0}
                                   max={360}
                                   step={1}
-                                  label="Angle (deg)"
+                                  label="Кут (градуси)"
                                   value={parseUnitValue(
                                     userStyles.background.value.gradient?.angle || 0
                                   )}
@@ -775,65 +842,68 @@ export default function UserEditPage() {
                           )}
 
                           {userStyles.background.type === "image" && (
-                            <>
-                              <div className={styles.imageUploadWrapper}>
-                                <label htmlFor="backgroundInput" className={styles.backgroundLabel}>
-                                  {isUploading ? (
-                                    <div className={styles.avatarLoading}>...</div>
-                                  ) : backgroundUrl ? (
-                                    <Image
-                                      src={backgroundUrl}
-                                      alt="Background"
-                                      width={200}
-                                      height={120}
-                                      className={styles.backgroundPreview}
-                                      unoptimized={true}
-                                    />
-                                  ) : (
-                                    <div className={styles.backgroundPlaceholder}>
-                                      Click to upload
-                                    </div>
-                                  )}
-                                  <div className={styles.backgroundOverlay}></div>
-                                </label>
-                                <input
-                                  id="backgroundInput"
-                                  type="file"
-                                  accept="image/*"
-                                  style={{ display: "none" }}
-                                  onChange={handleBackgroundUpload}
-                                />
-                              </div>
-
+                            <div className={styles.backgroundSection}>
+                              <label htmlFor="backgroundInput" className={styles.backgroundLabel}>
+                                {isUploadingBackground ? (
+                                  <div className={styles.backgroundLoading}>
+                                    <FiUpload />
+                                    Завантаження...
+                                  </div>
+                                ) : backgroundUrl ? (
+                                  <Image
+                                    src={backgroundUrl}
+                                    alt="Background"
+                                    width={600}
+                                    height={200}
+                                    className={styles.backgroundImage}
+                                    unoptimized={true}
+                                  />
+                                ) : (
+                                  <div className={styles.backgroundPlaceholder}>
+                                    <FiImage />
+                                    <span>Натисніть, щоб завантажити фон</span>
+                                  </div>
+                                )}
+                                <div className={styles.backgroundOverlay}>
+                                  <FiUpload />
+                                </div>
+                              </label>
+                              <input
+                                id="backgroundInput"
+                                type="file"
+                                accept="image/*"
+                                style={{ display: "none" }}
+                                onChange={handleBackgroundUpload}
+                              />
                               <div className={styles.formRow}>
                                 <Select
-                                  label="Position"
+                                  label="Позиція"
                                   value={userStyles.background.value.position}
                                   onChange={e =>
                                     handleStyleChange("background.value.position", e.target.value)
                                   }
                                   options={[
-                                    { value: "center", label: "Center" },
-                                    { value: "top", label: "Top" },
-                                    { value: "bottom", label: "Bottom" },
-                                    { value: "left", label: "Left" },
-                                    { value: "right", label: "Right" }
+                                    { value: "center", label: "Центр" },
+                                    { value: "top", label: "Зверху" },
+                                    { value: "bottom", label: "Знизу" },
+                                    { value: "left", label: "Ліворуч" },
+                                    { value: "right", label: "Праворуч" }
                                   ]}
                                 />
                                 <Select
-                                  label="Size"
+                                  label="Розмір"
                                   value={userStyles.background.value.size}
                                   onChange={e =>
                                     handleStyleChange("background.value.size", e.target.value)
                                   }
                                   options={[
-                                    { value: "cover", label: "Cover" },
-                                    { value: "contain", label: "Contain" },
-                                    { value: "auto", label: "Auto" }
+                                    { value: "cover", label: "Покрити" },
+                                    { value: "contain", label: "Вмістити" },
+                                    { value: "auto", label: "Авто" }
                                   ]}
                                 />
                               </div>
-                            </>
+                            </div>
                           )}
                         </>
                       )}
@@ -842,7 +912,7 @@ export default function UserEditPage() {
                         <>
                           <div className={styles.formRow}>
                             <Select
-                              label="Font"
+                              label="Шрифт"
                               value={userStyles.font}
                               onChange={e => handleStyleChange("font", e.target.value)}
                               options={fontOptions}
@@ -852,7 +922,7 @@ export default function UserEditPage() {
                               min={8}
                               max={72}
                               step={1}
-                              label="Size (px)"
+                              label="Розмір (px)"
                               value={parseUnitValue(userStyles.fontSize)}
                               onChange={e => handleStyleChange("fontSize", e.target.value)}
                               placeholder="16"
@@ -860,25 +930,25 @@ export default function UserEditPage() {
                           </div>
                           <div className={styles.formRow}>
                             <Select
-                              label="Weight"
+                              label="Вага"
                               value={userStyles.fontWeight}
                               onChange={e => handleStyleChange("fontWeight", e.target.value)}
                               options={[
-                                { value: "300", label: "Light" },
-                                { value: "400", label: "Regular" },
-                                { value: "500", label: "Medium" },
-                                { value: "600", label: "Semibold" },
-                                { value: "700", label: "Bold" }
+                                { value: "300", label: "Легкий" },
+                                { value: "400", label: "Звичайний" },
+                                { value: "500", label: "Середній" },
+                                { value: "600", label: "Напівжирний" },
+                                { value: "700", label: "Жирний" }
                               ]}
                             />
                             <Select
-                              label="Align"
+                              label="Вирівнювання"
                               value={userStyles.textAlign}
                               onChange={e => handleStyleChange("textAlign", e.target.value)}
                               options={[
-                                { value: "left", label: "Left" },
-                                { value: "center", label: "Center" },
-                                { value: "right", label: "Right" }
+                                { value: "left", label: "Ліворуч" },
+                                { value: "center", label: "По центру" },
+                                { value: "right", label: "Праворуч" }
                               ]}
                             />
                           </div>
@@ -888,14 +958,14 @@ export default function UserEditPage() {
                       {section === "Colors" && (
                         <div className={styles.colorGrid}>
                           {[
-                            ["Text", "text"],
-                            ["Link", "linkText"],
-                            ["Button Text", "buttonText"],
-                            ["Button BG", "buttonBackground"],
-                            ["Hover Text", "buttonHoverText"],
-                            ["Hover BG", "buttonHoverBackground"],
-                            ["Border", "border"],
-                            ["Content BG", "contentBackground"]
+                            ["Текст", "text"],
+                            ["Посилання", "linkText"],
+                            ["Текст кнопки", "buttonText"],
+                            ["Фон кнопки", "buttonBackground"],
+                            ["Текст при наведенні", "buttonHoverText"],
+                            ["Фон при наведенні", "buttonHoverBackground"],
+                            ["Рамка", "border"],
+                            ["Фон контенту", "contentBackground"]
                           ].map(([label, key]) => (
                             <div key={key} className={styles.formGroup}>
                               <label>{label}</label>
@@ -922,7 +992,7 @@ export default function UserEditPage() {
                             min={0}
                             max={100}
                             step={1}
-                            label="Border Radius (px)"
+                            label="Радіус рамки (px)"
                             value={parseUnitValue(userStyles.borderRadius)}
                             onChange={e => handleStyleChange("borderRadius", e.target.value)}
                             placeholder="8"
@@ -932,7 +1002,7 @@ export default function UserEditPage() {
                             min={0}
                             max={100}
                             step={1}
-                            label="Padding (px)"
+                            label="Відступ (px)"
                             value={parseUnitValue(userStyles.contentPadding)}
                             onChange={e => handleStyleChange("contentPadding", e.target.value)}
                             placeholder="20"
@@ -942,7 +1012,7 @@ export default function UserEditPage() {
                             min={0}
                             max={60}
                             step={1}
-                            label="Gap (px)"
+                            label="Проміжок (px)"
                             value={parseUnitValue(userStyles.contentGap)}
                             onChange={e => handleStyleChange("contentGap", e.target.value)}
                             placeholder="12"
@@ -957,17 +1027,23 @@ export default function UserEditPage() {
           )}
         </div>
 
-        {error && <div className={styles.errorMessage}>{error}</div>}
+        {error && (
+          <div className={styles.errorMessage}>
+            <FiAlertTriangle />
+            {error}
+          </div>
+        )}
 
-        <div>
-          <Button type="button" variant="primary" onClick={handleAccept}>
-            Accept Changes
-          </Button>
+        <div className={styles.actionButtons}>
           <Button type="button" variant="secondary" onClick={handleCancelChangesClick}>
-            Cancel
+            Скасувати
+          </Button>
+          <Button type="button" variant="primary" onClick={handleAccept}>
+            Зберегти зміни
           </Button>
         </div>
       </div>
+
       <ConfirmModal
         isOpen={confirmModal.isOpen}
         onConfirm={handleConfirm}

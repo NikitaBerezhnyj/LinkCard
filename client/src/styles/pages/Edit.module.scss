@@ -10,7 +10,7 @@
 
 .formContainer {
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   margin: 0 auto;
   padding: $spacing-lg;
   background-color: $color-background-alt;
@@ -18,34 +18,34 @@
   box-shadow: $shadow-md;
 
   h1 {
-    color: $color-text-primary;
-    margin-bottom: $spacing-md;
+    margin-bottom: $spacing-lg;
     text-align: center;
-    font-size: $font-xl;
   }
 }
 
 .tabs {
   display: flex;
   gap: 0;
-  margin-bottom: $spacing-md;
-  border-bottom: 1px solid $color-border;
+  margin-bottom: $spacing-lg;
+  border-bottom: 2px solid $color-border;
 }
 
 .tab {
   flex: 1;
-  padding: $spacing-sm $spacing-md;
+  padding: $spacing-md;
   background: none;
   border: none;
   color: $color-text-secondary;
   font-size: $font-md;
+  font-weight: 500;
   cursor: pointer;
   transition: all $transition-fast;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
 
-  &:hover {
+  &:hover:not(.active) {
     color: $color-text-primary;
+    background-color: rgba($color-primary, 0.05);
   }
 
   &.active {
@@ -55,13 +55,362 @@
 }
 
 .content {
-  margin-bottom: $spacing-md;
+  margin-bottom: $spacing-lg;
 }
 
 .section {
   display: flex;
   flex-direction: column;
+  gap: $spacing-lg;
+}
+
+.profileCard {
+  background-color: $color-background;
+  border-radius: $radius-md;
+  padding: $spacing-lg;
+  border: 1px solid $color-border;
+
+  &.highlight {
+    border-color: $color-primary;
+    box-shadow: 0 0 0 1px rgba($color-primary, 0.1);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-md;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid $color-border;
+
+  h2 {
+    font-size: $font-lg;
+    font-weight: 600;
+    color: $color-text-primary;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    svg {
+      font-size: $font-xl;
+      color: $color-primary;
+    }
+  }
+
+  .badge {
+    font-size: $font-xs;
+    padding: $spacing-xs $spacing-sm;
+    background-color: rgba($color-primary, 0.1);
+    color: $color-primary;
+    border-radius: $radius-full;
+    font-weight: 500;
+  }
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.avatarSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: $spacing-sm;
+}
+
+.avatarContainer {
+  position: relative;
+}
+
+.avatarLabel {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: $radius-full;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform $transition-fast;
+  border: 3px solid $color-border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-surface;
+
+  &:hover {
+    transform: scale(1.05);
+    border-color: $color-primary;
+
+    .avatarOverlay {
+      opacity: 1;
+    }
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  font-size: 5rem;
+  color: $color-text-muted;
+}
+
+.avatarOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  color: $color-text-primary;
+  font-size: $font-sm;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  opacity: 0;
+  transition: opacity $transition-fast;
+
+  svg {
+    font-size: $font-xl;
+  }
+}
+
+.avatarLoading {
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  font-size: $font-sm;
+  color: $color-text-muted;
+}
+
+.avatarHint {
+  font-size: $font-xs;
+  color: $color-text-muted;
+  text-align: center;
+  max-width: 200px;
+  margin: 0 $spacing-sm;
+}
+
+.basicInfoGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: $spacing-md;
+}
+
+.passwordSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.passwordLabel {
+  font-size: $font-sm;
+  font-weight: 500;
+  color: $color-text-secondary;
+}
+
+.changePasswordBtn {
+  align-self: flex-start;
+  background: none;
+  border: 1px solid $color-border;
+  color: $color-primary;
+  font-size: $font-sm;
+  cursor: pointer;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-sm;
+  transition: all $transition-fast;
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  svg {
+    font-size: $font-md;
+  }
+
+  &:hover {
+    background-color: rgba($color-primary, 0.1);
+    border-color: $color-primary;
+  }
+}
+
+.bioSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.linksSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+.linksHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    font-size: $font-md;
+    font-weight: 600;
+    color: $color-text-primary;
+    margin: 0;
+  }
+}
+
+.addBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background-color: $color-primary;
+  color: $color-text-primary;
+  border: none;
+  border-radius: $radius-sm;
+  font-size: $font-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  svg {
+    font-size: $font-md;
+  }
+
+  &:hover {
+    background-color: $color-primary-hover;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.linksList {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.linkItem {
+  display: grid;
+  grid-template-columns: 1fr 1fr 40px;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  background-color: $color-surface;
+  border-radius: $radius-sm;
+  border: 1px solid $color-border;
+  transition: border-color $transition-fast;
+
+  &:hover {
+    border-color: rgba($color-primary, 0.3);
+  }
+}
+
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  color: $color-error;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: all $transition-fast;
+
+  svg {
+    font-size: $font-md;
+  }
+
+  &:hover {
+    background-color: $color-error;
+    color: $color-text-primary;
+    border-color: $color-error;
+  }
+}
+
+.emptyLinks {
+  text-align: center;
+  padding: $spacing-xl;
+  color: $color-text-muted;
+  font-size: $font-sm;
+  background-color: $color-surface;
+  border-radius: $radius-sm;
+  border: 1px dashed $color-border;
+}
+
+.dangerZone {
+  border-color: rgba($color-error, 0.3);
+  background-color: rgba($color-error, 0.03);
+
+  .cardHeader h2 {
+    color: $color-error;
+
+    svg {
+      color: $color-error;
+    }
+  }
+}
+
+.dangerActions {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.dangerBtn {
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  background-color: transparent;
+  color: $color-error;
+  border: 1px solid rgba($color-error, 0.3);
+  border-radius: $radius-sm;
+  font-size: $font-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+
+  svg {
+    font-size: $font-md;
+  }
+
+  &:hover {
+    background-color: $color-error;
+    color: $color-text-primary;
+    border-color: $color-error;
+  }
+
+  &.deleteAccount {
+    background-color: rgba($color-error, 0.1);
+
+    &:hover {
+      background-color: $color-error;
+    }
+  }
 }
 
 .subsection {
@@ -85,13 +434,14 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: $spacing-sm;
-  margin-bottom: $spacing-xs;
+  margin-bottom: $spacing-sm;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
   gap: $spacing-xs;
+  margin-bottom: $spacing-sm;
 
   label {
     color: $color-text-secondary;
@@ -101,17 +451,9 @@
 }
 
 .select {
-  padding: $spacing-xs $spacing-sm;
-  background-color: $color-background;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  color: $color-text-primary;
-  font-size: $font-sm;
   cursor: pointer;
-  transition: border-color $transition-fast;
 
   &:focus {
-    outline: none;
     border-color: $color-primary;
   }
 }
@@ -126,14 +468,9 @@
   width: 40px;
   height: 32px;
   padding: 2px;
-  background-color: $color-background;
-  border: 1px solid $color-border;
-  border-radius: $radius-sm;
   cursor: pointer;
-  transition: border-color $transition-fast;
 
   &:focus {
-    outline: none;
     border-color: $color-primary;
   }
 }
@@ -150,104 +487,229 @@
   gap: $spacing-sm;
 }
 
-.linksSection {
-  padding: $spacing-md 0;
-  border-top: 1px solid $color-border;
-}
-
-.sectionHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: $spacing-sm;
-
-  label {
-    color: $color-text-primary;
-    font-size: $font-md;
-    font-weight: 600;
-  }
-}
-
-.addBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background-color: $color-primary;
-  color: $color-text-primary;
-  border: none;
-  border-radius: $radius-sm;
-  font-size: $font-md;
-  cursor: pointer;
-  transition: background-color $transition-fast;
-
-  &:hover {
-    background-color: $color-primary-hover;
-  }
-
-  svg {
-    font-size: $font-md;
-  }
-}
-
-.linkItem {
-  display: grid;
-  grid-template-columns: 1fr 1fr 40px;
-  gap: $spacing-xs;
-  margin-bottom: $spacing-xs;
-}
-
-.deleteBtn {
-  padding: 0;
-  background-color: $color-error;
-  color: $color-text-primary;
-  border: none;
-  border-radius: $radius-sm;
-  cursor: pointer;
-  transition: background-color $transition-fast;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-
-  &:hover {
-    background-color: darken($color-error, 10%);
-  }
-
-  svg {
-    font-size: $font-md;
-  }
-}
-
 .templateGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: $spacing-xs;
+  gap: $spacing-sm;
 }
 
 .templateBtn {
-  padding: $spacing-xs $spacing-sm;
+  padding: $spacing-sm $spacing-md;
   background-color: $color-background;
   color: $color-text-primary;
   border: 1px solid $color-border;
-  border-radius: $radius-sm;
-  font-size: $font-xs;
+  font-size: $font-sm;
   cursor: pointer;
   transition: all $transition-fast;
   text-transform: capitalize;
+  border-radius: $radius-sm;
 
   &:hover {
     background-color: $color-surface;
     border-color: $color-primary;
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.accordion {
+  margin-bottom: $spacing-md;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background-color: $color-background;
+  border: 1px solid $color-border;
+
+  .accordionHeader {
+    width: 100%;
+    padding: $spacing-md;
+    text-align: left;
+    font-weight: 600;
+    color: $color-text-primary;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    transition: background-color $transition-fast;
+
+    &:hover {
+      background-color: $color-surface;
+    }
+
+    svg {
+      transition: transform $transition-medium;
+      color: $color-text-secondary;
+    }
+  }
+
+  .accordionContent {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition:
+      max-height $transition-medium,
+      opacity $transition-medium,
+      padding $transition-medium;
+    padding: 0 $spacing-md;
+  }
+
+  &.open {
+    border-color: rgba($color-primary, 0.3);
+
+    .accordionHeader {
+      background-color: rgba($color-primary, 0.05);
+
+      svg {
+        transform: rotate(180deg);
+        color: $color-primary;
+      }
+    }
+
+    .accordionContent {
+      max-height: 2000px;
+      opacity: 1;
+      padding: $spacing-md;
+      border-top: 1px solid $color-border;
+    }
+  }
+}
+
+.backgroundSection {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+}
+
+.backgroundLabel {
+  position: relative;
+  width: 100%;
+  min-height: 150px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform $transition-fast;
+  border: 2px dashed $color-border;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $color-surface;
+
+  &:hover {
+    border-color: $color-primary;
+    border-style: solid;
+
+    .backgroundOverlay {
+      opacity: 1;
+    }
+  }
+}
+
+.backgroundImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.backgroundPlaceholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-lg;
+  color: $color-text-muted;
+
+  svg {
+    font-size: 3rem;
+  }
+
+  span {
+    font-size: $font-sm;
+  }
+}
+
+.backgroundOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  color: $color-text-primary;
+  font-size: $font-sm;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  opacity: 0;
+  transition: opacity $transition-fast;
+
+  svg {
+    font-size: $font-xl;
+  }
+}
+
+.backgroundLoading {
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  font-size: $font-sm;
+  color: $color-text-muted;
+}
+
+.hint {
+  font-size: $font-sm;
+  color: $color-text-muted;
+  line-height: 1.4;
+  padding: $spacing-sm;
+  background-color: rgba($color-primary, 0.05);
+  border-left: 3px solid $color-primary;
+  border-radius: $radius-sm;
+}
+
+.errorMessage {
+  color: $color-error;
+  background-color: rgba($color-error, 0.1);
+  border: 1px solid rgba($color-error, 0.3);
+  border-left: 3px solid $color-error;
+  padding: $spacing-md;
+  border-radius: $radius-sm;
+  margin-bottom: $spacing-md;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  font-size: $font-sm;
+
+  svg {
+    font-size: $font-lg;
+    flex-shrink: 0;
+  }
+}
+
+.actionButtons {
+  display: flex;
+  gap: $spacing-sm;
+  padding-top: $spacing-md;
+  border-top: 1px solid $color-border;
+
+  button {
+    flex: 1;
   }
 }
 
 @media (max-width: 768px) {
   .mainWrapper {
     padding: $spacing-sm;
+    align-items: flex-start;
   }
 
   .formContainer {
@@ -258,10 +720,7 @@
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .colorGrid {
-    grid-template-columns: 1fr;
-  }
-
+  .colorGrid,
   .formRow {
     grid-template-columns: 1fr;
   }
@@ -270,234 +729,45 @@
     grid-template-columns: 1fr;
     gap: $spacing-xs;
   }
-}
 
-.accordion {
-  margin-bottom: $spacing-md;
-  border-radius: $radius-md;
-  overflow: hidden;
-  background-color: $color-background-alt;
-  box-shadow: $shadow-sm;
-
-  .accordionHeader {
-    width: 100%;
-    padding: $spacing-sm $spacing-md;
-    text-align: left;
-    font-weight: 600;
-    color: $color-text-primary;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    cursor: pointer;
-    background-color: $color-background;
-    border: none;
-    outline: none;
-    transition:
-      background-color $transition-medium,
-      color $transition-medium;
-
-    &:hover {
-      background-color: $color-surface;
-    }
-
-    svg {
-      transition: transform 0.3s ease;
-    }
+  .avatarLabel {
+    width: 120px;
+    height: 120px;
   }
 
-  .accordionContent {
-    overflow: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition:
-      max-height 0.3s ease,
-      opacity 0.3s ease,
-      padding 0.3s ease;
-    padding: 0 $spacing-md;
+  .actionButtons {
+    flex-direction: column;
   }
 
-  &.open {
-    .accordionHeader svg {
-      transform: rotate(180deg);
-    }
-
-    .accordionContent {
-      max-height: 2000px;
-      opacity: 1;
-      padding: $spacing-md $spacing-md;
-    }
+  .dangerActions {
+    gap: $spacing-xs;
   }
 }
 
-.hint {
-  font-size: 0.85rem;
-  color: #777;
-  margin-bottom: 0.5rem;
-  line-height: 1.4;
-}
+@media (max-width: 480px) {
+  .formContainer {
+    padding: $spacing-sm;
 
-.errorMessage {
-  color: $color-error;
-  background-color: lighten($color-error, 40%);
-  border: 1px solid darken($color-error, 10%);
-  padding: $spacing-sm;
-  border-radius: $radius-sm;
-  margin-bottom: $spacing-md;
-  text-align: center;
-}
-
-.changePasswordBtn {
-  background: none;
-  border: none;
-  color: $color-primary;
-  font-size: $font-sm;
-  cursor: pointer;
-  text-decoration: underline;
-  padding: 0;
-  transition: color $transition-fast;
-
-  &:hover {
-    color: $color-primary-hover;
-  }
-}
-
-.avatarContainer {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.avatarLabel {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  border: 2px solid #2c2c2c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &:hover {
-    transform: scale(1.03);
-
-    .avatarOverlay {
-      opacity: 1;
-      visibility: visible;
+    h1 {
+      font-size: $font-xl;
     }
   }
-}
 
-.avatarImage {
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-.avatarPlaceholder {
-  font-size: 6rem;
-  color: #6b7280;
-}
-
-.avatarOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0.2s ease,
-    visibility 0.2s ease;
-  border-radius: 50%;
-}
-
-.avatarLoading {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  color: #aaa;
-}
-
-.backgroundContainer {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1rem;
-  position: relative;
-}
-
-.backgroundLabel {
-  position: relative;
-  // width: 200px;
-  // height: 120px;
-  // border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.2s ease;
-  border: 2px solid #2c2c2c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: $spacing-sm 0;
-
-  &:hover {
-    transform: scale(1.03);
-
-    .backgroundOverlay {
-      opacity: 1;
-      visibility: visible;
-    }
+  .tab {
+    padding: $spacing-sm;
+    font-size: $font-sm;
   }
-}
 
-.backgroundImage {
-  object-fit: cover;
-  // border-radius: 50%;
-}
+  .profileCard {
+    padding: $spacing-md;
+  }
 
-.backgroundPlaceholder {
-  font-size: 6rem;
-  color: #6b7280;
-}
+  .avatarLabel {
+    width: 100px;
+    height: 100px;
+  }
 
-.backgroundOverlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  color: #fff;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0.2s ease,
-    visibility 0.2s ease;
-  // border-radius: 50%;
-}
-
-.backgroundLoading {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  color: #aaa;
+  .templateGrid {
+    grid-template-columns: 1fr;
+  }
 }
