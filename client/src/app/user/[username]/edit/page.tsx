@@ -13,7 +13,7 @@
 // - [x] 10. Після змін користувача, редірект на новий URL (якщо змінився username)
 // - [x] 11. Додати якусь обробку на сервер (можливо якщо змінюється username відправляти новий jwt токен з новим username) щоб сайт досі вважав користувача авторизованим, але зі змінений username
 // - [x] 13. Додати підтримку шрифтів, які можна обрати
-// - [ ] 14. Додати можливість завантажувати зображення для бекграунду, або давати на них посилання, якщо воно вже є десь в інтернеті
+// - [x] 14. Додати можливість завантажувати зображення для бекграунду
 
 // UX/UI improvements:
 // - [x] 1. Додати підтвердження перед видаленням посилання;
@@ -75,6 +75,9 @@ export default function UserEditPage() {
   const [linkErrors, setLinkErrors] = useState<(string | null)[]>([]);
   const [openSection, setOpenSection] = useState<string>("Colors");
   const [userStyles, setUserStyles] = useState<IUser["styles"]>(templates.darkTheme);
+  const [backgroundUrl, setBackgroundUrl] = useState<string | null>(
+    userStyles.background.type === "image" ? userStyles.background.value.image || null : null
+  );
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     action?: ConfirmAction;
@@ -158,6 +161,15 @@ export default function UserEditPage() {
     fetchUserData();
   }, [usernameParam]);
 
+  useEffect(() => {
+    if (!originalUserData) return;
+    setAvatarUrl(originalUserData.avatar || null);
+
+    if (originalUserData.styles.background.type === "image") {
+      setBackgroundUrl(originalUserData.styles.background.value.image || null);
+    }
+  }, [originalUserData]);
+
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -165,7 +177,7 @@ export default function UserEditPage() {
     try {
       setIsUploading(true);
       const response = await uploadService.uploadAvatar(file);
-      const newUrl = response.data?.filePath; // або response.data.data.url — залежно від твоєї відповіді сервера
+      const newUrl = response.data?.filePath;
       if (newUrl) {
         setAvatarUrl(newUrl);
         toast.success("Аватарку оновлено!");
@@ -286,17 +298,18 @@ export default function UserEditPage() {
 
   const handleStyleChange = (path: string, value: string | number) => {
     setUserStyles(prev => {
-      const newStyles = { ...prev };
       const keys = path.split(".");
-      let current: unknown = newStyles;
+      const newStyles = { ...prev };
+
+      let current: Record<string, unknown> = newStyles as unknown as Record<string, unknown>;
+
       for (let i = 0; i < keys.length - 1; i++) {
-        if (typeof current === "object" && current !== null) {
-          current = (current as Record<string, unknown>)[keys[i]];
-        }
+        current[keys[i]] = { ...(current[keys[i]] as Record<string, unknown>) };
+        current = current[keys[i]] as Record<string, unknown>;
       }
-      if (typeof current === "object" && current !== null) {
-        (current as Record<string, string | number>)[keys[keys.length - 1]] = value;
-      }
+
+      current[keys[keys.length - 1]] = value;
+
       return newStyles;
     });
   };
@@ -316,6 +329,27 @@ export default function UserEditPage() {
     };
     if (templateMap[templateName]) {
       setUserStyles(templateMap[templateName]);
+    }
+  };
+
+  const handleBackgroundUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      const response = await uploadService.uploadBackground(file);
+      const newUrl = response.data?.filePath;
+      if (newUrl) {
+        setBackgroundUrl(newUrl);
+        handleStyleChange("background.value.image", newUrl);
+        toast.success("Фон оновлено!");
+      }
+    } catch (error) {
+      console.error("Background upload failed:", error);
+      toast.error("Не вдалося завантажити фон.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -385,6 +419,12 @@ export default function UserEditPage() {
 
     setError(null);
 
+    const formattedBackground = { ...userStyles.background.value };
+
+    if (backgroundUrl !== userStyles.background.value.image) {
+      formattedBackground.image = backgroundUrl ?? undefined;
+    }
+
     const formattedStyles = {
       ...userStyles,
       fontSize: formatUnitValue(userStyles.fontSize, "px"),
@@ -394,7 +434,7 @@ export default function UserEditPage() {
       background: {
         ...userStyles.background,
         value: {
-          ...userStyles.background.value,
+          ...formattedBackground,
           gradient: userStyles.background.value.gradient
             ? {
                 ...userStyles.background.value.gradient,
@@ -499,7 +539,7 @@ export default function UserEditPage() {
                   ) : (
                     <FaUserCircle className={styles.avatarPlaceholder} />
                   )}
-                  <div className={styles.avatarOverlay}>Змінити</div>
+                  <div className={styles.avatarOverlay}></div>
                 </label>
 
                 <input
@@ -730,15 +770,35 @@ export default function UserEditPage() {
 
                           {userStyles.background.type === "image" && (
                             <>
-                              <Input
-                                type="text"
-                                label="Image URL"
-                                value={userStyles.background.value.image}
-                                onChange={e =>
-                                  handleStyleChange("background.value.image", e.target.value)
-                                }
-                                placeholder="https://example.com/image.jpg"
-                              />
+                              <div className={styles.imageUploadWrapper}>
+                                <label htmlFor="backgroundInput" className={styles.backgroundLabel}>
+                                  {isUploading ? (
+                                    <div className={styles.avatarLoading}>...</div>
+                                  ) : backgroundUrl ? (
+                                    <Image
+                                      src={backgroundUrl}
+                                      alt="Background"
+                                      width={200}
+                                      height={120}
+                                      className={styles.backgroundPreview}
+                                      unoptimized={true}
+                                    />
+                                  ) : (
+                                    <div className={styles.backgroundPlaceholder}>
+                                      Click to upload
+                                    </div>
+                                  )}
+                                  <div className={styles.backgroundOverlay}></div>
+                                </label>
+                                <input
+                                  id="backgroundInput"
+                                  type="file"
+                                  accept="image/*"
+                                  style={{ display: "none" }}
+                                  onChange={handleBackgroundUpload}
+                                />
+                              </div>
+
                               <div className={styles.formRow}>
                                 <Select
                                   label="Position"

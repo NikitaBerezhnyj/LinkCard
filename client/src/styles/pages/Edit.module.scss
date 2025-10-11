@@ -430,3 +430,74 @@
   font-size: 0.8rem;
   color: #aaa;
 }
+
+.backgroundContainer {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.backgroundLabel {
+  position: relative;
+  // width: 200px;
+  // height: 120px;
+  // border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border: 2px solid #2c2c2c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: $spacing-sm 0;
+
+  &:hover {
+    transform: scale(1.03);
+
+    .backgroundOverlay {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+.backgroundImage {
+  object-fit: cover;
+  // border-radius: 50%;
+}
+
+.backgroundPlaceholder {
+  font-size: 6rem;
+  color: #6b7280;
+}
+
+.backgroundOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0.2s ease;
+  // border-radius: 50%;
+}
+
+.backgroundLoading {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #aaa;
+}
