@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "../config/s3Config";
 import { optimizeImage } from "../utils/imageProcessor";
+import { generateUniqueFileName } from "../utils/generateUniqueFileName";
 
 const validateMIMEType = async (
   mimetype: string,
@@ -41,7 +42,13 @@ export const uploadAvatar = async (req: Request, res: Response): Promise<void> =
       mimetype: req.file.mimetype
     });
 
-    const key = `avatars/${req.file.originalname.split(".")[0]}.webp`;
+    const key = await generateUniqueFileName(
+      process.env.MINIO_BUCKET || "linkcard",
+      "avatars",
+      req.file.originalname,
+      "webp"
+    );
+
     await uploadFileToS3(optimizedBuffer, key);
 
     res.status(200).json({
@@ -74,7 +81,15 @@ export const uploadBackground = async (req: Request, res: Response): Promise<voi
       mimetype: req.file.mimetype
     });
 
-    const key = `backgrounds/${req.file.originalname}`;
+    const extension = req.file.originalname.split(".").pop() || "webp";
+
+    const key = await generateUniqueFileName(
+      process.env.MINIO_BUCKET || "linkcard",
+      "backgrounds",
+      req.file.originalname,
+      extension
+    );
+
     await uploadFileToS3(optimizedBuffer, key);
 
     res.status(200).json({
