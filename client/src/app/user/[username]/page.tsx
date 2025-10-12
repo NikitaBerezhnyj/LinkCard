@@ -23,7 +23,6 @@ export default function UserPage() {
   const { username } = useParams();
   const [user, setUser] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
 
@@ -38,19 +37,11 @@ export default function UserPage() {
         setIsLoading(true);
         const res = await userService.getUser(usernameStr);
 
-        if (!res.data) throw new Error("User not found");
-
-        const userData = res.data.data;
-        setUser(userData);
-
-        if (currentUsername && currentUsername === userData.username) {
-          setIsOwner(true);
-        } else {
-          setIsOwner(false);
-        }
+        if (!res.data) throw new Error("Користувача не знайдено");
+        setUser(res.data.data);
       } catch (err) {
         console.error(err);
-        setError("Failed to load user.");
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -58,6 +49,12 @@ export default function UserPage() {
 
     fetchUserData();
   }, [username, currentUsername]);
+
+  useEffect(() => {
+    if (user && currentUsername) {
+      setIsOwner(currentUsername === user.username);
+    }
+  }, [user, currentUsername]);
 
   function getFontClassName(fontName?: string): string | undefined {
     if (!fontName) return undefined;
@@ -70,7 +67,9 @@ export default function UserPage() {
     return <Loader isOpen={true} />;
   }
 
-  if (error || !user) return <p className={styles.error}>{error || "User not found."}</p>;
+  if (!user) {
+    throw new Error("Користувача не знайдено");
+  }
 
   const s = user.styles || {};
 

@@ -389,37 +389,9 @@ export default function UserEditPage() {
     return Object.keys(changes).length > 0 ? changes : undefined;
   };
 
-  const handleAccept = async () => {
-    if (!originalUserData) {
-      console.error("Original user data is not loaded");
-      return;
-    }
-
-    const isUsernameChanged = username !== originalUserData.username;
-
-    const usernameValidation =
-      username !== originalUserData.username ? validateUsername(username) : null;
-    const emailValidation = email !== originalUserData.email ? validateEmail(email) : null;
-    const linksValidation =
-      JSON.stringify(links) !== JSON.stringify(originalUserData.links)
-        ? links.map(link => validateLink(link.url ?? ""))
-        : [];
-
-    setUsernameError(usernameValidation);
-    setEmailError(emailValidation);
-    setLinkErrors(linksValidation);
-
-    const hasErrors =
-      usernameValidation || emailValidation || linksValidation.some(error => error !== null);
-
-    if (hasErrors) {
-      toast.error("Будь ласка, виправте помилки у формі");
-      return;
-    }
-
-    setError(null);
-
+  const prepareCurrentData = (): Partial<IUser> => {
     const formattedBackground = { ...userStyles.background.value };
+
     if (backgroundUrl !== userStyles.background.value.image) {
       formattedBackground.image = backgroundUrl ?? undefined;
     }
@@ -452,9 +424,49 @@ export default function UserEditPage() {
       styles: formattedStyles
     };
 
-    if (avatarUrl && avatarUrl !== originalUserData.avatar) {
+    if (avatarUrl && avatarUrl !== originalUserData?.avatar) {
       currentData.avatar = avatarUrl;
     }
+
+    return currentData;
+  };
+
+  const validateForm = () => {
+    if (!originalUserData) return { hasErrors: true, errors: {} };
+
+    const usernameValidation =
+      username !== originalUserData.username ? validateUsername(username) : null;
+    const emailValidation = email !== originalUserData.email ? validateEmail(email) : null;
+    const linksValidation =
+      JSON.stringify(links) !== JSON.stringify(originalUserData.links)
+        ? links.map(link => validateLink(link.url ?? ""))
+        : [];
+
+    setUsernameError(usernameValidation);
+    setEmailError(emailValidation);
+    setLinkErrors(linksValidation);
+
+    const hasErrors =
+      usernameValidation || emailValidation || linksValidation.some(error => error !== null);
+
+    return { hasErrors, usernameValidation, emailValidation, linksValidation };
+  };
+
+  const handleAccept = async () => {
+    if (!originalUserData) {
+      console.error("Original user data is not loaded");
+      return;
+    }
+
+    const { hasErrors } = validateForm();
+    if (hasErrors) {
+      toast.error("Будь ласка, виправте помилки у формі");
+      return;
+    }
+
+    setError(null);
+
+    const currentData = prepareCurrentData();
 
     const changes = getChangedFields(
       originalUserData as unknown as Record<string, unknown>,
@@ -469,9 +481,10 @@ export default function UserEditPage() {
     try {
       await userService.updateUser(usernameParam, changes);
       toast.success("Профіль успішно оновлено!");
+
       setOriginalUserData({ ...originalUserData, ...currentData });
 
-      if (isUsernameChanged) {
+      if (username !== originalUserData.username) {
         setUser(username);
       }
 
@@ -491,6 +504,20 @@ export default function UserEditPage() {
   };
 
   const handleCancelChangesClick = () => {
+    if (!originalUserData) return;
+
+    const currentData = prepareCurrentData();
+
+    const changes = getChangedFields(
+      originalUserData as unknown as Record<string, unknown>,
+      currentData
+    );
+
+    if (!changes) {
+      router.push(`/user/${username}`);
+      return;
+    }
+
     openConfirmModal({ type: "cancelChanges" });
   };
 
@@ -504,7 +531,7 @@ export default function UserEditPage() {
   }
 
   if (!originalUserData) {
-    return <div>Завантаження...</div>;
+    throw new Error("Дані користувача не знайдено");
   }
 
   return (
