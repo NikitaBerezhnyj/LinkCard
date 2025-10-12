@@ -29,7 +29,8 @@
     "mongoose": "^8.19.1",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.9",
-    "sharp": "^0.34.4"
+    "sharp": "^0.34.4",
+    "sharp-gif": "^0.1.7"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
