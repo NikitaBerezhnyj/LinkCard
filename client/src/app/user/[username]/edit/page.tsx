@@ -551,7 +551,7 @@ export default function UserEditPage() {
                       <input
                         id="avatarInput"
                         type="file"
-                        accept="image/*"
+                        accept=".jpg,.jpeg,.png,.webp,.avif,.tiff,.gif"
                         style={{ display: "none" }}
                         onChange={handleAvatarChange}
                       />
@@ -871,7 +871,7 @@ export default function UserEditPage() {
                               <input
                                 id="backgroundInput"
                                 type="file"
-                                accept="image/*"
+                                accept=".jpg,.jpeg,.png,.webp,.avif,.tiff,.gif"
                                 style={{ display: "none" }}
                                 onChange={handleBackgroundUpload}
                               />
