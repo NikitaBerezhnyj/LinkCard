@@ -8,6 +8,7 @@ import Footer from "@/components/layout/Footer";
 import { IoIosShareAlt } from "react-icons/io";
 import { MdSecurity, MdDesignServices } from "react-icons/md";
 import { useAuth } from "@/hooks/useAuth";
+import Loader from "@/components/modals/Loader";
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,6 +18,10 @@ export default function HomePage() {
     const timer = setTimeout(() => setIsLoading(false), 200);
     return () => clearTimeout(timer);
   }, []);
+
+  if (isLoading) {
+    return <Loader isOpen={isLoading} />;
+  }
 
   return (
     <>
