@@ -76,10 +76,14 @@ export const registerUser = async (req: Request, res: Response): Promise<Respons
 
     if (isBrowser) {
       res.cookie("token", token, makeCookieOptions());
-      return res.status(201).json({ message: "User created successfully" });
+      return res
+        .status(201)
+        .json({ username: newUser.username, message: "User created successfully" });
     }
 
-    return res.status(201).json({ token, message: "User created successfully" });
+    return res
+      .status(201)
+      .json({ token, username: newUser.username, message: "User created successfully" });
   } catch (err) {
     console.error("=== Error during user registration ===", err);
     return res.status(500).json({
@@ -109,10 +113,12 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
 
     if (isBrowser) {
       res.cookie("token", token, makeCookieOptions());
-      return res.status(200).json({ message: "Logged in successfully" });
+      return res.status(200).json({ username: user.username, message: "Logged in successfully" });
     }
 
-    return res.status(200).json({ token, message: "Logged in successfully" });
+    return res
+      .status(200)
+      .json({ token, username: user.username, message: "Logged in successfully" });
   } catch (err) {
     console.error("Error during user login:", err);
     return res.status(500).json({ message: "Internal Server Error" });

@@ -3,12 +3,13 @@
 import Link from "next/link";
 import styles from "@/styles/components/Header.module.scss";
 import { useUserStore } from "@/store/userStore";
-import { useAuthValidation } from "@/hooks/useAuthValidation";
 
-export default function Header() {
-  useAuthValidation();
+interface HeaderProps {
+  isAuth: boolean;
+}
 
-  const { username, isAuth } = useUserStore();
+export default function Header({ isAuth }: HeaderProps) {
+  const { username } = useUserStore();
 
   return (
     <header className={styles.header}>

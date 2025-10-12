@@ -44,14 +44,9 @@ export default function LoginPage() {
       return;
     }
 
-    const userResponse = await authService.getCurrentUser();
-
-    if (!userResponse || !userResponse.username) {
-      setError("Не вдалося отримати дані користувача.");
-      return;
+    if (response.data?.username) {
+      setUser(response.data.username);
     }
-
-    setUser(userResponse.username);
 
     router.push("/");
   };

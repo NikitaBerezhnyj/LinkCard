@@ -35,6 +35,7 @@ import { userService } from "@/services/UserService";
 import { authService } from "@/services/AuthService";
 import { uploadService } from "@/services/UploadService";
 import { useUserStore } from "@/store/userStore";
+import { useAuth } from "@/hooks/useAuth";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -71,6 +72,8 @@ export default function UserEditPage() {
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
   const [isUploadingBackground, setIsUploadingBackground] = useState(false);
 
+  const { username: currentUsername } = useAuth({ forceCheck: true });
+
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     action?: ConfirmAction;
@@ -104,27 +107,19 @@ export default function UserEditPage() {
   } as const;
 
   useEffect(() => {
-    const checkUserAccess = async () => {
-      try {
-        const profileResponse = await authService.getCurrentUser();
-        const currentUsername = profileResponse?.username;
-
-        if (!currentUsername) {
-          router.push("/login");
-          return;
-        }
-
-        if (currentUsername !== usernameParam) {
-          router.replace(`/user/${usernameParam}`);
-        }
-      } catch (error) {
-        console.error("Failed to check user access:", error);
+    const checkUserAccess = () => {
+      if (!currentUsername) {
         router.push("/login");
+        return;
+      }
+
+      if (currentUsername !== usernameParam) {
+        router.replace(`/user/${usernameParam}`);
       }
     };
 
     checkUserAccess();
-  }, [usernameParam, router]);
+  }, [usernameParam, currentUsername, router]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -134,17 +129,15 @@ export default function UserEditPage() {
         const response = await userService.getUser(usernameParam);
         const userData = response?.data?.data as IUser | undefined;
 
-        if (!userData) {
-          console.warn("No user data received from server");
-          return;
-        }
+        if (!userData) return;
 
         setOriginalUserData(userData);
+
         setUsername(userData.username);
         setEmail(userData.email);
         setBio(userData.bio || "");
         setLinks(userData.links || []);
-        setUserStyles(userData.styles || templates.dracula);
+        setUserStyles(userData.styles || templates.darkTheme);
         setAvatarUrl(userData.avatar || null);
         setBackgroundUrl(userData.styles.background.value.image || null);
       } catch (error) {
@@ -500,6 +493,10 @@ export default function UserEditPage() {
     closeConfirmModal();
   };
 
+  if (!originalUserData) {
+    return <div>Завантаження...</div>;
+  }
+
   return (
     <main className={styles.mainWrapper}>
       <div className={styles.formContainer}>
@@ -634,7 +631,7 @@ export default function UserEditPage() {
                     <Textarea
                       label="Біографія"
                       placeholder="Розкажіть про себе..."
-                      value={bio}
+                      value={bio ?? ""}
                       onChange={e => setBio(e.target.value)}
                       maxCharacters={200}
                     />

@@ -11,11 +11,11 @@ import { BsQrCode } from "react-icons/bs";
 import { FaRegAddressCard } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import QRCode from "react-qr-code";
-import { authService } from "@/services/AuthService";
 import { FaUserCircle } from "react-icons/fa";
 import { getLinkIcon, getNormalizedLink } from "@/utils/linkUtils";
 import * as fonts from "@/constants/fonts";
 import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function UserPage() {
   const router = useRouter();
@@ -26,6 +26,8 @@ export default function UserPage() {
   const [flipped, setFlipped] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
 
+  const { username: currentUsername } = useAuth();
+
   useEffect(() => {
     const usernameStr = Array.isArray(username) ? username[0] : username;
     if (!usernameStr) return;
@@ -33,16 +35,14 @@ export default function UserPage() {
     const fetchUserData = async () => {
       try {
         setLoading(true);
-
         const res = await userService.getUser(usernameStr);
+
         if (!res.data) throw new Error("User not found");
 
         const userData = res.data.data;
         setUser(userData);
 
-        const currentUser = (await authService.getCurrentUser()) as IUser | null;
-
-        if (currentUser && currentUser.username === userData.username) {
+        if (currentUsername && currentUsername === userData.username) {
           setIsOwner(true);
         } else {
           setIsOwner(false);
@@ -56,7 +56,7 @@ export default function UserPage() {
     };
 
     fetchUserData();
-  }, [username]);
+  }, [username, currentUsername]);
 
   function getFontClassName(fontName?: string): string | undefined {
     if (!fontName) return undefined;

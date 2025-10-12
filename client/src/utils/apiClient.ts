@@ -55,20 +55,20 @@ export class ApiClient {
 
         if (axiosErr.code === "ECONNABORTED") {
           message = "Request timeout (no response for 5 seconds)";
+          console.error(`[API Error] ${method.toUpperCase()} ${url}: ${message}`);
+        } else if (!axiosErr.response) {
+          message = "No response from server";
+          console.error(`[API Error] ${method.toUpperCase()} ${url}: ${message}`);
         } else if (axiosErr.response?.data?.message) {
           message = axiosErr.response.data.message;
-        } else if (axiosErr.response) {
-          message = `Server error (${status})`;
-        } else if (axiosErr.request) {
-          message = "No response from server";
         } else {
-          message = axiosErr.message;
+          message = `Server error (${status})`;
+          console.error(`[API Error] ${method.toUpperCase()} ${url}: ${message}`);
         }
       } else if (err instanceof Error) {
         message = err.message;
+        console.error(`[API Error] ${method.toUpperCase()} ${url}: ${message}`);
       }
-
-      console.error(`[API Error] ${method.toUpperCase()} ${url}: ${message}`);
 
       return {
         data: null,
