@@ -10,34 +10,13 @@
   .container {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; // усе вирівняно ліворуч
+    align-items: flex-start;
     gap: $spacing-sm;
 
     p {
       margin: 0;
       font-size: $font-sm;
       color: $color-text-muted;
-    }
-
-    .links {
-      display: flex;
-      flex-direction: column; // посилання підряд
-      gap: $spacing-xs;
-
-      a {
-        color: $color-text-secondary;
-        text-decoration: none;
-        font-size: $font-sm;
-        transition: color $transition-fast;
-
-        &:hover {
-          color: $color-primary;
-        }
-
-        &:active {
-          color: $color-primary-active;
-        }
-      }
     }
   }
 }
@@ -47,12 +26,8 @@
     padding: $spacing-lg;
 
     .container {
-      align-items: center; // на малих екранах по центру
+      align-items: center;
       text-align: center;
-
-      .links {
-        align-items: center;
-      }
     }
   }
 }
