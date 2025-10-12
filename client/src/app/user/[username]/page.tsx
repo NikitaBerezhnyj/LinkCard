@@ -135,7 +135,6 @@ export default function UserPage() {
       </Link>
       <div className={`${styles.cardContainer} ${flipped ? styles.flipped : ""}`}>
         <div className={styles.card}>
-          {/* FRONT */}
           <div className={`${styles.cardFace} ${styles.front}`} style={cardStyle}>
             <div className={styles.topButtons}>
               <button
@@ -203,7 +202,6 @@ export default function UserPage() {
             </div>
           </div>
 
-          {/* BACK */}
           <div className={`${styles.cardFace} ${styles.back}`} style={cardStyle}>
             <div className={styles.topButtons}>
               <button

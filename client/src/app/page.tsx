@@ -27,7 +27,6 @@ export default function HomePage() {
     <>
       <Header isAuth={isAuth} />
       <main className={styles.homeWrapper}>
-        {/* Hero Section */}
         <section className={`${styles.section} ${styles.hero}`}>
           <div className={styles.content}>
             <h1>
@@ -72,7 +71,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Features Section */}
         <section className={`${styles.section} ${styles.features}`}>
           <h2>Що ми пропонуємо</h2>
           <div className={styles.featuresGrid}>
@@ -94,7 +92,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Call To Action */}
         {!isAuth && (
           <section className={`${styles.section} ${styles.cta}`}>
             <div className={styles.ctaContent}>

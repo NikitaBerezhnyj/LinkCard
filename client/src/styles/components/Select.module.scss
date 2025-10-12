@@ -19,7 +19,7 @@
 .select {
   width: 100%;
   padding: $spacing-sm $spacing-md;
-  padding-right: 2.5rem; // місце для стрілки
+  padding-right: 2.5rem;
   border-radius: $radius-sm;
   border: 1px solid $color-border;
   font-size: $font-md;
@@ -30,7 +30,6 @@
     border-color $transition-fast,
     box-shadow $transition-fast;
 
-  /* Прибираємо дефолтний браузерний вигляд */
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -47,7 +46,7 @@
   right: $spacing-md;
   top: 50%;
   transform: translateY(-50%);
-  pointer-events: none; // щоб не перекривав клік по select
+  pointer-events: none;
   color: $color-text-secondary;
 }
 
