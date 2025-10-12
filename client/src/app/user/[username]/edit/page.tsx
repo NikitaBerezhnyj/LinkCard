@@ -49,7 +49,7 @@ export default function UserEditPage() {
   const router = useRouter();
   const params = useParams();
   const usernameParam = params?.username as string;
-  const { logout } = useUserStore();
+  const { logout, setUser } = useUserStore();
 
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [originalUserData, setOriginalUserData] = useState<IUser | null>(null);
@@ -396,6 +396,8 @@ export default function UserEditPage() {
       return;
     }
 
+    const isUsernameChanged = username !== originalUserData.username;
+
     const usernameValidation =
       username !== originalUserData.username ? validateUsername(username) : null;
     const emailValidation = email !== originalUserData.email ? validateEmail(email) : null;
@@ -469,6 +471,11 @@ export default function UserEditPage() {
       await userService.updateUser(usernameParam, changes);
       toast.success("Профіль успішно оновлено!");
       setOriginalUserData({ ...originalUserData, ...currentData });
+
+      if (isUsernameChanged) {
+        setUser(username);
+      }
+
       router.push(`/user/${username}`);
     } catch (err: unknown) {
       console.error("Failed to update user:", err);
