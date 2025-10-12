@@ -16,12 +16,13 @@ import { getLinkIcon, getNormalizedLink } from "@/utils/linkUtils";
 import * as fonts from "@/constants/fonts";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import Loader from "@/components/modals/Loader";
 
 export default function UserPage() {
   const router = useRouter();
   const { username } = useParams();
   const [user, setUser] = useState<IUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
@@ -34,7 +35,7 @@ export default function UserPage() {
 
     const fetchUserData = async () => {
       try {
-        setLoading(true);
+        setIsLoading(true);
         const res = await userService.getUser(usernameStr);
 
         if (!res.data) throw new Error("User not found");
@@ -51,7 +52,7 @@ export default function UserPage() {
         console.error(err);
         setError("Failed to load user.");
       } finally {
-        setLoading(false);
+        setIsLoading(false);
       }
     };
 
@@ -65,7 +66,10 @@ export default function UserPage() {
     return fontObj?.className;
   }
 
-  if (loading) return <p className={styles.loading}>Loading...</p>;
+  if (isLoading) {
+    return <Loader isOpen={true} />;
+  }
+
   if (error || !user) return <p className={styles.error}>{error || "User not found."}</p>;
 
   const s = user.styles || {};

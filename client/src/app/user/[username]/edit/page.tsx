@@ -36,6 +36,7 @@ import { authService } from "@/services/AuthService";
 import { uploadService } from "@/services/UploadService";
 import { useUserStore } from "@/store/userStore";
 import { useAuth } from "@/hooks/useAuth";
+import Loader from "@/components/modals/Loader";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -52,6 +53,7 @@ export default function UserEditPage() {
   const usernameParam = params?.username as string;
   const { logout, setUser } = useUserStore();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [originalUserData, setOriginalUserData] = useState<IUser | null>(null);
 
@@ -126,6 +128,8 @@ export default function UserEditPage() {
       try {
         if (!usernameParam) return;
 
+        setIsLoading(true);
+
         const response = await userService.getUser(usernameParam);
         const userData = response?.data?.data as IUser | undefined;
 
@@ -142,6 +146,8 @@ export default function UserEditPage() {
         setBackgroundUrl(userData.styles.background.value.image || null);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -492,6 +498,10 @@ export default function UserEditPage() {
     router.push(`/user/${username}`);
     closeConfirmModal();
   };
+
+  if (isLoading) {
+    return <Loader isOpen={true} />;
+  }
 
   if (!originalUserData) {
     return <div>Завантаження...</div>;

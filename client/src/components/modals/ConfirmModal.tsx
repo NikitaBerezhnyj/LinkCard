@@ -11,7 +11,7 @@ interface ConfirmModalProps {
   cancelText?: string;
   onConfirm: () => void;
   onCancel: () => void;
-  danger?: boolean; // якщо дія небезпечна (червона кнопка)
+  danger?: boolean;
 }
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({
