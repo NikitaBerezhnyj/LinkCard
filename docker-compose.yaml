@@ -76,6 +76,18 @@ services:
     volumes:
       - minio_data:/data
 
+  cleanup:
+    build:
+      context: ./cleanup
+      dockerfile: Dockerfile
+    container_name: linkcard_cleanup
+    env_file:
+      - .env
+    depends_on:
+      - server
+      - mongo
+      - minio
+
 volumes:
   mongo_data:
   minio_data:
