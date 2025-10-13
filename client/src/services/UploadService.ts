@@ -6,17 +6,13 @@ export const uploadService = {
     const formData = new FormData();
     formData.append("file", file);
 
-    return apiClient.post<IUploadResponse, FormData>("/upload-avatar", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
+    return apiClient.post<IUploadResponse, FormData>("/upload-avatar", formData);
   },
 
   uploadBackground: (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
 
-    return apiClient.post<IUploadResponse, FormData>("/upload-background", formData, {
-      headers: { "Content-Type": "multipart/form-data" }
-    });
+    return apiClient.post<IUploadResponse, FormData>("/upload-background", formData);
   }
 };

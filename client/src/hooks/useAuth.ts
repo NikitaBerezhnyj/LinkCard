@@ -28,6 +28,7 @@ export function useAuth(options: { forceCheck?: boolean } = {}) {
             updateLastChecked();
           }
         } else {
+          await authService.logout();
           logout();
         }
       } catch (error) {
@@ -36,6 +37,7 @@ export function useAuth(options: { forceCheck?: boolean } = {}) {
         if (error && typeof error === "object" && "response" in error) {
           const axiosError = error as { response?: { status: number } };
           if (axiosError.response?.status === 403) {
+            await authService.logout();
             logout();
           }
         }
