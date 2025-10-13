@@ -18,7 +18,7 @@ const PASSTHROUGH_FORMATS = ["image/gif", "image/svg+xml"];
 
 const MIN_DIMENSIONS = {
   avatar: { width: 100, height: 100 },
-  background: { width: 800, height: 600 }
+  background: { width: 400, height: 200 }
 };
 
 const validateImageDimensions = async (

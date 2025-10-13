@@ -71,8 +71,12 @@ export const uploadAvatar = async (req: Request, res: Response): Promise<void> =
       filePath: `http://localhost:${process.env.MINIO_API_PORT}/${process.env.MINIO_BUCKET}/${key}`
     });
   } catch (error) {
-    console.error("Error uploading avatar to MinIO:", error);
-    res.status(500).send({ message: "Error uploading avatar" });
+    if (error instanceof Error && error.message.includes("too small")) {
+      res.status(400).json({ message: error.message });
+    } else {
+      console.error("Error uploading avatar to MinIO:", error);
+      res.status(500).send({ message: "Error uploading avatar" });
+    }
   }
 };
 
@@ -112,7 +116,11 @@ export const uploadBackground = async (req: Request, res: Response): Promise<voi
       filePath: `http://localhost:${process.env.MINIO_API_PORT}/${process.env.MINIO_BUCKET}/${key}`
     });
   } catch (error) {
-    console.error("Error uploading background to MinIO:", error);
-    res.status(500).send({ message: "Error uploading background" });
+    if (error instanceof Error && error.message.includes("too small")) {
+      res.status(400).json({ message: error.message });
+    } else {
+      console.error("Error uploading background to MinIO:", error);
+      res.status(500).json({ message: "Error uploading background" });
+    }
   }
 };
