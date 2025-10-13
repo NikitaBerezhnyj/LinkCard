@@ -18,14 +18,12 @@ import { IoMdDocument } from "react-icons/io";
 import { FaPlus, FaUserCircle } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import type { AxiosError } from "axios";
-
 import styles from "@/styles/pages/Edit.module.scss";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import Select from "@/components/ui/Select";
 import Textarea from "@/components/ui/Textarea";
 import ConfirmModal from "@/components/modals/ConfirmModal";
-
 import { IUser } from "@/types/IUser";
 import * as templates from "@/constants/templates";
 import * as fonts from "@/constants/fonts";
@@ -37,6 +35,7 @@ import { uploadService } from "@/services/UploadService";
 import { useUserStore } from "@/store/userStore";
 import { useAuth } from "@/hooks/useAuth";
 import Loader from "@/components/modals/Loader";
+import axios from "axios";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -44,6 +43,15 @@ type ConfirmAction =
   | { type: "cancelChanges" }
   | { type: "logout" }
   | { type: "deleteAccount" };
+
+type UploadType = "avatar" | "background";
+interface UploadOptions {
+  type: UploadType;
+  maxSizeMB: number;
+  onSuccess: (url: string) => void;
+  onStart?: () => void;
+  onFinish?: () => void;
+}
 
 type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
 
@@ -154,58 +162,75 @@ export default function UserEditPage() {
     fetchUserData();
   }, [usernameParam]);
 
-  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    options: UploadOptions
+  ) => {
+    const { type, maxSizeMB, onSuccess, onStart, onFinish } = options;
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Файл занадто великий. Максимум 5MB");
+    if (file.size > maxSizeMB * 1024 * 1024) {
+      toast.error(`Файл занадто великий. Максимум ${maxSizeMB}MB`);
       return;
     }
 
     try {
-      setIsUploadingAvatar(true);
-      const response = await uploadService.uploadAvatar(file);
-      const newUrl = response.data?.filePath;
+      onStart?.();
 
-      if (newUrl) {
-        setAvatarUrl(newUrl);
-        toast.success("Аватарку оновлено!");
+      const response =
+        type === "avatar"
+          ? await uploadService.uploadAvatar(file)
+          : await uploadService.uploadBackground(file);
+
+      const newUrl = response.data?.filePath;
+      if (!newUrl) throw new Error("Не вдалося завантажити зображення.");
+
+      onSuccess(newUrl);
+      toast.success(type === "avatar" ? "Аватарку оновлено!" : "Фон оновлено!");
+    } catch (error: unknown) {
+      console.error(`❌ Помилка завантаження ${type}:`, error);
+
+      let errorMessage =
+        type === "avatar" ? "Не вдалося завантажити аватарку." : "Не вдалося завантажити фон.";
+
+      if (axios.isAxiosError(error)) {
+        const data = error.response?.data;
+        if (typeof data === "object" && data && "message" in data) {
+          errorMessage = (data as { message: string }).message;
+        } else if (typeof data === "string") {
+          errorMessage = data;
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
       }
-    } catch (error) {
-      console.error("Avatar upload failed:", error);
-      toast.error("Не вдалося завантажити аватарку.");
+
+      toast.error(errorMessage);
     } finally {
-      setIsUploadingAvatar(false);
+      onFinish?.();
     }
   };
 
-  const handleBackgroundUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) =>
+    handleImageUpload(event, {
+      type: "avatar",
+      maxSizeMB: 5,
+      onStart: () => setIsUploadingAvatar(true),
+      onFinish: () => setIsUploadingAvatar(false),
+      onSuccess: url => setAvatarUrl(url)
+    });
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error("Файл занадто великий. Максимум 10MB");
-      return;
-    }
-
-    try {
-      setIsUploadingBackground(true);
-      const response = await uploadService.uploadBackground(file);
-      const newUrl = response.data?.filePath;
-
-      if (newUrl) {
-        setBackgroundUrl(newUrl);
-        handleStyleChange("background.value.image", newUrl);
-        toast.success("Фон оновлено!");
+  const handleBackgroundUpload = (event: React.ChangeEvent<HTMLInputElement>) =>
+    handleImageUpload(event, {
+      type: "background",
+      maxSizeMB: 10,
+      onStart: () => setIsUploadingBackground(true),
+      onFinish: () => setIsUploadingBackground(false),
+      onSuccess: url => {
+        setBackgroundUrl(url);
+        handleStyleChange("background.value.image", url);
       }
-    } catch (error) {
-      console.error("Background upload failed:", error);
-      toast.error("Не вдалося завантажити фон.");
-    } finally {
-      setIsUploadingBackground(false);
-    }
-  };
+    });
 
   const handlePasswordResetRequest = async () => {
     try {
