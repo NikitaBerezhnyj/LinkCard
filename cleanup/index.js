@@ -43,10 +43,18 @@ const cleanup = async () => {
     ).lean();
 
     const usedKeys = new Set();
+
     for (const user of users) {
-      if (user.avatar) usedKeys.add(user.avatar.split("/").pop());
+      if (user.avatar) {
+        const avatarKey = new URL(user.avatar).pathname;
+        usedKeys.add(avatarKey.replace(/^\/linkcard\//, ""));
+      }
+
       const bgImage = user.styles?.background?.value?.image;
-      if (bgImage) usedKeys.add(bgImage.split("/").pop());
+      if (bgImage) {
+        const bgKey = new URL(bgImage).pathname;
+        usedKeys.add(bgKey.replace(/^\/linkcard\//, ""));
+      }
     }
 
     const list = await s3Client.send(
