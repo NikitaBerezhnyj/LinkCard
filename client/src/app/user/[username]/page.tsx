@@ -1,25 +1,23 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Image from "next/image";
-import { userService } from "@/services/UserService";
-import { IUser } from "@/types/IUser";
-import styles from "@/styles/pages/User.module.scss";
-import { BsQrCode } from "react-icons/bs";
-import { FaRegAddressCard } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
+import Link from "next/link";
 import QRCode from "react-qr-code";
-import { FaUserCircle } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
+import { BsQrCode } from "react-icons/bs";
+import { FaRegAddressCard, FaUserCircle } from "react-icons/fa";
+import { MdEdit } from "react-icons/md";
+import { IUser } from "@/types/IUser";
+import { userService } from "@/services/UserService";
+import { accessManager } from "@/managers/accessManager";
 import { getLinkIcon, getNormalizedLink } from "@/utils/linkUtils";
 import * as fonts from "@/constants/fonts";
-import Link from "next/link";
-import { useAuth } from "@/hooks/useAuth";
 import Loader from "@/components/modals/Loader";
-import { useTranslation } from "react-i18next";
 import Select from "@/components/ui/Select";
 import ErrorPage from "@/app/error";
+import styles from "@/styles/pages/User.module.scss";
 
 export default function UserPage() {
   const router = useRouter();
@@ -31,7 +29,6 @@ export default function UserPage() {
   const [isOwner, setIsOwner] = useState(false);
   const { t, i18n } = useTranslation();
   const [language, setLanguage] = useState<"ua" | "en" | "es">("ua");
-  const { username: currentUsername } = useAuth();
 
   const languageOptions = [
     { value: "ua", label: "UA" },
@@ -43,21 +40,24 @@ export default function UserPage() {
     const usernameStr = Array.isArray(username) ? username[0] : username;
     if (!usernameStr) return;
 
-    const fetchUserData = async () => {
+    const initPage = async () => {
       setIsLoading(true);
-
       try {
-        const res = await userService.getUser(usernameStr);
+        const currentUsername = await accessManager.getCurrentUserCached();
 
+        const res = await userService.getUser(usernameStr);
         const userData = res?.data?.data;
 
         if (!userData) {
           setError(new Error(t("user-page.userNotFound")));
           setUser(null);
-        } else {
-          setUser(userData);
-          setError(null);
+          return;
         }
+
+        setUser(userData);
+        setError(null);
+
+        setIsOwner(currentUsername === userData.username);
       } catch (err) {
         console.error("Fetch user failed:", err);
         setError(err instanceof Error ? err : new Error(String(err)));
@@ -67,14 +67,8 @@ export default function UserPage() {
       }
     };
 
-    fetchUserData();
-  }, [username, currentUsername, t]);
-
-  useEffect(() => {
-    if (user && currentUsername) {
-      setIsOwner(currentUsername === user.username);
-    }
-  }, [user, currentUsername]);
+    initPage();
+  }, [username, t]);
 
   useEffect(() => {
     const current = i18n.language.toLowerCase();
@@ -91,12 +85,12 @@ export default function UserPage() {
     i18n.changeLanguage(newLang);
   };
 
-  function getFontClassName(fontName?: string): string | undefined {
+  const getFontClassName = (fontName?: string): string | undefined => {
     if (!fontName) return undefined;
     const key = fontName.replace(/\s+/g, "").toLowerCase();
     const fontObj = (fonts as Record<string, { className: string }>)[key];
     return fontObj?.className;
-  }
+  };
 
   if (isLoading) {
     return <Loader isOpen={true} />;
@@ -114,27 +108,25 @@ export default function UserPage() {
   }
 
   const s = user.styles || {};
-
   const fontClassName = getFontClassName(s.font);
 
-  const backgroundStyle: React.CSSProperties = s.background
-    ? s.background.type === "color"
+  const backgroundStyle: React.CSSProperties =
+    s.background?.type === "color"
       ? { backgroundColor: s.background.value.color }
-      : s.background.type === "gradient"
+      : s.background?.type === "gradient"
         ? {
             background: `linear-gradient(${s.background.value.gradient?.angle || "135deg"}, ${
               s.background.value.gradient?.start
             }, ${s.background.value.gradient?.end})`
           }
-        : s.background.type === "image"
+        : s.background?.type === "image"
           ? {
               backgroundImage: `url(${s.background.value.image})`,
               backgroundPosition: s.background.value.position,
               backgroundSize: s.background.value.size,
               backgroundRepeat: s.background.value.repeat
             }
-          : {}
-    : {};
+          : {};
 
   const cardStyle: React.CSSProperties = {
     ...(s.contentBackground && { backgroundColor: s.contentBackground }),
@@ -193,8 +185,10 @@ export default function UserPage() {
           arrowColor={s.text}
         />
       </div>
+
       <div className={`${styles.cardContainer} ${flipped ? styles.flipped : ""}`}>
         <div className={styles.card}>
+          {/* FRONT */}
           <div className={`${styles.cardFace} ${styles.front}`} style={cardStyle}>
             <div className={styles.topButtons}>
               <button
@@ -206,6 +200,7 @@ export default function UserPage() {
               >
                 <BsQrCode />
               </button>
+
               {isOwner && (
                 <button
                   className={styles.qrButton}
@@ -225,11 +220,9 @@ export default function UserPage() {
                 alt={user.username}
                 width={150}
                 height={150}
-                unoptimized={true}
+                unoptimized
                 className={styles.avatar}
-                style={{
-                  ...(s.border && { border: `2px solid ${s.border}` })
-                }}
+                style={s.border ? { border: `2px solid ${s.border}` } : {}}
               />
             ) : (
               <FaUserCircle className={styles.avatarPlaceholder} style={textStyle} />
@@ -242,7 +235,6 @@ export default function UserPage() {
               {user.links.map((link, idx) => {
                 const url = link.url.trim();
                 const normalizedUrl = getNormalizedLink(url);
-
                 return (
                   <a
                     key={idx}
@@ -262,6 +254,7 @@ export default function UserPage() {
             </div>
           </div>
 
+          {/* BACK */}
           <div className={`${styles.cardFace} ${styles.back}`} style={cardStyle}>
             <div className={styles.topButtons}>
               <button
@@ -274,6 +267,7 @@ export default function UserPage() {
                 <FaRegAddressCard />
               </button>
             </div>
+
             <div className={styles.qrWrapper}>
               <h1 style={textStyle}>{t("user-page.qrCodeTitle")}</h1>
               <div

@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import styles from "@/styles/pages/Error.module.scss";
 import Button from "@/components/ui/Button";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
-import { useAuth } from "@/hooks/useAuth";
 import { FaRegSadTear } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
+import { accessManager } from "@/managers/accessManager";
 
 interface ErrorProps {
   error: Error;
@@ -15,11 +15,22 @@ interface ErrorProps {
 }
 
 export default function ErrorPage({ error, reset }: ErrorProps) {
-  const { isAuth } = useAuth();
+  const [isAuth, setIsAuth] = useState<boolean>(false);
   const { t } = useTranslation();
 
   useEffect(() => {
     console.error(error);
+
+    const checkAccess = async () => {
+      try {
+        const username = await accessManager.getCurrentUserCached();
+        setIsAuth(!!username);
+      } catch {
+        setIsAuth(false);
+      }
+    };
+
+    checkAccess();
   }, [error]);
 
   return (

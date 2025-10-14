@@ -16,6 +16,31 @@ export class ApiClient {
       withCredentials: true,
       headers: {}
     });
+
+    this.client.interceptors.response.use(
+      response => response,
+      async error => {
+        const originalRequest = error.config;
+
+        if (
+          (error.response?.status === 401 || error.response?.status === 403) &&
+          !originalRequest._retry &&
+          !originalRequest.url?.includes("/logout")
+        ) {
+          originalRequest._retry = true;
+
+          await new Promise(resolve => setTimeout(resolve, 100));
+
+          try {
+            return await this.client(originalRequest);
+          } catch (retryError) {
+            return Promise.reject(retryError);
+          }
+        }
+
+        return Promise.reject(error);
+      }
+    );
   }
 
   private async request<T, D = undefined>(

@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import styles from "@/styles/pages/Home.module.scss";
 import Button from "@/components/ui/Button";
@@ -7,18 +8,34 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { IoIosShareAlt } from "react-icons/io";
 import { MdSecurity, MdDesignServices } from "react-icons/md";
-import { useAuth } from "@/hooks/useAuth";
 import Loader from "@/components/modals/Loader";
 import { useTranslation } from "react-i18next";
+import { accessManager } from "@/managers/accessManager";
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
-  const { username, isAuth } = useAuth();
+  const [isAuth, setIsAuth] = useState<boolean>(false);
+  const [username, setUsername] = useState<string | null>(null);
   const { t } = useTranslation();
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 200);
-    return () => clearTimeout(timer);
+    const checkAccess = async () => {
+      try {
+        const username = await accessManager.getCurrentUserCached();
+        if (username) {
+          setIsAuth(true);
+          setUsername(username);
+        } else {
+          setIsAuth(false);
+        }
+      } catch {
+        setIsAuth(false);
+      } finally {
+        setTimeout(() => setIsLoading(false), 200);
+      }
+    };
+
+    checkAccess();
   }, []);
 
   if (isLoading) {

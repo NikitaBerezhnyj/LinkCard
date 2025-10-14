@@ -34,10 +34,10 @@ import { userService } from "@/services/UserService";
 import { authService } from "@/services/AuthService";
 import { uploadService } from "@/services/UploadService";
 import { useUserStore } from "@/store/userStore";
-import { useAuth } from "@/hooks/useAuth";
 import Loader from "@/components/modals/Loader";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import { accessManager } from "@/managers/accessManager";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -79,12 +79,11 @@ export default function UserEditPage() {
   const [linkErrors, setLinkErrors] = useState<(string | null)[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const [openSection, setOpenSection] = useState<string>("Colors");
+  const [openSection, setOpenSection] = useState<string>("colors");
   const [userStyles, setUserStyles] = useState<IUser["styles"]>(templates.darkTheme);
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
   const [isUploadingBackground, setIsUploadingBackground] = useState(false);
   const { t } = useTranslation();
-  const { username: currentUsername } = useAuth({ forceCheck: true });
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -119,50 +118,47 @@ export default function UserEditPage() {
   } as const;
 
   useEffect(() => {
-    const checkUserAccess = () => {
-      if (!currentUsername) {
-        router.push("/login");
-        return;
-      }
-
-      if (currentUsername !== usernameParam) {
-        router.replace(`/user/${usernameParam}`);
-      }
-    };
-
-    checkUserAccess();
-  }, [usernameParam, currentUsername, router]);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
+    const initPage = async () => {
       try {
         if (!usernameParam) return;
 
         setIsLoading(true);
 
-        const response = await userService.getUser(usernameParam);
-        const userData = response?.data?.data as IUser | undefined;
+        const accessData = await accessManager.checkEditPageAccess(usernameParam);
 
-        if (!userData) return;
+        if (!accessData) {
+          const currentUser = await accessManager.getCurrentUserCached();
 
-        setOriginalUserData(userData);
+          if (!currentUser) {
+            router.push("/login");
+          } else {
+            router.replace(`/user/${usernameParam}`);
+          }
+          return;
+        }
 
-        setUsername(userData.username);
-        setEmail(userData.email);
-        setBio(userData.bio || "");
-        setLinks(userData.links || []);
-        setUserStyles(userData.styles || templates.darkTheme);
-        setAvatarUrl(userData.avatar || null);
-        setBackgroundUrl(userData.styles.background.value.image || null);
+        const { pageUser } = accessData;
+
+        setUser(accessData.currentUser);
+        setOriginalUserData(pageUser);
+
+        setUsername(pageUser.username);
+        setEmail(pageUser.email);
+        setBio(pageUser.bio || "");
+        setLinks(pageUser.links || []);
+        setUserStyles(pageUser.styles || templates.darkTheme);
+        setAvatarUrl(pageUser.avatar || null);
+        setBackgroundUrl(pageUser.styles.background.value.image || null);
       } catch (error) {
-        console.error("Failed to fetch user data:", error);
+        console.error("Failed to initialize page:", error);
+        router.push("/login");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchUserData();
-  }, [usernameParam]);
+    initPage();
+  }, [usernameParam, router, setUser]);
 
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>,
