@@ -1,5 +1,227 @@
 {
-  "login": "Login",
-  "profile": "Profile",
-  "language": "Language"
+  "header": { "login": "Login", "profile": "Profile" },
+
+  "footer": { "allRightsReserved": "All rights reserved" },
+
+  "confirm-modal": {
+    "confirmTitle": "Are you sure?",
+    "confirmMessage": "This action cannot be undone.",
+    "confirmButton": "Yes",
+    "cancelButton": "No"
+  },
+
+  "home": {
+    "greeting": "Welcome, {{username}} 👋",
+    "heroMessageAuth": "Return to your profile or create a new style for your page.",
+    "heroMessageGuest": "Manage your profile, add links, customize your style, and share it with friends — simple and beautiful.",
+    "goToProfile": "Go to profile",
+    "editPage": "Edit page",
+    "startNow": "Start now",
+    "login": "Login",
+    "featuresTitle": "What we offer",
+    "featureCustom": "Full customization",
+    "featureCustomDesc": "Change colors, background, fonts, and design to match your style.",
+    "featureShare": "Share with everyone",
+    "featureShareDesc": "Add your social links, contacts, and tell the world about yourself.",
+    "featureSecure": "Secure account",
+    "featureSecureDesc": "We care about your privacy and account security.",
+    "ctaTitle": "Ready to create your own page?",
+    "ctaDesc": "Join the community of users who already have their unique card.",
+    "ctaButton": "Create account"
+  },
+
+  "auth": {
+    "loginTitle": "Login",
+    "registerTitle": "Register",
+    "forgotPasswordTitle": "Forgot Password",
+    "resetPasswordTitle": "Reset Password",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "newPassword": "New Password",
+    "emailRequired": "Email is required",
+    "usernameRequired": "Username is required",
+    "passwordRequired": "Password is required",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "sendResetLink": "Send Reset Link",
+    "resetPasswordButton": "Reset Password",
+    "helperNoAccount": "Don’t have an account yet? Sign up now",
+    "helperHaveAccount": "Already have an account? Login",
+    "helperForgotPassword": "Forgot your password? Reset it here",
+    "helperRememberPassword": "Remembered your password? Back to login"
+  },
+
+  "user-page": {
+    "qrCodeTitle": "QR code",
+    "scanProfile": "Scan to open this profile",
+    "userNotFound": "User not found"
+  },
+
+  "edit": {
+    "title": "Edit Profile",
+    "tabs": {
+      "profile": "Profile",
+      "styles": "Styles"
+    },
+    "avatar": {
+      "title": "Avatar",
+      "uploading": "Uploading...",
+      "hint": "JPG, PNG or GIF. Max 5MB"
+    },
+    "basicInfo": {
+      "title": "Basic Information",
+      "username": "Username",
+      "email": "Email"
+    },
+    "security": {
+      "title": "Security",
+      "hint": "Click to receive a password reset email",
+      "password": "Password",
+      "changePassword": "Change Password",
+      "emailRequired": "Email cannot be empty.",
+      "resetEmailSent": "Password reset instructions sent to your email.",
+      "resetEmailError": "Failed to send email. Please try again later."
+    },
+    "bio": {
+      "title": "About",
+      "label": "Biography",
+      "placeholder": "Tell us about yourself..."
+    },
+    "links": {
+      "title": "Links",
+      "subtitle": "Social media and websites",
+      "titlePlaceholder": "Title (e.g. GitHub)",
+      "urlPlaceholder": "https://example.com",
+      "deleteTooltip": "Delete link",
+      "empty": "You haven't added any links yet"
+    },
+    "dangerZone": {
+      "title": "Danger Zone",
+      "logout": "Log Out",
+      "deleteAccount": "Delete Account Forever"
+    },
+    "styles": {
+      "sections": {
+        "templates": "Templates",
+        "background": "Background",
+        "typography": "Typography",
+        "colors": "Colors",
+        "layout": "Layout"
+      },
+      "templatesHint": "Selecting a template will replace all current styles with the chosen template's styles",
+      "templateApplied": "Template \"{{template}}\" applied",
+      "background": {
+        "type": "Type",
+        "typeColor": "Color",
+        "typeGradient": "Gradient",
+        "typeImage": "Image",
+        "backgroundColor": "Background Color",
+        "gradientStart": "Start Color",
+        "gradientEnd": "End Color",
+        "gradientAngle": "Angle (degrees)",
+        "uploadPrompt": "Click to upload background",
+        "position": "Position",
+        "posCenter": "Center",
+        "posTop": "Top",
+        "posBottom": "Bottom",
+        "posLeft": "Left",
+        "posRight": "Right",
+        "size": "Size",
+        "sizeCover": "Cover",
+        "sizeContain": "Contain",
+        "sizeAuto": "Auto"
+      },
+      "typography": {
+        "font": "Font",
+        "fontSize": "Size (px)",
+        "fontWeight": "Weight",
+        "weightLight": "Light",
+        "weightNormal": "Normal",
+        "weightMedium": "Medium",
+        "weightSemibold": "Semibold",
+        "weightBold": "Bold",
+        "textAlign": "Alignment",
+        "alignLeft": "Left",
+        "alignCenter": "Center",
+        "alignRight": "Right"
+      },
+      "colors": {
+        "text": "Text",
+        "linkText": "Link",
+        "buttonText": "Button Text",
+        "buttonBackground": "Button Background",
+        "buttonHoverText": "Hover Text",
+        "buttonHoverBackground": "Hover Background",
+        "border": "Border",
+        "contentBackground": "Content Background"
+      },
+      "layout": {
+        "borderRadius": "Border Radius (px)",
+        "padding": "Padding (px)",
+        "gap": "Gap (px)"
+      }
+    },
+    "upload": {
+      "fileTooLarge": "File is too large. Max {{size}}MB",
+      "uploadFailed": "Failed to upload image.",
+      "avatarSuccess": "Avatar updated!",
+      "backgroundSuccess": "Background updated!",
+      "avatarError": "Failed to upload avatar.",
+      "backgroundError": "Failed to upload background."
+    },
+    "validation": {
+      "fixErrors": "Please fix form errors",
+      "noChanges": "No changes to save",
+      "updateSuccess": "Profile successfully updated!",
+      "updateError": "Failed to update user data. Please try again later."
+    },
+    "modal": {
+      "deleteLink": {
+        "title": "Delete Link?",
+        "message": "This link will be permanently deleted.",
+        "confirmText": "Yes, delete",
+        "cancelText": "Cancel"
+      },
+      "cancelChanges": {
+        "title": "Cancel Changes?",
+        "message": "All unsaved changes will be lost.",
+        "confirmText": "Yes, cancel",
+        "cancelText": "Go back"
+      },
+      "logout": {
+        "title": "Log Out?",
+        "message": "Are you sure you want to log out?",
+        "confirmText": "Yes, log out",
+        "cancelText": "Cancel"
+      },
+      "deleteAccount": {
+        "title": "Delete Account Forever?",
+        "message": "Your account and all data will be permanently deleted. This action cannot be undone!",
+        "confirmText": "Yes, delete forever",
+        "cancelText": "Cancel"
+      }
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save Changes"
+    },
+    "errors": {
+      "userNotFound": "User data not found"
+    }
+  },
+
+  "not-found": {
+    "title": "Page not found",
+    "message": "Sorry, but this page does not exist.",
+    "goHome": "Go to Home",
+    "createAccount": "Create Account"
+  },
+
+  "error": {
+    "title": "Something went wrong",
+    "message": "An error occurred",
+    "tryAgain": "Try again",
+    "goHome": "Go to Home"
+  }
 }

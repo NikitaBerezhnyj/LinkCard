@@ -1,5 +1,205 @@
 {
-  "login": "Login",
-  "profile": "Profile",
-  "language": "Language"
+  "header": { "login": "Iniciar sesión", "profile": "Perfil" },
+
+  "footer": { "allRightsReserved": "Todos los derechos reservados" },
+
+  "confirm-modal": {
+    "confirmTitle": "¿Estás seguro?",
+    "confirmMessage": "Esta acción no se puede deshacer.",
+    "confirmButton": "Sí",
+    "cancelButton": "No"
+  },
+
+  "home": {
+    "greeting": "¡Bienvenido, {{username}}! 👋",
+    "heroMessageAuth": "Vuelve a tu perfil o crea un nuevo estilo para tu página.",
+    "heroMessageGuest": "Gestiona tu perfil, agrega enlaces, personaliza tu estilo y compártelo con amigos — simple y bonito.",
+    "goToProfile": "Ir al perfil",
+    "editPage": "Editar página",
+    "startNow": "Comenzar ahora",
+    "login": "Iniciar sesión",
+    "featuresTitle": "Lo que ofrecemos",
+    "featureCustom": "Personalización completa",
+    "featureCustomDesc": "Cambia colores, fondo, fuentes y diseño para que coincida con tu estilo.",
+    "featureShare": "Compartir con todos",
+    "featureShareDesc": "Agrega tus enlaces sociales, contactos y cuéntale al mundo sobre ti.",
+    "featureSecure": "Cuenta segura",
+    "featureSecureDesc": "Nos preocupamos por tu privacidad y la seguridad de tu cuenta.",
+    "ctaTitle": "¿Listo para crear tu propia página?",
+    "ctaDesc": "Únete a la comunidad de usuarios que ya tienen su tarjeta única.",
+    "ctaButton": "Crear cuenta"
+  },
+
+  "user-page": {
+    "qrCodeTitle": "Código QR",
+    "scanProfile": "Escanea para abrir este perfil",
+    "userNotFound": "Usuario no encontrado"
+  },
+
+  "edit": {
+    "title": "Editar Perfil",
+    "tabs": {
+      "profile": "Perfil",
+      "styles": "Estilos"
+    },
+    "avatar": {
+      "title": "Avatar",
+      "uploading": "Cargando...",
+      "hint": "JPG, PNG o GIF. Máximo 5MB"
+    },
+    "basicInfo": {
+      "title": "Información Básica",
+      "username": "Nombre de usuario",
+      "email": "Correo electrónico"
+    },
+    "security": {
+      "title": "Seguridad",
+      "hint": "Haz clic para recibir un correo para cambiar la contraseña",
+      "password": "Contraseña",
+      "changePassword": "Cambiar Contraseña",
+      "emailRequired": "El correo electrónico no puede estar vacío.",
+      "resetEmailSent": "Instrucciones para restablecer contraseña enviadas a tu correo.",
+      "resetEmailError": "No se pudo enviar el correo. Inténtalo más tarde."
+    },
+    "bio": {
+      "title": "Acerca de",
+      "label": "Biografía",
+      "placeholder": "Cuéntanos sobre ti..."
+    },
+    "links": {
+      "title": "Enlaces",
+      "subtitle": "Redes sociales y sitios web",
+      "titlePlaceholder": "Título (ej. GitHub)",
+      "urlPlaceholder": "https://ejemplo.com",
+      "deleteTooltip": "Eliminar enlace",
+      "empty": "Aún no has añadido ningún enlace"
+    },
+    "dangerZone": {
+      "title": "Zona Peligrosa",
+      "logout": "Cerrar Sesión",
+      "deleteAccount": "Eliminar Cuenta Para Siempre"
+    },
+    "styles": {
+      "sections": {
+        "templates": "Plantillas",
+        "background": "Fondo",
+        "typography": "Tipografía",
+        "colors": "Colores",
+        "layout": "Diseño"
+      },
+      "templatesHint": "Seleccionar una plantilla reemplazará todos los estilos actuales con los de la plantilla elegida",
+      "templateApplied": "Plantilla \"{{template}}\" aplicada",
+      "background": {
+        "type": "Tipo",
+        "typeColor": "Color",
+        "typeGradient": "Degradado",
+        "typeImage": "Imagen",
+        "backgroundColor": "Color de Fondo",
+        "gradientStart": "Color Inicial",
+        "gradientEnd": "Color Final",
+        "gradientAngle": "Ángulo (grados)",
+        "uploadPrompt": "Haz clic para subir fondo",
+        "position": "Posición",
+        "posCenter": "Centro",
+        "posTop": "Arriba",
+        "posBottom": "Abajo",
+        "posLeft": "Izquierda",
+        "posRight": "Derecha",
+        "size": "Tamaño",
+        "sizeCover": "Cubrir",
+        "sizeContain": "Contener",
+        "sizeAuto": "Auto"
+      },
+      "typography": {
+        "font": "Fuente",
+        "fontSize": "Tamaño (px)",
+        "fontWeight": "Peso",
+        "weightLight": "Ligero",
+        "weightNormal": "Normal",
+        "weightMedium": "Medio",
+        "weightSemibold": "Semi-negrita",
+        "weightBold": "Negrita",
+        "textAlign": "Alineación",
+        "alignLeft": "Izquierda",
+        "alignCenter": "Centro",
+        "alignRight": "Derecha"
+      },
+      "colors": {
+        "text": "Texto",
+        "linkText": "Enlace",
+        "buttonText": "Texto del Botón",
+        "buttonBackground": "Fondo del Botón",
+        "buttonHoverText": "Texto al Pasar",
+        "buttonHoverBackground": "Fondo al Pasar",
+        "border": "Borde",
+        "contentBackground": "Fondo del Contenido"
+      },
+      "layout": {
+        "borderRadius": "Radio del Borde (px)",
+        "padding": "Relleno (px)",
+        "gap": "Espacio (px)"
+      }
+    },
+    "upload": {
+      "fileTooLarge": "El archivo es demasiado grande. Máximo {{size}}MB",
+      "uploadFailed": "No se pudo subir la imagen.",
+      "avatarSuccess": "¡Avatar actualizado!",
+      "backgroundSuccess": "¡Fondo actualizado!",
+      "avatarError": "No se pudo subir el avatar.",
+      "backgroundError": "No se pudo subir el fondo."
+    },
+    "validation": {
+      "fixErrors": "Por favor, corrige los errores del formulario",
+      "noChanges": "No hay cambios para guardar",
+      "updateSuccess": "¡Perfil actualizado correctamente!",
+      "updateError": "No se pudieron actualizar los datos del usuario. Inténtalo más tarde."
+    },
+    "modal": {
+      "deleteLink": {
+        "title": "¿Eliminar Enlace?",
+        "message": "Este enlace será eliminado permanentemente.",
+        "confirmText": "Sí, eliminar",
+        "cancelText": "Cancelar"
+      },
+      "cancelChanges": {
+        "title": "¿Cancelar Cambios?",
+        "message": "Todos los cambios no guardados se perderán.",
+        "confirmText": "Sí, cancelar",
+        "cancelText": "Volver"
+      },
+      "logout": {
+        "title": "¿Cerrar Sesión?",
+        "message": "¿Estás seguro de que quieres cerrar sesión?",
+        "confirmText": "Sí, cerrar sesión",
+        "cancelText": "Cancelar"
+      },
+      "deleteAccount": {
+        "title": "¿Eliminar Cuenta Para Siempre?",
+        "message": "Tu cuenta y todos los datos serán eliminados permanentemente. ¡Esta acción no se puede deshacer!",
+        "confirmText": "Sí, eliminar para siempre",
+        "cancelText": "Cancelar"
+      }
+    },
+    "actions": {
+      "cancel": "Cancelar",
+      "save": "Guardar Cambios"
+    },
+    "errors": {
+      "userNotFound": "Datos de usuario no encontrados"
+    }
+  },
+
+  "not-found": {
+    "title": "Página no encontrada",
+    "message": "Lo sentimos, pero esta página no existe.",
+    "goHome": "Volver al inicio",
+    "createAccount": "Crear cuenta"
+  },
+
+  "error": {
+    "title": "Algo salió mal",
+    "message": "Ocurrió un error",
+    "tryAgain": "Intentar de nuevo",
+    "goHome": "Volver al inicio"
+  }
 }
