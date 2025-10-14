@@ -11,7 +11,8 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
   const headerToken = header && header.startsWith("Bearer ") ? header.split(" ")[1] : undefined;
   const token = cookieToken || headerToken;
 
-  if (!token) {
+  if (!token || typeof token !== "string") {
+    console.warn("Token missing or invalid type:", token);
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
