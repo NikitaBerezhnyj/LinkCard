@@ -32,7 +32,7 @@ export function useAuth(options: { forceCheck?: boolean } = {}) {
           logout();
         }
       } catch (error) {
-        console.error("Помилка перевірки авторизації:", error);
+        console.error("Authorization verification error:", error);
 
         if (error && typeof error === "object" && "response" in error) {
           const axiosError = error as { response?: { status: number } };

@@ -1,21 +1,40 @@
 @import "@/styles/variables.scss";
 
-.logoLink {
+.headerContent {
   position: fixed;
-  top: 1rem;
-  left: 1rem;
-  font-size: 1.2rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-  z-index: 10;
-  background-color: transparent;
+  top: 0;
+  left: 0;
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-  &:hover {
-    opacity: 0.8;
-    transform: scale(1.03);
+  .logoLink {
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+    z-index: 10;
+    background-color: transparent;
+
+    &:hover {
+      opacity: 0.8;
+      transform: scale(1.03);
+    }
+  }
+
+  .languageSelect {
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+      transform: scale(1.03);
+    }
   }
 }
 

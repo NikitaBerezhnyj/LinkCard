@@ -9,10 +9,12 @@ import { IoIosShareAlt } from "react-icons/io";
 import { MdSecurity, MdDesignServices } from "react-icons/md";
 import { useAuth } from "@/hooks/useAuth";
 import Loader from "@/components/modals/Loader";
+import { useTranslation } from "react-i18next";
 
 export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
   const { username, isAuth } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 200);
@@ -31,38 +33,32 @@ export default function HomePage() {
           <div className={styles.content}>
             <h1>
               {isAuth && username ? (
-                <>
-                  Вітаємо, <span>{username}</span> 👋
-                </>
+                <>{t("home.greeting", { username })}</>
               ) : (
                 <>
-                  Створи свою персональну картку з <span>LinkCard</span>
+                  {t("home.heroMessageGuest")} <span>LinkCard</span>
                 </>
               )}
             </h1>
-            <p>
-              {isAuth
-                ? "Повернись до свого профілю або створи новий стиль своєї сторінки."
-                : "Керуйте своїм профілем, додавайте посилання, змінюйте стиль і діліться ним з друзями — все просто і красиво."}
-            </p>
+            <p>{isAuth ? t("home.heroMessageAuth") : t("home.heroMessageGuest")}</p>
             {!isLoading && (
               <div className={styles.buttons}>
                 {isAuth && username ? (
                   <>
                     <Link href={`/user/${username}`}>
-                      <Button>Перейти до профілю</Button>
+                      <Button>{t("home.goToProfile")}</Button>
                     </Link>
                     <Link href={`/user/${username}/edit`}>
-                      <Button variant="primary">Редагувати сторінку</Button>
+                      <Button variant="primary">{t("home.editPage")}</Button>
                     </Link>
                   </>
                 ) : (
                   <>
                     <Link href="/register">
-                      <Button>Почати зараз</Button>
+                      <Button>{t("home.startNow")}</Button>
                     </Link>
                     <Link href="/login">
-                      <Button variant="primary">Увійти</Button>
+                      <Button variant="primary">{t("home.login")}</Button>
                     </Link>
                   </>
                 )}
@@ -72,22 +68,22 @@ export default function HomePage() {
         </section>
 
         <section className={`${styles.section} ${styles.features}`}>
-          <h2>Що ми пропонуємо</h2>
+          <h2>{t("home.featuresTitle")}</h2>
           <div className={styles.featuresGrid}>
             <div className={styles.featureCard}>
               <MdDesignServices size={60} />
-              <h3>Повна кастомізація</h3>
-              <p>Змінюй кольори, фон, шрифти та оформлення під свій стиль.</p>
+              <h3>{t("home.featureCustom")}</h3>
+              <p>{t("home.featureCustomDesc")}</p>
             </div>
             <div className={styles.featureCard}>
               <IoIosShareAlt size={60} />
-              <h3>Поділися з усіма</h3>
-              <p>Додай свої соціальні посилання, контакти й розкажи про себе світу.</p>
+              <h3>{t("home.featureShare")}</h3>
+              <p>{t("home.featureShareDesc")}</p>
             </div>
             <div className={styles.featureCard}>
               <MdSecurity size={60} />
-              <h3>Безпечний облік</h3>
-              <p>Ми дбаємо про твою приватність та захищеність акаунту.</p>
+              <h3>{t("home.featureSecure")}</h3>
+              <p>{t("home.featureSecureDesc")}</p>
             </div>
           </div>
         </section>
@@ -95,10 +91,10 @@ export default function HomePage() {
         {!isAuth && (
           <section className={`${styles.section} ${styles.cta}`}>
             <div className={styles.ctaContent}>
-              <h2>Готові створити власну сторінку?</h2>
-              <p>Приєднуйтесь до спільноти користувачів, які вже мають свою унікальну візитку.</p>
+              <h2>{t("home.ctaTitle")}</h2>
+              <p>{t("home.ctaDesc")}</p>
               <Link href="/register">
-                <Button>Створити акаунт</Button>
+                <Button>{t("home.ctaButton")}</Button>
               </Link>
             </div>
           </section>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslation } from "react-i18next";
 import styles from "@/styles/components/Modal.module.scss";
 
 interface ConfirmModalProps {
@@ -16,31 +17,33 @@ interface ConfirmModalProps {
 
 const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
-  title = "Ви впевнені?",
-  message = "Цю дію не можна буде скасувати.",
-  confirmText = "Так",
-  cancelText = "Ні",
+  title,
+  message,
+  confirmText,
+  cancelText,
   onConfirm,
   onCancel,
   danger = true
 }) => {
+  const { t } = useTranslation();
+
   if (!isOpen) return null;
 
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        <h2 className={styles.title}>{title}</h2>
-        <p className={styles.text}>{message}</p>
+        <h2 className={styles.title}>{title || t("confirm-modal.confirmTitle")}</h2>
+        <p className={styles.text}>{message || t("confirm-modal.confirmMessage")}</p>
 
         <div className={styles.buttons}>
           <button
             className={danger ? styles.confirmButton : styles.cancelButton}
             onClick={onConfirm}
           >
-            {confirmText}
+            {confirmText || t("confirm-modal.confirmButton")}
           </button>
           <button className={styles.cancelButton} onClick={onCancel}>
-            {cancelText}
+            {cancelText || t("confirm-modal.cancelButton")}
           </button>
         </div>
       </div>

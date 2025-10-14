@@ -1,4 +1,5 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
@@ -36,6 +37,7 @@ import { useUserStore } from "@/store/userStore";
 import { useAuth } from "@/hooks/useAuth";
 import Loader from "@/components/modals/Loader";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -81,7 +83,7 @@ export default function UserEditPage() {
   const [userStyles, setUserStyles] = useState<IUser["styles"]>(templates.darkTheme);
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
   const [isUploadingBackground, setIsUploadingBackground] = useState(false);
-
+  const { t } = useTranslation();
   const { username: currentUsername } = useAuth({ forceCheck: true });
 
   const [confirmModal, setConfirmModal] = useState<{
@@ -91,28 +93,28 @@ export default function UserEditPage() {
 
   const modalConfig = {
     deleteLink: {
-      title: "Видалити посилання?",
-      message: "Це посилання буде видалене без можливості відновлення.",
-      confirmText: "Так, видалити",
-      cancelText: "Скасувати"
+      title: t("edit.modal.deleteLink.title"),
+      message: t("edit.modal.deleteLink.message"),
+      confirmText: t("edit.modal.deleteLink.confirmText"),
+      cancelText: t("edit.modal.deleteLink.cancelText")
     },
     cancelChanges: {
-      title: "Скасувати зміни?",
-      message: "Усі незбережені зміни будуть втрачені.",
-      confirmText: "Так, скасувати",
-      cancelText: "Повернутись"
+      title: t("edit.modal.cancelChanges.title"),
+      message: t("edit.modal.cancelChanges.message"),
+      confirmText: t("edit.modal.cancelChanges.confirmText"),
+      cancelText: t("edit.modal.cancelChanges.cancelText")
     },
     logout: {
-      title: "Вийти з акаунту?",
-      message: "Ви справді хочете вийти з акаунту?",
-      confirmText: "Так, вийти",
-      cancelText: "Скасувати"
+      title: t("edit.modal.logout.title"),
+      message: t("edit.modal.logout.message"),
+      confirmText: t("edit.modal.logout.confirmText"),
+      cancelText: t("edit.modal.logout.cancelText")
     },
     deleteAccount: {
-      title: "Видалити акаунт назавжди?",
-      message: "Ваш акаунт і всі дані будуть безповоротно видалені. Цю дію не можна скасувати!",
-      confirmText: "Так, видалити назавжди",
-      cancelText: "Скасувати"
+      title: t("edit.modal.deleteAccount.title"),
+      message: t("edit.modal.deleteAccount.message"),
+      confirmText: t("edit.modal.deleteAccount.confirmText"),
+      cancelText: t("edit.modal.deleteAccount.cancelText")
     }
   } as const;
 
@@ -171,7 +173,7 @@ export default function UserEditPage() {
     if (!file) return;
 
     if (file.size > maxSizeMB * 1024 * 1024) {
-      toast.error(`Файл занадто великий. Максимум ${maxSizeMB}MB`);
+      toast.error(t("edit.upload.fileTooLarge", { maxSizeMB }));
       return;
     }
 
@@ -184,15 +186,17 @@ export default function UserEditPage() {
           : await uploadService.uploadBackground(file);
 
       const newUrl = response.data?.filePath;
-      if (!newUrl) throw new Error("Не вдалося завантажити зображення.");
+      if (!newUrl) throw new Error(t("edit.upload.uploadFailed"));
 
       onSuccess(newUrl);
-      toast.success(type === "avatar" ? "Аватарку оновлено!" : "Фон оновлено!");
+      toast.success(
+        type === "avatar" ? t("edit.upload.avatarSuccess") : t("edit.upload.backgroundSuccess")
+      );
     } catch (error: unknown) {
-      console.error(`❌ Помилка завантаження ${type}:`, error);
+      console.error(`Download error ${type}:`, error);
 
       let errorMessage =
-        type === "avatar" ? "Не вдалося завантажити аватарку." : "Не вдалося завантажити фон.";
+        type === "avatar" ? t("edit.upload.avatarError") : t("edit.upload.backgroundError");
 
       if (axios.isAxiosError(error)) {
         const data = error.response?.data;
@@ -235,15 +239,15 @@ export default function UserEditPage() {
   const handlePasswordResetRequest = async () => {
     try {
       if (!email) {
-        setEmailError("Email не може бути порожнім.");
+        setEmailError(t("edit.security.emailRequired"));
         return;
       }
 
       await authService.forgotPassword({ email });
-      toast.success("Інструкцію для зміни пароля надіслано на вашу пошту.");
+      toast.success(t("edit.security.resetEmailSent"));
     } catch {
       console.error("Password reset request failed");
-      toast.error("Не вдалося надіслати лист. Спробуйте пізніше.");
+      toast.error(t("edit.security.resetEmailError"));
     }
   };
 
@@ -372,7 +376,7 @@ export default function UserEditPage() {
 
     if (templateMap[templateName]) {
       setUserStyles(templateMap[templateName]);
-      toast.success(`Шаблон "${templateName}" застосовано`);
+      toast.success(t("edit.styles.templateApplied", { templateName }));
     }
   };
 
@@ -485,7 +489,7 @@ export default function UserEditPage() {
 
     const { hasErrors } = validateForm();
     if (hasErrors) {
-      toast.error("Будь ласка, виправте помилки у формі");
+      toast.error(t("edit.validation.fixErrors"));
       return;
     }
 
@@ -499,13 +503,13 @@ export default function UserEditPage() {
     );
 
     if (!changes) {
-      toast.success("Немає змін для збереження");
+      toast.success(t("edit.validation.noChanges"));
       return;
     }
 
     try {
       await userService.updateUser(usernameParam, changes);
-      toast.success("Профіль успішно оновлено!");
+      toast.success(t("edit.validation.updateSuccess"));
 
       setOriginalUserData({ ...originalUserData, ...currentData });
 
@@ -523,7 +527,7 @@ export default function UserEditPage() {
       } else if (axiosError.message) {
         setError(axiosError.message);
       } else {
-        setError("Не вдалося оновити дані користувача. Спробуйте пізніше.");
+        setError(t("edit.validation.updateError"));
       }
     }
   };
@@ -556,26 +560,26 @@ export default function UserEditPage() {
   }
 
   if (!originalUserData) {
-    throw new Error("Дані користувача не знайдено");
+    throw new Error(t("edit.errors.userNotFound"));
   }
 
   return (
     <main className={styles.mainWrapper}>
       <div className={styles.formContainer}>
-        <h1>Редагування профілю</h1>
+        <h1 className={styles.title}>{t("edit.title")}</h1>
 
         <div className={styles.tabs}>
           <button
             className={`${styles.tab} ${activeTab === "profile" ? styles.active : ""}`}
             onClick={() => setActiveTab("profile")}
           >
-            Профіль
+            {t("edit.tabs.profile")}
           </button>
           <button
             className={`${styles.tab} ${activeTab === "styles" ? styles.active : ""}`}
             onClick={() => setActiveTab("styles")}
           >
-            Стилі
+            {t("edit.tabs.styles")}
           </button>
         </div>
 
@@ -586,7 +590,7 @@ export default function UserEditPage() {
                 <div className={styles.cardHeader}>
                   <h2>
                     <FiUser />
-                    Аватар
+                    {t("edit.avatar.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
@@ -596,7 +600,7 @@ export default function UserEditPage() {
                         {isUploadingAvatar ? (
                           <div className={styles.avatarLoading}>
                             <FiUpload />
-                            Завантаження...
+                            {t("edit.avatar.uploading")}
                           </div>
                         ) : avatarUrl ? (
                           <Image
@@ -622,7 +626,7 @@ export default function UserEditPage() {
                         onChange={handleAvatarChange}
                       />
                     </div>
-                    <p className={styles.avatarHint}>JPG, PNG або GIF. Максимум 5MB</p>
+                    <p className={styles.avatarHint}>{t("edit.avatar.hint")}</p>
                   </div>
                 </div>
               </div>
@@ -630,14 +634,14 @@ export default function UserEditPage() {
               <div className={styles.profileCard}>
                 <div className={styles.cardHeader}>
                   <h2>
-                    <IoMdDocument /> Основна інформація
+                    <IoMdDocument /> {t("edit.basicInfo.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.basicInfoGrid}>
                     <Input
                       type="text"
-                      label="Ім'я користувача"
+                      label={t("edit.basicInfo.username")}
                       value={username}
                       onChange={e => {
                         setUsername(e.target.value);
@@ -648,7 +652,7 @@ export default function UserEditPage() {
                     />
                     <Input
                       type="email"
-                      label="Email"
+                      label={t("edit.basicInfo.email")}
                       value={email}
                       onChange={e => {
                         setEmail(e.target.value);
@@ -665,18 +669,18 @@ export default function UserEditPage() {
                 <div className={styles.cardHeader}>
                   <h2>
                     <FiKey />
-                    Безпека
+                    {t("edit.security.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.passwordSection}>
-                    <p className={styles.hint}>Натисніть, щоб отримати лист для зміни пароля</p>
-                    <span className={styles.passwordLabel}>Пароль</span>
+                    <p className={styles.hint}>{t("edit.security.hint")}</p>
+                    <span className={styles.passwordLabel}>{t("edit.security.password")}</span>
                     <button
                       className={styles.changePasswordBtn}
                       onClick={handlePasswordResetRequest}
                     >
-                      Змінити пароль
+                      {t("edit.security.changePassword")}
                     </button>
                   </div>
                 </div>
@@ -685,14 +689,14 @@ export default function UserEditPage() {
               <div className={styles.profileCard}>
                 <div className={styles.cardHeader}>
                   <h2>
-                    <FiInfo /> Про себе
+                    <FiInfo /> {t("edit.bio.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.bioSection}>
                     <Textarea
-                      label="Біографія"
-                      placeholder="Розкажіть про себе..."
+                      label={t("edit.bio.label")}
+                      placeholder={t("edit.bio.placeholder")}
                       value={bio ?? ""}
                       onChange={e => setBio(e.target.value)}
                       maxCharacters={200}
@@ -705,13 +709,13 @@ export default function UserEditPage() {
                 <div className={styles.cardHeader}>
                   <h2>
                     <FiLink />
-                    Посилання
+                    {t("edit.links.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.linksSection}>
                     <div className={styles.linksHeader}>
-                      <h3>Соціальні мережі та сайти</h3>
+                      <h3>{t("edit.links.subtitle")}</h3>
                       <button className={styles.addBtn} onClick={handleAddLink}>
                         <FaPlus />
                       </button>
@@ -722,13 +726,13 @@ export default function UserEditPage() {
                           <div key={index} className={styles.linkItem}>
                             <Input
                               type="text"
-                              placeholder="Назва (напр. GitHub)"
+                              placeholder={t("edit.links.titlePlaceholder")}
                               value={link.title}
                               onChange={e => handleLinkChange(index, "title", e.target.value)}
                             />
                             <Input
                               type="text"
-                              placeholder="https://example.com"
+                              placeholder={t("edit.urlPlaceholder")}
                               value={link.url}
                               onChange={e => handleLinkChange(index, "url", e.target.value)}
                               error={linkErrors[index] || undefined}
@@ -736,7 +740,7 @@ export default function UserEditPage() {
                             <button
                               className={styles.deleteBtn}
                               onClick={() => handleRemoveLink(index)}
-                              title="Видалити посилання"
+                              title={t("edit.links.deleteTooltip")}
                             >
                               <FiTrash2 />
                             </button>
@@ -744,7 +748,7 @@ export default function UserEditPage() {
                         ))}
                       </div>
                     ) : (
-                      <div className={styles.emptyLinks}>Ви ще не додали жодного посилання</div>
+                      <div className={styles.emptyLinks}>{t("edit.links.empty")}</div>
                     )}
                   </div>
                 </div>
@@ -754,21 +758,21 @@ export default function UserEditPage() {
                 <div className={styles.cardHeader}>
                   <h2>
                     <FiAlertTriangle />
-                    Небезпечна зона
+                    {t("edit.dangerZone.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.dangerActions}>
                     <button className={styles.dangerBtn} onClick={handleLogoutClick}>
                       <FiLogOut />
-                      Вийти з акаунту
+                      {t("edit.dangerZone.logout")}
                     </button>
                     <button
                       className={`${styles.dangerBtn} ${styles.deleteAccount}`}
                       onClick={handleDeleteAccountClick}
                     >
                       <FiTrash2 />
-                      Видалити акаунт назавжди
+                      {t("edit.dangerZone.deleteAccount")}
                     </button>
                   </div>
                 </div>
@@ -776,48 +780,58 @@ export default function UserEditPage() {
             </div>
           ) : (
             <div className={styles.section}>
-              {["Templates", "Background", "Typography", "Colors", "Layout"].map(section => {
-                const isOpen = openSection === section;
+              {[
+                { key: "templates", label: t("edit.styles.sections.templates") },
+                { key: "background", label: t("edit.styles.sections.background") },
+                { key: "typography", label: t("edit.styles.sections.typography") },
+                { key: "colors", label: t("edit.styles.sections.colors") },
+                { key: "layout", label: t("edit.styles.sections.layout") }
+              ].map(({ key, label }) => {
+                const isOpen = openSection === key;
                 return (
-                  <div key={section} className={`${styles.accordion} ${isOpen ? styles.open : ""}`}>
+                  <div key={key} className={`${styles.accordion} ${isOpen ? styles.open : ""}`}>
                     <button
                       className={styles.accordionHeader}
-                      onClick={() => setOpenSection(prev => (prev === section ? "" : section))}
+                      onClick={() => setOpenSection(prev => (prev === key ? "" : key))}
                     >
-                      {section}
+                      {label}
                       <IoIosArrowDown />
                     </button>
+
                     <div className={styles.accordionContent}>
-                      {section === "Templates" && (
+                      {/* === Templates === */}
+                      {key === "templates" && (
                         <>
-                          <p className={styles.hint}>
-                            Вибір шаблону замінить усі поточні стилі на стилі обраного шаблону
-                          </p>
+                          <p className={styles.hint}>{t("edit.styles.templatesHint")}</p>
                           <div className={styles.templateGrid}>
-                            {Object.keys(templates).map(key => (
+                            {Object.keys(templates).map(templateKey => (
                               <button
-                                key={key}
+                                key={templateKey}
                                 className={styles.templateBtn}
-                                onClick={() => handleTemplateSelect(key)}
+                                onClick={() => handleTemplateSelect(templateKey)}
                               >
-                                {key.replace(/([A-Z])/g, " $1").trim()}
+                                {templateKey.replace(/([A-Z])/g, " $1").trim()}
                               </button>
                             ))}
                           </div>
                         </>
                       )}
 
-                      {section === "Background" && (
+                      {/* === Background === */}
+                      {key === "background" && (
                         <>
                           <div className={styles.formRow}>
                             <Select
-                              label="Тип"
+                              label={t("edit.styles.background.type")}
                               value={userStyles.background.type}
                               onChange={e => handleStyleChange("background.type", e.target.value)}
                               options={[
-                                { value: "color", label: "Колір" },
-                                { value: "gradient", label: "Градієнт" },
-                                { value: "image", label: "Зображення" }
+                                { value: "color", label: t("edit.styles.background.typeColor") },
+                                {
+                                  value: "gradient",
+                                  label: t("edit.styles.background.typeGradient")
+                                },
+                                { value: "image", label: t("edit.styles.background.typeImage") }
                               ]}
                             />
                           </div>
@@ -825,7 +839,7 @@ export default function UserEditPage() {
                           {userStyles.background.type === "color" && (
                             <div className={styles.formRow}>
                               <div className={styles.formGroup}>
-                                <label>Колір фону</label>
+                                <label>{t("edit.styles.background.backgroundColor")}</label>
                                 <div className={styles.colorWrapper}>
                                   <input
                                     type="color"
@@ -847,7 +861,7 @@ export default function UserEditPage() {
                             <>
                               <div className={styles.formRow}>
                                 <div className={styles.formGroup}>
-                                  <label>Початковий колір</label>
+                                  <label>{t("edit.styles.background.gradientStart")}</label>
                                   <div className={styles.colorWrapper}>
                                     <input
                                       type="color"
@@ -866,7 +880,7 @@ export default function UserEditPage() {
                                   </div>
                                 </div>
                                 <div className={styles.formGroup}>
-                                  <label>Кінцевий колір</label>
+                                  <label>{t("edit.styles.background.gradientEnd")}</label>
                                   <div className={styles.colorWrapper}>
                                     <input
                                       type="color"
@@ -891,7 +905,7 @@ export default function UserEditPage() {
                                   min={0}
                                   max={360}
                                   step={1}
-                                  label="Кут (градуси)"
+                                  label={t("edit.styles.background.gradientAngle")}
                                   value={parseUnitValue(
                                     userStyles.background.value.gradient?.angle || 0
                                   )}
@@ -913,7 +927,7 @@ export default function UserEditPage() {
                                 {isUploadingBackground ? (
                                   <div className={styles.backgroundLoading}>
                                     <FiUpload />
-                                    Завантаження...
+                                    {t("common.loading", { defaultValue: "Завантаження..." })}
                                   </div>
                                 ) : backgroundUrl ? (
                                   <Image
@@ -927,7 +941,7 @@ export default function UserEditPage() {
                                 ) : (
                                   <div className={styles.backgroundPlaceholder}>
                                     <FiImage />
-                                    <span>Натисніть, щоб завантажити фон</span>
+                                    <span>{t("edit.styles.background.uploadPrompt")}</span>
                                   </div>
                                 )}
                                 <div className={styles.backgroundOverlay}>
@@ -943,29 +957,41 @@ export default function UserEditPage() {
                               />
                               <div className={styles.formRow}>
                                 <Select
-                                  label="Позиція"
+                                  label={t("edit.styles.background.position")}
                                   value={userStyles.background.value.position}
                                   onChange={e =>
                                     handleStyleChange("background.value.position", e.target.value)
                                   }
                                   options={[
-                                    { value: "center", label: "Центр" },
-                                    { value: "top", label: "Зверху" },
-                                    { value: "bottom", label: "Знизу" },
-                                    { value: "left", label: "Ліворуч" },
-                                    { value: "right", label: "Праворуч" }
+                                    {
+                                      value: "center",
+                                      label: t("edit.styles.background.posCenter")
+                                    },
+                                    { value: "top", label: t("edit.styles.background.posTop") },
+                                    {
+                                      value: "bottom",
+                                      label: t("edit.styles.background.posBottom")
+                                    },
+                                    { value: "left", label: t("edit.styles.background.posLeft") },
+                                    { value: "right", label: t("edit.styles.background.posRight") }
                                   ]}
                                 />
                                 <Select
-                                  label="Розмір"
+                                  label={t("edit.styles.background.size")}
                                   value={userStyles.background.value.size}
                                   onChange={e =>
                                     handleStyleChange("background.value.size", e.target.value)
                                   }
                                   options={[
-                                    { value: "cover", label: "Покрити" },
-                                    { value: "contain", label: "Вмістити" },
-                                    { value: "auto", label: "Авто" }
+                                    {
+                                      value: "cover",
+                                      label: t("edit.styles.background.sizeCover")
+                                    },
+                                    {
+                                      value: "contain",
+                                      label: t("edit.styles.background.sizeContain")
+                                    },
+                                    { value: "auto", label: t("edit.styles.background.sizeAuto") }
                                   ]}
                                 />
                               </div>
@@ -974,11 +1000,12 @@ export default function UserEditPage() {
                         </>
                       )}
 
-                      {section === "Typography" && (
+                      {/* === Typography === */}
+                      {key === "typography" && (
                         <>
                           <div className={styles.formRow}>
                             <Select
-                              label="Шрифт"
+                              label={t("edit.styles.typography.font")}
                               value={userStyles.font}
                               onChange={e => handleStyleChange("font", e.target.value)}
                               options={fontOptions}
@@ -988,7 +1015,7 @@ export default function UserEditPage() {
                               min={8}
                               max={72}
                               step={1}
-                              label="Розмір (px)"
+                              label={t("edit.styles.typography.fontSize")}
                               value={parseUnitValue(userStyles.fontSize)}
                               onChange={e => handleStyleChange("fontSize", e.target.value)}
                               placeholder="16"
@@ -996,54 +1023,58 @@ export default function UserEditPage() {
                           </div>
                           <div className={styles.formRow}>
                             <Select
-                              label="Вага"
+                              label={t("edit.styles.typography.fontWeight")}
                               value={userStyles.fontWeight}
                               onChange={e => handleStyleChange("fontWeight", e.target.value)}
                               options={[
-                                { value: "300", label: "Легкий" },
-                                { value: "400", label: "Звичайний" },
-                                { value: "500", label: "Середній" },
-                                { value: "600", label: "Напівжирний" },
-                                { value: "700", label: "Жирний" }
+                                { value: "300", label: t("edit.styles.typography.weightLight") },
+                                { value: "400", label: t("edit.styles.typography.weightNormal") },
+                                { value: "500", label: t("edit.styles.typography.weightMedium") },
+                                { value: "600", label: t("edit.styles.typography.weightSemibold") },
+                                { value: "700", label: t("edit.styles.typography.weightBold") }
                               ]}
                             />
                             <Select
-                              label="Вирівнювання"
+                              label={t("edit.styles.typography.textAlign")}
                               value={userStyles.textAlign}
                               onChange={e => handleStyleChange("textAlign", e.target.value)}
                               options={[
-                                { value: "left", label: "Ліворуч" },
-                                { value: "center", label: "По центру" },
-                                { value: "right", label: "Праворуч" }
+                                { value: "left", label: t("edit.styles.typography.alignLeft") },
+                                { value: "center", label: t("edit.styles.typography.alignCenter") },
+                                { value: "right", label: t("edit.styles.typography.alignRight") }
                               ]}
                             />
                           </div>
                         </>
                       )}
 
-                      {section === "Colors" && (
+                      {/* === Colors === */}
+                      {key === "colors" && (
                         <div className={styles.colorGrid}>
                           {[
-                            ["Текст", "text"],
-                            ["Посилання", "linkText"],
-                            ["Текст кнопки", "buttonText"],
-                            ["Фон кнопки", "buttonBackground"],
-                            ["Текст при наведенні", "buttonHoverText"],
-                            ["Фон при наведенні", "buttonHoverBackground"],
-                            ["Рамка", "border"],
-                            ["Фон контенту", "contentBackground"]
-                          ].map(([label, key]) => (
-                            <div key={key} className={styles.formGroup}>
+                            ["text", t("edit.styles.colors.text")],
+                            ["linkText", t("edit.styles.colors.linkText")],
+                            ["buttonText", t("edit.styles.colors.buttonText")],
+                            ["buttonBackground", t("edit.styles.colors.buttonBackground")],
+                            ["buttonHoverText", t("edit.styles.colors.buttonHoverText")],
+                            [
+                              "buttonHoverBackground",
+                              t("edit.styles.colors.buttonHoverBackground")
+                            ],
+                            ["border", t("edit.styles.colors.border")],
+                            ["contentBackground", t("edit.styles.colors.contentBackground")]
+                          ].map(([keyName, label]) => (
+                            <div key={keyName} className={styles.formGroup}>
                               <label>{label}</label>
                               <div className={styles.colorWrapper}>
                                 <input
                                   type="color"
-                                  value={userStyles[key as keyof typeof userStyles] as string}
-                                  onChange={e => handleStyleChange(key, e.target.value)}
+                                  value={userStyles[keyName as keyof typeof userStyles] as string}
+                                  onChange={e => handleStyleChange(keyName, e.target.value)}
                                   className={styles.colorInput}
                                 />
                                 <span className={styles.colorValue}>
-                                  {userStyles[key as keyof typeof userStyles] as string}
+                                  {userStyles[keyName as keyof typeof userStyles] as string}
                                 </span>
                               </div>
                             </div>
@@ -1051,14 +1082,15 @@ export default function UserEditPage() {
                         </div>
                       )}
 
-                      {section === "Layout" && (
+                      {/* === Layout === */}
+                      {key === "layout" && (
                         <div className={styles.formRow}>
                           <Input
                             type="number"
                             min={0}
                             max={100}
                             step={1}
-                            label="Радіус рамки (px)"
+                            label={t("edit.styles.layout.borderRadius")}
                             value={parseUnitValue(userStyles.borderRadius)}
                             onChange={e => handleStyleChange("borderRadius", e.target.value)}
                             placeholder="8"
@@ -1068,7 +1100,7 @@ export default function UserEditPage() {
                             min={0}
                             max={100}
                             step={1}
-                            label="Відступ (px)"
+                            label={t("edit.styles.layout.padding")}
                             value={parseUnitValue(userStyles.contentPadding)}
                             onChange={e => handleStyleChange("contentPadding", e.target.value)}
                             placeholder="20"
@@ -1078,7 +1110,7 @@ export default function UserEditPage() {
                             min={0}
                             max={60}
                             step={1}
-                            label="Проміжок (px)"
+                            label={t("edit.styles.layout.gap")}
                             value={parseUnitValue(userStyles.contentGap)}
                             onChange={e => handleStyleChange("contentGap", e.target.value)}
                             placeholder="12"
@@ -1102,10 +1134,10 @@ export default function UserEditPage() {
 
         <div className={styles.actionButtons}>
           <Button type="button" variant="secondary" onClick={handleCancelChangesClick}>
-            Скасувати
+            {t("edit.actions.cancel")}
           </Button>
           <Button type="button" variant="primary" onClick={handleAccept}>
-            Зберегти зміни
+            {t("edit.actions.save")}
           </Button>
         </div>
       </div>

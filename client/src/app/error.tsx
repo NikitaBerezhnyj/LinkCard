@@ -7,6 +7,7 @@ import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { useAuth } from "@/hooks/useAuth";
 import { FaRegSadTear } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 
 interface ErrorProps {
   error: Error;
@@ -15,6 +16,7 @@ interface ErrorProps {
 
 export default function ErrorPage({ error, reset }: ErrorProps) {
   const { isAuth } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     console.error(error);
@@ -26,11 +28,13 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
       <main className={styles.errorWrapper}>
         <div className={styles.content}>
           <FaRegSadTear className={styles.icon} />
-          <h1>Щось пішло не так</h1>
-          <p>Виникла помилка: {error.message}</p>
+          <h1>{t("error.title")}</h1>
+          <p>
+            {t("error.message")}: {error.message}
+          </p>
           <div className={styles.buttons}>
-            <Button onClick={reset}>Спробувати знову</Button>
-            <Button onClick={() => (window.location.href = "/")}>Повернутися на головну</Button>
+            <Button onClick={reset}>{t("error.tryAgain")}</Button>
+            <Button onClick={() => (window.location.href = "/")}>{t("error.goHome")}</Button>
           </div>
         </div>
       </main>

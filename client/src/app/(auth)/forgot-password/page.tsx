@@ -6,8 +6,10 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
 import { validateEmail } from "@/utils/validations";
+import { useTranslation } from "react-i18next";
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +20,7 @@ export default function ForgotPasswordPage() {
     setError(null);
 
     if (!email) {
-      setError("Email is required.");
+      setError(t("auth.emailRequired"));
       return;
     }
 
@@ -35,13 +37,13 @@ export default function ForgotPasswordPage() {
       return;
     }
 
-    setMessage(response.data?.message || "Check your email for instructions.");
+    setMessage(response.data?.message || t("auth.checkEmailInstructions"));
   };
 
   return (
     <main className={styles.mainWrapper}>
       <div className={styles.formContainer}>
-        <h1>Forgot Password</h1>
+        <h1>{t("auth.forgotPasswordTitle")}</h1>
         <br />
         <form
           onSubmit={handleSubmit}
@@ -49,23 +51,23 @@ export default function ForgotPasswordPage() {
         >
           <Input
             type="email"
-            label="Email"
+            label={t("auth.email")}
             placeholder="you@example.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            error={error && email === "" ? "Email is required" : undefined}
+            error={error && email === "" ? t("auth.emailRequired") : undefined}
             required
           />
 
           <p className={styles.helperText}>
-            Remembered your password? <a href="/login">Back to login</a>
+            {t("auth.helperBackToLogin")} <a href="/login">{t("auth.loginButton")}</a>
           </p>
 
           {error && <p className={styles.errorMessage}>{error}</p>}
           {message && <p className={styles.successMessage}>{message}</p>}
 
           <Button type="submit" variant="primary">
-            Send Reset Link
+            {t("auth.sendResetLink")}
           </Button>
         </form>
       </div>

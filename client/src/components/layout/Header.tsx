@@ -3,7 +3,7 @@
 import Link from "next/link";
 import styles from "@/styles/components/Header.module.scss";
 import { useUserStore } from "@/store/userStore";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Select from "@/components/ui/Select";
 import { useTranslation } from "react-i18next";
 
@@ -14,20 +14,28 @@ interface HeaderProps {
 export default function Header({ isAuth }: HeaderProps) {
   const { t, i18n } = useTranslation();
   const { username } = useUserStore();
-  const [language, setLanguage] = useState<"UA" | "EN" | "ES">("UA");
-
-  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLang = e.target.value.toLowerCase();
-    setLanguage(e.target.value as "UA" | "EN" | "ES");
-    i18n.changeLanguage(newLang);
-    console.log(newLang);
-  };
+  const [language, setLanguage] = useState<"ua" | "en" | "es">("ua");
 
   const languageOptions = [
-    { value: "UA", label: "UA" },
-    { value: "EN", label: "EN" },
-    { value: "ES", label: "ES" }
+    { value: "ua", label: "UA" },
+    { value: "en", label: "EN" },
+    { value: "es", label: "ES" }
   ];
+
+  useEffect(() => {
+    const current = i18n.language.toLowerCase();
+    if (["ua", "en", "es"].includes(current)) {
+      setLanguage(current as "ua" | "en" | "es");
+    } else {
+      setLanguage("en");
+    }
+  }, [i18n.language]);
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value as "ua" | "en" | "es";
+    setLanguage(newLang);
+    i18n.changeLanguage(newLang);
+  };
 
   return (
     <header className={styles.header}>
@@ -49,14 +57,14 @@ export default function Header({ isAuth }: HeaderProps) {
               className={styles.loginButton}
               onClick={() => (window.location.href = "/login")}
             >
-              {t("login")}
+              {t("header.login")}
             </button>
           ) : (
             <button
               className={styles.profileButton}
               onClick={() => (window.location.href = `/user/${username}`)}
             >
-              {t("profile")}
+              {t("header.profile")}
             </button>
           )}
         </nav>

@@ -8,9 +8,11 @@ import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
 import { validateUsername, validateEmail, validatePassword } from "@/utils/validations";
 import { useUserStore } from "@/store/userStore";
+import { useTranslation } from "react-i18next";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,17 +25,17 @@ export default function RegisterPage() {
     setError(null);
 
     if (!username) {
-      setError("Username is required.");
+      setError(t("auth.usernameRequired"));
       return;
     }
 
     if (!email) {
-      setError("Email is required.");
+      setError(t("auth.emailRequired"));
       return;
     }
 
     if (!password) {
-      setError("Password is required.");
+      setError(t("auth.passwordRequired"));
       return;
     }
 
@@ -69,7 +71,7 @@ export default function RegisterPage() {
   return (
     <main className={styles.mainWrapper}>
       <div className={styles.formContainer}>
-        <h1>Register</h1>
+        <h1>{t("auth.registerTitle")}</h1>
         <br />
         <form
           onSubmit={handleRegister}
@@ -77,40 +79,40 @@ export default function RegisterPage() {
         >
           <Input
             type="text"
-            label="Username"
-            placeholder="Choose a username"
+            label={t("auth.username")}
+            placeholder={t("auth.usernamePlaceholder")}
             value={username}
             onChange={e => setUsername(e.target.value)}
-            error={error && username === "" ? "Username is required" : undefined}
+            error={error && username === "" ? t("auth.usernameRequired") : undefined}
             required
           />
           <Input
             type="email"
-            label="Email"
+            label={t("auth.email")}
             placeholder="you@example.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            error={error && email === "" ? "Email is required" : undefined}
+            error={error && email === "" ? t("auth.emailRequired") : undefined}
             required
           />
           <Input
             type="password"
-            label="Password"
-            placeholder="Enter your password"
+            label={t("auth.password")}
+            placeholder={t("auth.passwordPlaceholder")}
             value={password}
             onChange={e => setPassword(e.target.value)}
-            error={error && password === "" ? "Password is required" : undefined}
+            error={error && password === "" ? t("auth.passwordRequired") : undefined}
             showPasswordToggle
             required
           />
 
           <p className={styles.helperText}>
-            Already have an account? <a href="/login">Login</a>
+            {t("auth.helperHaveAccount")} <a href="/login">{t("auth.loginButton")}</a>
           </p>
 
           {error && <p className={styles.errorMessage}>{error}</p>}
           <Button type="submit" variant="primary">
-            Register
+            {t("auth.registerButton")}
           </Button>
         </form>
       </div>

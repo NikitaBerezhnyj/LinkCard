@@ -7,9 +7,11 @@ import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
 import { validatePassword } from "@/utils/validations";
+import { useTranslation } from "react-i18next";
 
 export default function ResetPasswordPage() {
   const { token } = useParams();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +23,7 @@ export default function ResetPasswordPage() {
     setMessage(null);
 
     if (!password) {
-      setError("Password is required.");
+      setError(t("auth.passwordRequired"));
       return;
     }
 
@@ -33,7 +35,7 @@ export default function ResetPasswordPage() {
     const tokenStr = Array.isArray(token) ? token[0] : token;
 
     if (!tokenStr) {
-      setError("Invalid token");
+      setError(t("auth.invalidToken"));
       return;
     }
 
@@ -44,13 +46,13 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    setMessage(response.data?.message || "Password reset successful.");
+    setMessage(response.data?.message || t("auth.passwordResetSuccess"));
   };
 
   return (
     <main className={styles.mainWrapper}>
       <div className={styles.formContainer}>
-        <h1>Reset Password</h1>
+        <h1>{t("auth.resetPasswordTitle")}</h1>
         <br />
         <form
           onSubmit={handleSubmit}
@@ -58,20 +60,20 @@ export default function ResetPasswordPage() {
         >
           <Input
             type="email"
-            label="Email"
+            label={t("auth.email")}
             placeholder="you@example.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            error={error && email === "" ? "Email is required" : undefined}
+            error={error && email === "" ? t("auth.emailRequired") : undefined}
             required
           />
           <Input
             type="password"
-            label="New Password"
-            placeholder="Enter new password"
+            label={t("auth.newPassword")}
+            placeholder={t("auth.passwordPlaceholder")}
             value={password}
             onChange={e => setPassword(e.target.value)}
-            error={error && password === "" ? "Password is required" : undefined}
+            error={error && password === "" ? t("auth.passwordRequired") : undefined}
             showPasswordToggle
             required
           />
@@ -80,7 +82,7 @@ export default function ResetPasswordPage() {
           {message && <p className={styles.successMessage}>{message}</p>}
 
           <Button type="submit" variant="primary">
-            Reset Password
+            {t("auth.resetPasswordButton")}
           </Button>
         </form>
       </div>

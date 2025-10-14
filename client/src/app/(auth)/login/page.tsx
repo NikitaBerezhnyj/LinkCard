@@ -8,9 +8,11 @@ import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
 import { validateEmail } from "@/utils/validations";
 import { useUserStore } from "@/store/userStore";
+import { useTranslation } from "react-i18next";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +24,7 @@ export default function LoginPage() {
     setError(null);
 
     if (!email) {
-      setError("Email is required.");
+      setError(t("auth.emailRequired"));
       return;
     }
 
@@ -33,7 +35,7 @@ export default function LoginPage() {
     }
 
     if (!password) {
-      setError("Password is required.");
+      setError(t("auth.passwordRequired"));
       return;
     }
 
@@ -54,7 +56,7 @@ export default function LoginPage() {
   return (
     <main className={styles.mainWrapper}>
       <div className={styles.formContainer}>
-        <h1>Login</h1>
+        <h1>{t("auth.loginTitle")}</h1>
         <br />
         <form
           onSubmit={handleLogin}
@@ -62,34 +64,35 @@ export default function LoginPage() {
         >
           <Input
             type="email"
-            label="Email"
+            label={t("auth.email")}
             placeholder="you@example.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            error={error && email === "" ? "Email is required" : undefined}
+            error={error && email === "" ? t("auth.emailRequired") : undefined}
             required
           />
           <Input
             type="password"
-            label="Password"
-            placeholder="Enter your password"
+            label={t("auth.password")}
+            placeholder={t("auth.password")}
             value={password}
             onChange={e => setPassword(e.target.value)}
-            error={error && password === "" ? "Password is required" : undefined}
+            error={error && password === "" ? t("auth.passwordRequired") : undefined}
             showPasswordToggle
             required
           />
 
           <p className={styles.helperText}>
-            Don’t have an account yet? <a href="/register">Sign up now</a>
+            {t("auth.helperNoAccount")} <a href="/register">{t("auth.registerButton")}</a>
           </p>
           <p className={styles.helperText}>
-            Forgot your password? <a href="/forgot-password">Reset it here</a>
+            {t("auth.helperForgotPassword")}{" "}
+            <a href="/forgot-password">{t("auth.resetPasswordButton")}</a>
           </p>
 
           {error && <p className={styles.errorMessage}>{error}</p>}
           <Button type="submit" variant="primary">
-            Login
+            {t("auth.loginButton")}
           </Button>
         </form>
       </div>

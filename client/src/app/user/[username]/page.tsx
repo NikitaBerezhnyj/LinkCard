@@ -17,30 +17,50 @@ import * as fonts from "@/constants/fonts";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import Loader from "@/components/modals/Loader";
+import { useTranslation } from "react-i18next";
+import Select from "@/components/ui/Select";
+import ErrorPage from "@/app/error";
 
 export default function UserPage() {
   const router = useRouter();
   const { username } = useParams();
   const [user, setUser] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
   const [flipped, setFlipped] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
-
+  const { t, i18n } = useTranslation();
+  const [language, setLanguage] = useState<"ua" | "en" | "es">("ua");
   const { username: currentUsername } = useAuth();
+
+  const languageOptions = [
+    { value: "ua", label: "UA" },
+    { value: "en", label: "EN" },
+    { value: "es", label: "ES" }
+  ];
 
   useEffect(() => {
     const usernameStr = Array.isArray(username) ? username[0] : username;
     if (!usernameStr) return;
 
     const fetchUserData = async () => {
+      setIsLoading(true);
+
       try {
-        setIsLoading(true);
         const res = await userService.getUser(usernameStr);
 
-        if (!res.data) throw new Error("Користувача не знайдено");
-        setUser(res.data.data);
+        const userData = res?.data?.data;
+
+        if (!userData) {
+          setError(new Error(t("user-page.userNotFound")));
+          setUser(null);
+        } else {
+          setUser(userData);
+          setError(null);
+        }
       } catch (err) {
-        console.error(err);
+        console.error("Fetch user failed:", err);
+        setError(err instanceof Error ? err : new Error(String(err)));
         setUser(null);
       } finally {
         setIsLoading(false);
@@ -48,13 +68,28 @@ export default function UserPage() {
     };
 
     fetchUserData();
-  }, [username, currentUsername]);
+  }, [username, currentUsername, t]);
 
   useEffect(() => {
     if (user && currentUsername) {
       setIsOwner(currentUsername === user.username);
     }
   }, [user, currentUsername]);
+
+  useEffect(() => {
+    const current = i18n.language.toLowerCase();
+    if (["ua", "en", "es"].includes(current)) {
+      setLanguage(current as "ua" | "en" | "es");
+    } else {
+      setLanguage("en");
+    }
+  }, [i18n.language]);
+
+  const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLang = e.target.value as "ua" | "en" | "es";
+    setLanguage(newLang);
+    i18n.changeLanguage(newLang);
+  };
 
   function getFontClassName(fontName?: string): string | undefined {
     if (!fontName) return undefined;
@@ -68,7 +103,14 @@ export default function UserPage() {
   }
 
   if (!user) {
-    throw new Error("Користувача не знайдено");
+    return error ? (
+      <ErrorPage
+        error={error || new Error(t("user-page.userNotFound"))}
+        reset={() => router.refresh()}
+      />
+    ) : (
+      <Loader isOpen={true} />
+    );
   }
 
   const s = user.styles || {};
@@ -130,9 +172,27 @@ export default function UserPage() {
 
   return (
     <main className={`${styles.mainWrapper} ${fontClassName || ""}`} style={backgroundStyle}>
-      <Link href="/" className={styles.logoLink} style={{ color: s.text }}>
-        LinkCard
-      </Link>
+      <div className={styles.headerContent}>
+        <Link href="/" className={styles.logoLink} style={{ color: s.text }}>
+          LinkCard
+        </Link>
+
+        <Select
+          options={languageOptions}
+          value={language}
+          onChange={handleLanguageChange}
+          className={styles.languageSelect}
+          style={{
+            ...(s.contentBackground && { backgroundColor: s.contentBackground }),
+            ...(s.text && { color: s.text }),
+            ...(s.borderRadius && { borderRadius: s.borderRadius }),
+            ...(s.border && { border: `1px solid ${s.border}` }),
+            ...(s.font && { fontFamily: s.font }),
+            ...(s.fontSize && { fontSize: s.fontSize })
+          }}
+          arrowColor={s.text}
+        />
+      </div>
       <div className={`${styles.cardContainer} ${flipped ? styles.flipped : ""}`}>
         <div className={styles.card}>
           <div className={`${styles.cardFace} ${styles.front}`} style={cardStyle}>
@@ -215,7 +275,7 @@ export default function UserPage() {
               </button>
             </div>
             <div className={styles.qrWrapper}>
-              <h1 style={textStyle}>QR code</h1>
+              <h1 style={textStyle}>{t("user-page.qrCodeTitle")}</h1>
               <div
                 className={styles.qrCodeContainer}
                 style={{
@@ -231,7 +291,7 @@ export default function UserPage() {
                 />
               </div>
               <p className={styles.qrText} style={textStyle}>
-                Scan to open this profile
+                {t("user-page.scanProfile")}
               </p>
             </div>
           </div>
