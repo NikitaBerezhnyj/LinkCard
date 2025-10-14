@@ -12,6 +12,7 @@
 
   "home": {
     "greeting": "Welcome, {{username}} 👋",
+    "guestGreeting": "Create your personal card with",
     "heroMessageAuth": "Return to your profile or create a new style for your page.",
     "heroMessageGuest": "Manage your profile, add links, customize your style, and share it with friends — simple and beautiful.",
     "goToProfile": "Go to profile",

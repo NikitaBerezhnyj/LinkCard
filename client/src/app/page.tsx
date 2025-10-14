@@ -53,7 +53,7 @@ export default function HomePage() {
                 <>{t("home.greeting", { username })}</>
               ) : (
                 <>
-                  {t("home.heroMessageGuest")} <span>LinkCard</span>
+                  {t("home.guestGreeting")} <span>LinkCard</span>
                 </>
               )}
             </h1>
