@@ -38,7 +38,7 @@ export default function Header({ isAuth }: HeaderProps) {
   };
 
   return (
-    <header className={styles.header}>
+    <header className={styles.header} aria-label={t("header.navigation")}>
       <div className={styles.container}>
         <Link href="/" className={styles.logo}>
           LinkCard
@@ -56,6 +56,7 @@ export default function Header({ isAuth }: HeaderProps) {
             <button
               className={styles.loginButton}
               onClick={() => (window.location.href = "/login")}
+              aria-label={t("header.login")}
             >
               {t("header.login")}
             </button>
@@ -63,6 +64,7 @@ export default function Header({ isAuth }: HeaderProps) {
             <button
               className={styles.profileButton}
               onClick={() => (window.location.href = `/user/${username}`)}
+              aria-label={t("header.profile")}
             >
               {t("header.profile")}
             </button>

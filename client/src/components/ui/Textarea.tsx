@@ -21,6 +21,9 @@ export default function Textarea({
 }: TextareaProps) {
   const [text, setText] = useState(value as string);
 
+  const textareaId = props.id || `textarea-${label?.replace(/\s+/g, "-").toLowerCase()}`;
+  const errorId = error ? `${textareaId}-error` : undefined;
+
   const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value;
 
@@ -32,10 +35,17 @@ export default function Textarea({
 
   return (
     <div className={clsx(styles.textareaWrapper, className)}>
-      {label && <label className={styles.label}>{label}</label>}
+      {label && (
+        <label htmlFor={textareaId} className={styles.label}>
+          {label}
+        </label>
+      )}
 
       <div className={styles.textareaContainer}>
         <textarea
+          id={textareaId}
+          aria-invalid={!!error}
+          aria-describedby={errorId}
           className={clsx(styles.textarea, error && styles.error)}
           value={text}
           onChange={handleChange}
@@ -44,12 +54,16 @@ export default function Textarea({
       </div>
 
       {maxCharacters && (
-        <div className={styles.charCount}>
+        <div className={styles.charCount} aria-live="polite">
           {text.length} / {maxCharacters}
         </div>
       )}
 
-      {error && <span className={styles.errorMessage}>{error}</span>}
+      {error && (
+        <span id={errorId} className={styles.errorMessage}>
+          {error}
+        </span>
+      )}
     </div>
   );
 }

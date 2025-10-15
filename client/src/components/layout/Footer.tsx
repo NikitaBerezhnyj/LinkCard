@@ -7,7 +7,7 @@ export default function Footer() {
   const { t } = useTranslation();
 
   return (
-    <footer className={styles.footer}>
+    <footer className={styles.footer} aria-label={t("footer.siteFooter")}>
       <div className={styles.container}>
         <p>
           © {new Date().getFullYear()} LinkCard. {t("footer.allRightsReserved")}

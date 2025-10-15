@@ -15,7 +15,11 @@ export default function Button({
   ...props
 }: ButtonProps) {
   return (
-    <button className={clsx(styles.button, styles[variant], className)} {...props}>
+    <button
+      className={clsx(styles.button, styles[variant], className)}
+      type={props.type || "button"}
+      {...props}
+    >
       {children}
     </button>
   );

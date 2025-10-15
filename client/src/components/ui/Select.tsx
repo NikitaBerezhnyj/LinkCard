@@ -19,18 +19,36 @@ export default function Select({
   arrowColor,
   ...props
 }: SelectProps) {
+  const selectId = props.id || `select-${label?.replace(/\s+/g, "-").toLowerCase()}`;
+  const errorId = error ? `${selectId}-error` : undefined;
+
   return (
     <div className={clsx(styles.selectWrapper, className)}>
-      {label && <label className={styles.label}>{label}</label>}
+      {label && (
+        <label htmlFor={selectId} className={styles.label}>
+          {label}
+        </label>
+      )}
       <div className={styles.selectContainer}>
-        <select className={clsx(styles.select, error && styles.error)} {...props} style={style}>
+        <select
+          id={selectId}
+          aria-invalid={!!error}
+          aria-describedby={errorId}
+          className={clsx(styles.select, error && styles.error)}
+          {...props}
+          style={style}
+        >
           {options.map(option => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
         </select>
-        <div className={styles.selectArrow} style={{ color: arrowColor || undefined }}>
+        <div
+          aria-hidden="true"
+          className={styles.selectArrow}
+          style={{ color: arrowColor || undefined }}
+        >
           <svg width="12" height="8" viewBox="0 0 12 8" fill="none">
             <path
               d="M1 1.5L6 6.5L11 1.5"
@@ -42,7 +60,11 @@ export default function Select({
           </svg>
         </div>
       </div>
-      {error && <span className={styles.errorMessage}>{error}</span>}
+      {error && (
+        <span id={errorId} className={styles.errorMessage}>
+          {error}
+        </span>
+      )}
     </div>
   );
 }
