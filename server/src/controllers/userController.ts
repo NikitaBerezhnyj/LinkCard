@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
-import { Request, Response } from "express";
+import { Request, Response, RequestHandler } from "express";
 import { transporter } from "../config/mailConfig";
 import { ResetToken } from "../models/resetTokenModel";
 import { User } from "../models/userModel";
@@ -251,19 +251,20 @@ export const resetPassword = async (req: Request, res: Response): Promise<Respon
   }
 };
 
-export const logoutUser = (req: Request, res: Response): Response => {
+export const logoutUser: RequestHandler = (req, res) => {
   try {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax"
     });
+
     const response: ApiResponse<null> = { message: "Logged out successfully" };
-    return res.status(200).json(response);
+    res.status(200).json(response);
   } catch (err) {
     console.error("Error during logout:", err);
     const response: ApiResponse<null> = { message: "Internal Server Error" };
-    return res.status(500).json(response);
+    res.status(500).json(response);
   }
 };
 
