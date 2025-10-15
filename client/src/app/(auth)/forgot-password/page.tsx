@@ -1,18 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import styles from "@/styles/pages/Auth.module.scss";
 import { validateEmail } from "@/utils/validations";
 import { useTranslation } from "react-i18next";
+import Loader from "@/components/modals/Loader";
 
 export default function ForgotPasswordPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [isReady, setIsReady] = useState(false);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (i18n.isInitialized) {
+      setIsReady(true);
+    }
+  }, [i18n.isInitialized]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +47,8 @@ export default function ForgotPasswordPage() {
 
     setMessage(response.data?.message || t("auth.checkEmailInstructions"));
   };
+
+  if (!isReady) return <Loader isOpen={true} />;
 
   return (
     <main className={styles.mainWrapper}>

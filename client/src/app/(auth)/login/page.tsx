@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
@@ -9,49 +9,70 @@ import styles from "@/styles/pages/Auth.module.scss";
 import { validateEmail } from "@/utils/validations";
 import { useUserStore } from "@/store/userStore";
 import { useTranslation } from "react-i18next";
+import Loader from "@/components/modals/Loader";
 
 export default function LoginPage() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const { setUser } = useUserStore();
 
+  useEffect(() => {
+    if (i18n.isInitialized) {
+      setIsReady(true);
+    }
+  }, [i18n.isInitialized]);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setIsLoading(true);
 
     if (!email) {
       setError(t("auth.emailRequired"));
+      setIsLoading(false);
       return;
     }
 
     const emailError = validateEmail(email);
     if (emailError) {
       setError(emailError);
+      setIsLoading(false);
       return;
     }
 
     if (!password) {
       setError(t("auth.passwordRequired"));
+      setIsLoading(false);
       return;
     }
 
-    const response = await authService.login({ email, password });
+    try {
+      const response = await authService.login({ email, password });
 
-    if (response.error) {
-      setError(response.error);
-      return;
+      if (response.error) {
+        setError(response.error);
+        return;
+      }
+
+      if (response.data?.username) {
+        setUser(response.data.username);
+      }
+
+      router.push("/");
+    } catch (err) {
+      setError(String(err));
+    } finally {
+      setIsLoading(false);
     }
-
-    if (response.data?.username) {
-      setUser(response.data.username);
-    }
-
-    router.push("/");
   };
+
+  if (!isReady || isLoading) return <Loader isOpen={true} />;
 
   return (
     <main className={styles.mainWrapper}>

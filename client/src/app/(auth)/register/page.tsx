@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/AuthService";
 import Button from "@/components/ui/Button";
@@ -9,16 +9,23 @@ import styles from "@/styles/pages/Auth.module.scss";
 import { validateUsername, validateEmail, validatePassword } from "@/utils/validations";
 import { useUserStore } from "@/store/userStore";
 import { useTranslation } from "react-i18next";
+import Loader from "@/components/modals/Loader";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [isReady, setIsReady] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
-
   const { setUser } = useUserStore();
+
+  useEffect(() => {
+    if (i18n.isInitialized) {
+      setIsReady(true);
+    }
+  }, [i18n.isInitialized]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,32 +48,42 @@ export default function RegisterPage() {
 
     const usernameError = validateUsername(username);
     if (usernameError) {
-      return setError(usernameError);
+      setError(usernameError);
+      return;
     }
 
     const emailError = validateEmail(email);
     if (emailError) {
-      return setError(emailError);
+      setError(emailError);
+      return;
     }
 
     const passwordError = validatePassword(password);
     if (passwordError) {
-      return setError(passwordError);
-    }
-
-    const response = await authService.register({ username, email, password });
-
-    if (response.error) {
-      setError(response.error);
+      setError(passwordError);
       return;
     }
 
-    if (response.data?.username) {
-      setUser(response.data.username);
-    }
+    try {
+      const response = await authService.register({ username, email, password });
 
-    router.push("/");
+      if (response.error) {
+        setError(response.error);
+        return;
+      }
+
+      if (response.data?.username) {
+        setUser(response.data.username);
+      }
+
+      router.push("/");
+    } catch (err) {
+      setError(String(err));
+    } finally {
+    }
   };
+
+  if (!isReady) return <Loader isOpen={true} />;
 
   return (
     <main className={styles.mainWrapper}>
