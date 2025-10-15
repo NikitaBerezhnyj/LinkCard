@@ -14,69 +14,67 @@ export default function ResetPasswordPage() {
   const { token } = useParams();
   const { t, i18n } = useTranslation();
   const [isReady, setIsReady] = useState(false);
-  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (i18n.isInitialized) {
-      setIsReady(true);
-    }
+    if (i18n.isInitialized) setIsReady(true);
   }, [i18n.isInitialized]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setMessage(null);
+    setIsLoading(true);
 
     if (!password) {
       setError(t("auth.passwordRequired"));
+      setIsLoading(false);
       return;
     }
 
     const passwordError = validatePassword(password);
     if (passwordError) {
-      return setError(passwordError);
+      setError(passwordError);
+      setIsLoading(false);
+      return;
     }
 
     const tokenStr = Array.isArray(token) ? token[0] : token;
-
     if (!tokenStr) {
       setError(t("auth.invalidToken"));
+      setIsLoading(false);
       return;
     }
 
-    const response = await authService.resetPassword(tokenStr, { email, password });
+    try {
+      const response = await authService.resetPassword(tokenStr, { password });
 
-    if (response.error) {
-      setError(response.error);
-      return;
+      if (response.error) {
+        setError(response.error);
+        return;
+      }
+
+      setMessage(response.data?.message || t("auth.passwordResetSuccess"));
+    } catch (err) {
+      setError(String(err));
+    } finally {
+      setIsLoading(false);
     }
-
-    setMessage(response.data?.message || t("auth.passwordResetSuccess"));
   };
 
-  if (!isReady) return <Loader isOpen={true} />;
+  if (!isReady || isLoading) return <Loader isOpen={true} />;
 
   return (
-    <main className={styles.mainWrapper}>
+    <main className={styles.mainWrapper} aria-busy={isLoading}>
       <div className={styles.formContainer}>
         <h1>{t("auth.resetPasswordTitle")}</h1>
-        <br />
         <form
           onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
         >
-          <Input
-            type="email"
-            label={t("auth.email")}
-            placeholder="you@example.com"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            error={error && email === "" ? t("auth.emailRequired") : undefined}
-            required
-          />
           <Input
             type="password"
             label={t("auth.newPassword")}
@@ -88,10 +86,18 @@ export default function ResetPasswordPage() {
             required
           />
 
-          {error && <p className={styles.errorMessage}>{error}</p>}
-          {message && <p className={styles.successMessage}>{message}</p>}
+          {error && (
+            <div role="alert" className={styles.errorMessage}>
+              {error}
+            </div>
+          )}
+          {message && (
+            <div role="alert" className={styles.successMessage}>
+              {message}
+            </div>
+          )}
 
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" disabled={isLoading}>
             {t("auth.resetPasswordButton")}
           </Button>
         </form>

@@ -12,49 +12,56 @@ import Loader from "@/components/modals/Loader";
 export default function ForgotPasswordPage() {
   const { t, i18n } = useTranslation();
   const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (i18n.isInitialized) {
-      setIsReady(true);
-    }
+    if (i18n.isInitialized) setIsReady(true);
   }, [i18n.isInitialized]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setMessage(null);
     setError(null);
+    setMessage(null);
+    setIsLoading(true);
 
     if (!email) {
       setError(t("auth.emailRequired"));
+      setIsLoading(false);
       return;
     }
 
     const emailError = validateEmail(email);
     if (emailError) {
       setError(emailError);
+      setIsLoading(false);
       return;
     }
 
-    const response = await authService.forgotPassword({ email });
+    try {
+      const response = await authService.forgotPassword({ email });
 
-    if (response.error) {
-      setError(response.error);
-      return;
+      if (response.error) {
+        setError(response.error);
+        return;
+      }
+
+      setMessage(response.data?.message || t("auth.checkEmailInstructions"));
+    } catch (err) {
+      setError(String(err));
+    } finally {
+      setIsLoading(false);
     }
-
-    setMessage(response.data?.message || t("auth.checkEmailInstructions"));
   };
 
-  if (!isReady) return <Loader isOpen={true} />;
+  if (!isReady || isLoading) return <Loader isOpen={true} />;
 
   return (
-    <main className={styles.mainWrapper}>
+    <main className={styles.mainWrapper} aria-busy={isLoading}>
       <div className={styles.formContainer}>
         <h1>{t("auth.forgotPasswordTitle")}</h1>
-        <br />
         <form
           onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -73,10 +80,18 @@ export default function ForgotPasswordPage() {
             {t("auth.helperBackToLogin")} <a href="/login">{t("auth.loginButton")}</a>
           </p>
 
-          {error && <p className={styles.errorMessage}>{error}</p>}
-          {message && <p className={styles.successMessage}>{message}</p>}
+          {error && (
+            <div role="alert" className={styles.errorMessage}>
+              {error}
+            </div>
+          )}
+          {message && (
+            <div role="alert" className={styles.successMessage}>
+              {message}
+            </div>
+          )}
 
-          <Button type="submit" variant="primary">
+          <Button type="submit" variant="primary" disabled={isLoading}>
             {t("auth.sendResetLink")}
           </Button>
         </form>

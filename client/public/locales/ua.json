@@ -1,13 +1,18 @@
 {
-  "header": { "login": "Увійти", "profile": "Профіль" },
+  "header": { "login": "Увійти", "profile": "Профіль", "navigation": "Навігація" },
 
-  "footer": { "allRightsReserved": "Усі права захищено" },
+  "footer": { "allRightsReserved": "Усі права захищено", "siteFooter": "Нижній колонтитул сайту" },
 
   "confirm-modal": {
     "confirmTitle": "Ви впевнені?",
     "confirmMessage": "Цю дію не можна буде скасувати.",
     "confirmButton": "Так",
     "cancelButton": "Ні"
+  },
+
+  "input": {
+    "showPassword": "Показати пароль",
+    "hidePassword": "Приховати пароль"
   },
 
   "home": {
@@ -50,13 +55,21 @@
     "helperNoAccount": "Ще немає акаунту? Створіть його зараз",
     "helperHaveAccount": "Вже є акаунт? Увійдіть",
     "helperForgotPassword": "Забули пароль? Скиньте його тут",
-    "helperRememberPassword": "Згадали пароль? Повернутися до входу"
+    "helperRememberPassword": "Згадали пароль? Повернутися до входу",
+    "helperBackToLogin": "Повернутися до входу",
+    "usernamePlaceholder": "Введіть ім'я користувача",
+    "passwordPlaceholder": "Введіть ваш пароль"
   },
 
   "user-page": {
     "qrCodeTitle": "QR код",
     "scanProfile": "Скануйте, щоб відкрити цей профіль",
-    "userNotFound": "Користувача не знайдено"
+    "userNotFound": "Користувача не знайдено",
+    "showQrCode": "Показати QR код",
+    "showEditPage": "Перейти на сторінку редагування",
+    "languageSelector": "Обрати мову",
+    "avatarAlt": "Аватар користувача {{username}}",
+    "qrCodeAlt": "QR-код профілю користувача {{username}}"
   },
 
   "edit": {

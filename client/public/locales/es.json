@@ -1,13 +1,21 @@
 {
-  "header": { "login": "Iniciar sesión", "profile": "Perfil" },
+  "header": { "login": "Iniciar sesión", "profile": "Perfil", "navigation": "Navegación" },
 
-  "footer": { "allRightsReserved": "Todos los derechos reservados" },
+  "footer": {
+    "allRightsReserved": "Todos los derechos reservados",
+    "siteFooter": "Pie de página del sitio web"
+  },
 
   "confirm-modal": {
     "confirmTitle": "¿Estás seguro?",
     "confirmMessage": "Esta acción no se puede deshacer.",
     "confirmButton": "Sí",
     "cancelButton": "No"
+  },
+
+  "input": {
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña"
   },
 
   "home": {
@@ -31,10 +39,40 @@
     "ctaButton": "Crear cuenta"
   },
 
+  "auth": {
+    "loginTitle": "Iniciar sesión",
+    "registerTitle": "Registrarse",
+    "forgotPasswordTitle": "Recuperar contraseña",
+    "resetPasswordTitle": "Restablecer contraseña",
+    "email": "Correo electrónico",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "newPassword": "Nueva contraseña",
+    "emailRequired": "El correo electrónico es obligatorio",
+    "usernameRequired": "El nombre de usuario es obligatorio",
+    "passwordRequired": "La contraseña es obligatoria",
+    "loginButton": "Iniciar sesión",
+    "registerButton": "Registrarse",
+    "sendResetLink": "Enviar enlace de restablecimiento",
+    "resetPasswordButton": "Restablecer contraseña",
+    "helperNoAccount": "¿No tienes cuenta? Crea una ahora",
+    "helperHaveAccount": "¿Ya tienes cuenta? Inicia sesión",
+    "helperForgotPassword": "¿Olvidaste tu contraseña? Restablécela aquí",
+    "helperRememberPassword": "¿Recordaste tu contraseña? Volver a iniciar sesión",
+    "helperBackToLogin": "Volver al inicio de sesión",
+    "usernamePlaceholder": "Introduce tu nombre de usuario",
+    "passwordPlaceholder": "Introduce tu contraseña"
+  },
+
   "user-page": {
     "qrCodeTitle": "Código QR",
     "scanProfile": "Escanea para abrir este perfil",
-    "userNotFound": "Usuario no encontrado"
+    "userNotFound": "Usuario no encontrado",
+    "showQrCode": "Mostrar código QR",
+    "showEditPage": "Ir a la página de edición",
+    "languageSelector": "Seleccionar idioma",
+    "avatarAlt": "Avatar de {{username}}",
+    "qrCodeAlt": "Código QR del perfil de {{username}}"
   },
 
   "edit": {

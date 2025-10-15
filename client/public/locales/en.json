@@ -1,13 +1,18 @@
 {
-  "header": { "login": "Login", "profile": "Profile" },
+  "header": { "login": "Login", "profile": "Profile", "navigation": "Navigation" },
 
-  "footer": { "allRightsReserved": "All rights reserved" },
+  "footer": { "allRightsReserved": "All rights reserved", "siteFooter": "Website footer" },
 
   "confirm-modal": {
     "confirmTitle": "Are you sure?",
     "confirmMessage": "This action cannot be undone.",
     "confirmButton": "Yes",
     "cancelButton": "No"
+  },
+
+  "input": {
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
 
   "home": {
@@ -47,16 +52,24 @@
     "registerButton": "Register",
     "sendResetLink": "Send Reset Link",
     "resetPasswordButton": "Reset Password",
-    "helperNoAccount": "Don’t have an account yet? Sign up now",
+    "helperNoAccount": "Don't have an account? Create one now",
     "helperHaveAccount": "Already have an account? Login",
     "helperForgotPassword": "Forgot your password? Reset it here",
-    "helperRememberPassword": "Remembered your password? Back to login"
+    "helperRememberPassword": "Remembered your password? Go back to login",
+    "helperBackToLogin": "Back to login",
+    "usernamePlaceholder": "Enter your username",
+    "passwordPlaceholder": "Enter your password"
   },
 
   "user-page": {
-    "qrCodeTitle": "QR code",
+    "qrCodeTitle": "QR Code",
     "scanProfile": "Scan to open this profile",
-    "userNotFound": "User not found"
+    "userNotFound": "User not found",
+    "showQrCode": "Show QR Code",
+    "showEditPage": "Go to edit page",
+    "languageSelector": "Select language",
+    "avatarAlt": "{{username}}'s avatar",
+    "qrCodeAlt": "QR code of {{username}}'s profile"
   },
 
   "edit": {

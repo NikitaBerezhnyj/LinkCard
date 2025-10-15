@@ -75,10 +75,9 @@ export default function LoginPage() {
   if (!isReady || isLoading) return <Loader isOpen={true} />;
 
   return (
-    <main className={styles.mainWrapper}>
+    <main className={styles.mainWrapper} aria-busy={isLoading}>
       <div className={styles.formContainer}>
         <h1>{t("auth.loginTitle")}</h1>
-        <br />
         <form
           onSubmit={handleLogin}
           style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -111,8 +110,13 @@ export default function LoginPage() {
             <a href="/forgot-password">{t("auth.resetPasswordButton")}</a>
           </p>
 
-          {error && <p className={styles.errorMessage}>{error}</p>}
-          <Button type="submit" variant="primary">
+          {error && (
+            <div role="alert" className={styles.errorMessage}>
+              {error}
+            </div>
+          )}
+
+          <Button type="submit" variant="primary" disabled={isLoading}>
             {t("auth.loginButton")}
           </Button>
         </form>

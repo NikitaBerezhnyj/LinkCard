@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const { t, i18n } = useTranslation();
   const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,45 +23,50 @@ export default function RegisterPage() {
   const { setUser } = useUserStore();
 
   useEffect(() => {
-    if (i18n.isInitialized) {
-      setIsReady(true);
-    }
+    if (i18n.isInitialized) setIsReady(true);
   }, [i18n.isInitialized]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setIsLoading(true);
 
     if (!username) {
       setError(t("auth.usernameRequired"));
+      setIsLoading(false);
       return;
     }
 
     if (!email) {
       setError(t("auth.emailRequired"));
+      setIsLoading(false);
       return;
     }
 
     if (!password) {
       setError(t("auth.passwordRequired"));
+      setIsLoading(false);
       return;
     }
 
     const usernameError = validateUsername(username);
     if (usernameError) {
       setError(usernameError);
+      setIsLoading(false);
       return;
     }
 
     const emailError = validateEmail(email);
     if (emailError) {
       setError(emailError);
+      setIsLoading(false);
       return;
     }
 
     const passwordError = validatePassword(password);
     if (passwordError) {
       setError(passwordError);
+      setIsLoading(false);
       return;
     }
 
@@ -72,24 +78,22 @@ export default function RegisterPage() {
         return;
       }
 
-      if (response.data?.username) {
-        setUser(response.data.username);
-      }
+      if (response.data?.username) setUser(response.data.username);
 
       router.push("/");
     } catch (err) {
       setError(String(err));
     } finally {
+      setIsLoading(false);
     }
   };
 
-  if (!isReady) return <Loader isOpen={true} />;
+  if (!isReady || isLoading) return <Loader isOpen={true} />;
 
   return (
-    <main className={styles.mainWrapper}>
+    <main className={styles.mainWrapper} aria-busy={isLoading}>
       <div className={styles.formContainer}>
         <h1>{t("auth.registerTitle")}</h1>
-        <br />
         <form
           onSubmit={handleRegister}
           style={{ display: "flex", flexDirection: "column", gap: "1rem" }}
@@ -127,8 +131,13 @@ export default function RegisterPage() {
             {t("auth.helperHaveAccount")} <a href="/login">{t("auth.loginButton")}</a>
           </p>
 
-          {error && <p className={styles.errorMessage}>{error}</p>}
-          <Button type="submit" variant="primary">
+          {error && (
+            <div role="alert" className={styles.errorMessage}>
+              {error}
+            </div>
+          )}
+
+          <Button type="submit" variant="primary" disabled={isLoading}>
             {t("auth.registerButton")}
           </Button>
         </form>
