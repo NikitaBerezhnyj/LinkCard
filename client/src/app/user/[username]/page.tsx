@@ -183,6 +183,7 @@ export default function UserPage() {
             ...(s.fontSize && { fontSize: s.fontSize })
           }}
           arrowColor={s.text}
+          aria-label={t("user-page.languageSelector")}
         />
       </div>
 
@@ -192,24 +193,26 @@ export default function UserPage() {
           <div className={`${styles.cardFace} ${styles.front}`} style={cardStyle}>
             <div className={styles.topButtons}>
               <button
+                aria-label={t("user-page.showQrCode")}
                 className={styles.qrButton}
                 onClick={() => setFlipped(true)}
                 style={qrButtonStyle}
                 onMouseEnter={e => Object.assign(e.currentTarget.style, qrButtonHoverStyle)}
                 onMouseLeave={e => Object.assign(e.currentTarget.style, qrButtonStyle)}
               >
-                <BsQrCode />
+                <BsQrCode aria-hidden="true" />
               </button>
 
               {isOwner && (
                 <button
+                  aria-label={t("user-page.showEditPage")}
                   className={styles.qrButton}
                   onClick={() => router.push(`${window.location.pathname}/edit`)}
                   style={qrButtonStyle}
                   onMouseEnter={e => Object.assign(e.currentTarget.style, qrButtonHoverStyle)}
                   onMouseLeave={e => Object.assign(e.currentTarget.style, qrButtonStyle)}
                 >
-                  <MdEdit />
+                  <MdEdit aria-hidden="true" />
                 </button>
               )}
             </div>
@@ -217,7 +220,7 @@ export default function UserPage() {
             {user.avatar ? (
               <Image
                 src={user.avatar}
-                alt={user.username}
+                alt={t("user-page.avatarAlt", { username: user.username })}
                 width={150}
                 height={150}
                 unoptimized
@@ -271,6 +274,7 @@ export default function UserPage() {
             <div className={styles.qrWrapper}>
               <h1 style={textStyle}>{t("user-page.qrCodeTitle")}</h1>
               <div
+                aria-label={t("user-page.qrCodeAlt", { username: user.username })}
                 className={styles.qrCodeContainer}
                 style={{
                   borderColor: s.buttonHoverBackground,

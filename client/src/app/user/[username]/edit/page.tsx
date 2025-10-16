@@ -564,14 +564,26 @@ export default function UserEditPage() {
       <div className={styles.formContainer}>
         <h1 className={styles.title}>{t("edit.title")}</h1>
 
-        <div className={styles.tabs}>
+        <div
+          className={styles.tabs}
+          role="tablist"
+          aria-label={t("edit.tabs.label", { defaultValue: "Налаштування профілю" })}
+        >
           <button
+            role="tab"
+            aria-selected={activeTab === "profile"}
+            aria-controls="profile-panel"
+            id="profile-tab"
             className={`${styles.tab} ${activeTab === "profile" ? styles.active : ""}`}
             onClick={() => setActiveTab("profile")}
           >
             {t("edit.tabs.profile")}
           </button>
           <button
+            role="tab"
+            aria-selected={activeTab === "styles"}
+            aria-controls="styles-panel"
+            id="styles-tab"
             className={`${styles.tab} ${activeTab === "styles" ? styles.active : ""}`}
             onClick={() => setActiveTab("styles")}
           >
@@ -581,11 +593,16 @@ export default function UserEditPage() {
 
         <div className={styles.content}>
           {activeTab === "profile" ? (
-            <div className={styles.section}>
+            <div
+              className={styles.section}
+              role="tabpanel"
+              id="profile-panel"
+              aria-labelledby="profile-tab"
+            >
               <div className={`${styles.profileCard}`}>
                 <div className={styles.cardHeader}>
                   <h2>
-                    <FiUser />
+                    <FiUser aria-hidden="true" />
                     {t("edit.avatar.title")}
                   </h2>
                 </div>
@@ -594,23 +611,25 @@ export default function UserEditPage() {
                     <div className={styles.avatarContainer}>
                       <label htmlFor="avatarInput" className={styles.avatarLabel}>
                         {isUploadingAvatar ? (
-                          <div className={styles.avatarLoading}>
-                            <FiUpload />
-                            {t("edit.avatar.uploading")}
+                          <div className={styles.avatarLoading} role="status" aria-live="polite">
+                            <FiUpload aria-hidden="true" />
+                            <span>{t("edit.avatar.uploading")}</span>
                           </div>
                         ) : avatarUrl ? (
                           <Image
                             src={avatarUrl}
-                            alt={username || "User avatar"}
+                            alt={t("edit.avatar.currentAvatar", {
+                              defaultValue: `Поточний аватар ${username || "користувача"}`
+                            })}
                             width={140}
                             height={140}
                             unoptimized={true}
                             className={styles.avatarImage}
                           />
                         ) : (
-                          <FaUserCircle className={styles.avatarPlaceholder} />
+                          <FaUserCircle className={styles.avatarPlaceholder} aria-hidden="true" />
                         )}
-                        <div className={styles.avatarOverlay}>
+                        <div className={styles.avatarOverlay} aria-hidden="true">
                           <FiUpload />
                         </div>
                       </label>
@@ -620,6 +639,9 @@ export default function UserEditPage() {
                         accept=".jpg,.jpeg,.png,.webp,.avif,.tiff,.gif"
                         style={{ display: "none" }}
                         onChange={handleAvatarChange}
+                        aria-label={t("edit.avatar.uploadLabel", {
+                          defaultValue: "Завантажити аватар"
+                        })}
                       />
                     </div>
                     <p className={styles.avatarHint}>{t("edit.avatar.hint")}</p>
@@ -630,7 +652,7 @@ export default function UserEditPage() {
               <div className={styles.profileCard}>
                 <div className={styles.cardHeader}>
                   <h2>
-                    <IoMdDocument /> {t("edit.basicInfo.title")}
+                    <IoMdDocument aria-hidden="true" /> {t("edit.basicInfo.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
@@ -664,17 +686,20 @@ export default function UserEditPage() {
               <div className={styles.profileCard}>
                 <div className={styles.cardHeader}>
                   <h2>
-                    <FiKey />
+                    <FiKey aria-hidden="true" />
                     {t("edit.security.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.passwordSection}>
                     <p className={styles.hint}>{t("edit.security.hint")}</p>
-                    <span className={styles.passwordLabel}>{t("edit.security.password")}</span>
+                    <span className={styles.passwordLabel} id="password-label">
+                      {t("edit.security.password")}
+                    </span>
                     <button
                       className={styles.changePasswordBtn}
                       onClick={handlePasswordResetRequest}
+                      aria-describedby="password-label"
                     >
                       {t("edit.security.changePassword")}
                     </button>
@@ -685,7 +710,7 @@ export default function UserEditPage() {
               <div className={styles.profileCard}>
                 <div className={styles.cardHeader}>
                   <h2>
-                    <FiInfo /> {t("edit.bio.title")}
+                    <FiInfo aria-hidden="true" /> {t("edit.bio.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
@@ -704,7 +729,7 @@ export default function UserEditPage() {
               <div className={styles.profileCard}>
                 <div className={styles.cardHeader}>
                   <h2>
-                    <FiLink />
+                    <FiLink aria-hidden="true" />
                     {t("edit.links.title")}
                   </h2>
                 </div>
@@ -712,19 +737,28 @@ export default function UserEditPage() {
                   <div className={styles.linksSection}>
                     <div className={styles.linksHeader}>
                       <h3>{t("edit.links.subtitle")}</h3>
-                      <button className={styles.addBtn} onClick={handleAddLink}>
-                        <FaPlus />
+                      <button
+                        className={styles.addBtn}
+                        onClick={handleAddLink}
+                        aria-label={t("edit.links.addLabel", {
+                          defaultValue: "Додати нове посилання"
+                        })}
+                      >
+                        <FaPlus aria-hidden="true" />
                       </button>
                     </div>
                     {links.length > 0 ? (
-                      <div className={styles.linksList}>
+                      <div className={styles.linksList} role="list">
                         {links.map((link, index) => (
-                          <div key={index} className={styles.linkItem}>
+                          <div key={index} className={styles.linkItem} role="listitem">
                             <Input
                               type="text"
                               placeholder={t("edit.links.titlePlaceholder")}
                               value={link.title}
                               onChange={e => handleLinkChange(index, "title", e.target.value)}
+                              aria-label={t("edit.links.titleLabel", {
+                                defaultValue: `Назва посилання ${index + 1}`
+                              })}
                             />
                             <Input
                               type="text"
@@ -732,19 +766,26 @@ export default function UserEditPage() {
                               value={link.url}
                               onChange={e => handleLinkChange(index, "url", e.target.value)}
                               error={linkErrors[index] || undefined}
+                              aria-label={t("edit.links.urlLabel", {
+                                defaultValue: `URL посилання ${index + 1}`
+                              })}
                             />
                             <button
                               className={styles.deleteBtn}
                               onClick={() => handleRemoveLink(index)}
-                              title={t("edit.links.deleteTooltip")}
+                              aria-label={t("edit.links.deleteLabel", {
+                                defaultValue: `Видалити посилання ${index + 1}`
+                              })}
                             >
-                              <FiTrash2 />
+                              <FiTrash2 aria-hidden="true" />
                             </button>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div className={styles.emptyLinks}>{t("edit.links.empty")}</div>
+                      <div className={styles.emptyLinks} role="status">
+                        {t("edit.links.empty")}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -753,21 +794,30 @@ export default function UserEditPage() {
               <div className={`${styles.profileCard} ${styles.dangerZone}`}>
                 <div className={styles.cardHeader}>
                   <h2>
-                    <FiAlertTriangle />
+                    <FiAlertTriangle aria-hidden="true" />
                     {t("edit.dangerZone.title")}
                   </h2>
                 </div>
                 <div className={styles.cardContent}>
                   <div className={styles.dangerActions}>
-                    <button className={styles.dangerBtn} onClick={handleLogoutClick}>
-                      <FiLogOut />
+                    <button
+                      className={styles.dangerBtn}
+                      onClick={handleLogoutClick}
+                      aria-label={t("edit.dangerZone.logoutLabel", {
+                        defaultValue: "Вийти з облікового запису"
+                      })}
+                    >
+                      <FiLogOut aria-hidden="true" />
                       {t("edit.dangerZone.logout")}
                     </button>
                     <button
                       className={`${styles.dangerBtn} ${styles.deleteAccount}`}
                       onClick={handleDeleteAccountClick}
+                      aria-label={t("edit.dangerZone.deleteLabel", {
+                        defaultValue: "Видалити обліковий запис назавжди"
+                      })}
                     >
-                      <FiTrash2 />
+                      <FiTrash2 aria-hidden="true" />
                       {t("edit.dangerZone.deleteAccount")}
                     </button>
                   </div>
@@ -775,7 +825,12 @@ export default function UserEditPage() {
               </div>
             </div>
           ) : (
-            <div className={styles.section}>
+            <div
+              className={styles.section}
+              role="tabpanel"
+              id="styles-panel"
+              aria-labelledby="styles-tab"
+            >
               {[
                 { key: "templates", label: t("edit.styles.sections.templates") },
                 { key: "background", label: t("edit.styles.sections.background") },
@@ -789,22 +844,35 @@ export default function UserEditPage() {
                     <button
                       className={styles.accordionHeader}
                       onClick={() => setOpenSection(prev => (prev === key ? "" : key))}
+                      aria-expanded={isOpen}
+                      aria-controls={`accordion-${key}`}
+                      id={`accordion-header-${key}`}
                     >
-                      {label}
-                      <IoIosArrowDown />
+                      <span>{label}</span>
+                      <IoIosArrowDown aria-hidden="true" />
                     </button>
 
-                    <div className={styles.accordionContent}>
+                    <div
+                      className={styles.accordionContent}
+                      id={`accordion-${key}`}
+                      role="region"
+                      aria-labelledby={`accordion-header-${key}`}
+                      aria-hidden={!isOpen}
+                    >
                       {/* === Templates === */}
                       {key === "templates" && (
                         <>
                           <p className={styles.hint}>{t("edit.styles.templatesHint")}</p>
-                          <div className={styles.templateGrid}>
+                          <div className={styles.templateGrid} role="list">
                             {Object.keys(templates).map(templateKey => (
                               <button
                                 key={templateKey}
                                 className={styles.templateBtn}
                                 onClick={() => handleTemplateSelect(templateKey)}
+                                role="listitem"
+                                aria-label={t("edit.styles.templateLabel", {
+                                  defaultValue: `Вибрати шаблон ${templateKey.replace(/([A-Z])/g, " $1").trim()}`
+                                })}
                               >
                                 {templateKey.replace(/([A-Z])/g, " $1").trim()}
                               </button>
@@ -835,17 +903,23 @@ export default function UserEditPage() {
                           {userStyles.background.type === "color" && (
                             <div className={styles.formRow}>
                               <div className={styles.formGroup}>
-                                <label>{t("edit.styles.background.backgroundColor")}</label>
+                                <label htmlFor="bg-color-input">
+                                  {t("edit.styles.background.backgroundColor")}
+                                </label>
                                 <div className={styles.colorWrapper}>
                                   <input
+                                    id="bg-color-input"
                                     type="color"
                                     value={userStyles.background.value.color}
                                     onChange={e =>
                                       handleStyleChange("background.value.color", e.target.value)
                                     }
                                     className={styles.colorInput}
+                                    aria-label={t("edit.styles.background.colorLabel", {
+                                      defaultValue: "Колір фону"
+                                    })}
                                   />
-                                  <span className={styles.colorValue}>
+                                  <span className={styles.colorValue} aria-live="polite">
                                     {userStyles.background.value.color}
                                   </span>
                                 </div>
@@ -857,9 +931,12 @@ export default function UserEditPage() {
                             <>
                               <div className={styles.formRow}>
                                 <div className={styles.formGroup}>
-                                  <label>{t("edit.styles.background.gradientStart")}</label>
+                                  <label htmlFor="gradient-start-input">
+                                    {t("edit.styles.background.gradientStart")}
+                                  </label>
                                   <div className={styles.colorWrapper}>
                                     <input
+                                      id="gradient-start-input"
                                       type="color"
                                       value={userStyles.background.value.gradient?.start}
                                       onChange={e =>
@@ -869,16 +946,22 @@ export default function UserEditPage() {
                                         )
                                       }
                                       className={styles.colorInput}
+                                      aria-label={t("edit.styles.background.gradientStartLabel", {
+                                        defaultValue: "Початковий колір градієнта"
+                                      })}
                                     />
-                                    <span className={styles.colorValue}>
+                                    <span className={styles.colorValue} aria-live="polite">
                                       {userStyles.background.value.gradient?.start}
                                     </span>
                                   </div>
                                 </div>
                                 <div className={styles.formGroup}>
-                                  <label>{t("edit.styles.background.gradientEnd")}</label>
+                                  <label htmlFor="gradient-end-input">
+                                    {t("edit.styles.background.gradientEnd")}
+                                  </label>
                                   <div className={styles.colorWrapper}>
                                     <input
+                                      id="gradient-end-input"
                                       type="color"
                                       value={userStyles.background.value.gradient?.end}
                                       onChange={e =>
@@ -888,8 +971,11 @@ export default function UserEditPage() {
                                         )
                                       }
                                       className={styles.colorInput}
+                                      aria-label={t("edit.styles.background.gradientEndLabel", {
+                                        defaultValue: "Кінцевий колір градієнта"
+                                      })}
                                     />
-                                    <span className={styles.colorValue}>
+                                    <span className={styles.colorValue} aria-live="polite">
                                       {userStyles.background.value.gradient?.end}
                                     </span>
                                   </div>
@@ -921,14 +1007,22 @@ export default function UserEditPage() {
                             <div className={styles.backgroundSection}>
                               <label htmlFor="backgroundInput" className={styles.backgroundLabel}>
                                 {isUploadingBackground ? (
-                                  <div className={styles.backgroundLoading}>
-                                    <FiUpload />
-                                    {t("common.loading", { defaultValue: "Завантаження..." })}
+                                  <div
+                                    className={styles.backgroundLoading}
+                                    role="status"
+                                    aria-live="polite"
+                                  >
+                                    <FiUpload aria-hidden="true" />
+                                    <span>
+                                      {t("common.loading", { defaultValue: "Завантаження..." })}
+                                    </span>
                                   </div>
                                 ) : backgroundUrl ? (
                                   <Image
                                     src={backgroundUrl}
-                                    alt="Background"
+                                    alt={t("edit.styles.background.currentImage", {
+                                      defaultValue: "Поточне зображення фону"
+                                    })}
                                     width={600}
                                     height={200}
                                     className={styles.backgroundImage}
@@ -936,11 +1030,11 @@ export default function UserEditPage() {
                                   />
                                 ) : (
                                   <div className={styles.backgroundPlaceholder}>
-                                    <FiImage />
+                                    <FiImage aria-hidden="true" />
                                     <span>{t("edit.styles.background.uploadPrompt")}</span>
                                   </div>
                                 )}
-                                <div className={styles.backgroundOverlay}>
+                                <div className={styles.backgroundOverlay} aria-hidden="true">
                                   <FiUpload />
                                 </div>
                               </label>
@@ -950,6 +1044,9 @@ export default function UserEditPage() {
                                 accept=".jpg,.jpeg,.png,.webp,.avif,.tiff,.gif"
                                 style={{ display: "none" }}
                                 onChange={handleBackgroundUpload}
+                                aria-label={t("edit.styles.background.uploadLabel", {
+                                  defaultValue: "Завантажити зображення фону"
+                                })}
                               />
                               <div className={styles.formRow}>
                                 <Select
@@ -1061,15 +1158,17 @@ export default function UserEditPage() {
                             ["contentBackground", t("edit.styles.colors.contentBackground")]
                           ].map(([keyName, label]) => (
                             <div key={keyName} className={styles.formGroup}>
-                              <label>{label}</label>
+                              <label htmlFor={`color-${keyName}`}>{label}</label>
                               <div className={styles.colorWrapper}>
                                 <input
+                                  id={`color-${keyName}`}
                                   type="color"
                                   value={userStyles[keyName as keyof typeof userStyles] as string}
                                   onChange={e => handleStyleChange(keyName, e.target.value)}
                                   className={styles.colorInput}
+                                  aria-label={label}
                                 />
-                                <span className={styles.colorValue}>
+                                <span className={styles.colorValue} aria-live="polite">
                                   {userStyles[keyName as keyof typeof userStyles] as string}
                                 </span>
                               </div>
@@ -1122,9 +1221,9 @@ export default function UserEditPage() {
         </div>
 
         {error && (
-          <div className={styles.errorMessage}>
-            <FiAlertTriangle />
-            {error}
+          <div className={styles.errorMessage} role="alert" aria-live="assertive">
+            <FiAlertTriangle aria-hidden="true" />
+            <span>{error}</span>
           </div>
         )}
 

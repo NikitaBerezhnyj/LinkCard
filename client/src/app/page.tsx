@@ -45,7 +45,7 @@ export default function HomePage() {
   return (
     <>
       <Header isAuth={isAuth} />
-      <main className={styles.homeWrapper}>
+      <main className={styles.homeWrapper} aria-busy={isLoading}>
         <section className={`${styles.section} ${styles.hero}`}>
           <div className={styles.content}>
             <h1>
@@ -63,19 +63,27 @@ export default function HomePage() {
                 {isAuth && username ? (
                   <>
                     <Link href={`/user/${username}`}>
-                      <Button>{t("home.goToProfile")}</Button>
+                      <Button role="button" tabIndex={0}>
+                        {t("home.goToProfile")}
+                      </Button>
                     </Link>
                     <Link href={`/user/${username}/edit`}>
-                      <Button variant="primary">{t("home.editPage")}</Button>
+                      <Button role="button" tabIndex={1}>
+                        {t("home.editPage")}
+                      </Button>
                     </Link>
                   </>
                 ) : (
                   <>
                     <Link href="/register">
-                      <Button>{t("home.startNow")}</Button>
+                      <Button role="button" tabIndex={0}>
+                        {t("home.startNow")}
+                      </Button>
                     </Link>
                     <Link href="/login">
-                      <Button variant="primary">{t("home.login")}</Button>
+                      <Button role="button" tabIndex={1}>
+                        {t("home.login")}
+                      </Button>
                     </Link>
                   </>
                 )}
@@ -88,17 +96,17 @@ export default function HomePage() {
           <h2>{t("home.featuresTitle")}</h2>
           <div className={styles.featuresGrid}>
             <div className={styles.featureCard}>
-              <MdDesignServices size={60} />
+              <MdDesignServices size={60} aria-hidden="true" />
               <h3>{t("home.featureCustom")}</h3>
               <p>{t("home.featureCustomDesc")}</p>
             </div>
             <div className={styles.featureCard}>
-              <IoIosShareAlt size={60} />
+              <IoIosShareAlt size={60} aria-hidden="true" />
               <h3>{t("home.featureShare")}</h3>
               <p>{t("home.featureShareDesc")}</p>
             </div>
             <div className={styles.featureCard}>
-              <MdSecurity size={60} />
+              <MdSecurity size={60} aria-hidden="true" />
               <h3>{t("home.featureSecure")}</h3>
               <p>{t("home.featureSecureDesc")}</p>
             </div>
