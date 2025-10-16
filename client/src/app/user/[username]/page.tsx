@@ -45,6 +45,31 @@ export default function UserPage() {
   ];
 
   useEffect(() => {
+    const fetchUserData = async (usernameStr: string) => {
+      setIsLoading(true);
+      try {
+        const currentUsername = await accessManager.getCurrentUserCached();
+        const res = await userService.getUser(usernameStr);
+        const userData = res?.data?.data;
+
+        if (!userData) {
+          setError(new Error(t("user-page.userNotFound")));
+          setUser(null);
+          return;
+        }
+
+        setUser(userData);
+        setError(null);
+        setIsOwner(currentUsername === userData.username);
+      } catch (err) {
+        console.error("Fetch user failed:", err);
+        setError(err instanceof Error ? err : new Error(String(err)));
+        setUser(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     const usernameStr = Array.isArray(username) ? username[0] : username;
     if (!usernameStr) return;
     fetchUserData(usernameStr);
@@ -58,31 +83,6 @@ export default function UserPage() {
       setLanguage("en");
     }
   }, [i18n.language]);
-
-  const fetchUserData = async (usernameStr: string) => {
-    setIsLoading(true);
-    try {
-      const currentUsername = await accessManager.getCurrentUserCached();
-      const res = await userService.getUser(usernameStr);
-      const userData = res?.data?.data;
-
-      if (!userData) {
-        setError(new Error(t("user-page.userNotFound")));
-        setUser(null);
-        return;
-      }
-
-      setUser(userData);
-      setError(null);
-      setIsOwner(currentUsername === userData.username);
-    } catch (err) {
-      console.error("Fetch user failed:", err);
-      setError(err instanceof Error ? err : new Error(String(err)));
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newLang = e.target.value as "ua" | "en" | "es";
