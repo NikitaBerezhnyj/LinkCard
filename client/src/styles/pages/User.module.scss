@@ -158,40 +158,6 @@
   flex-direction: column;
   width: 100%;
   gap: $spacing-sm;
-
-  .linkBlock {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    padding: $spacing-sm $spacing-md;
-    border-radius: $radius-sm;
-    background-color: $color-background-alt;
-    text-decoration: none;
-    transition:
-      background-color $transition-fast,
-      color $transition-fast;
-
-    &:hover {
-      background-color: $color-primary;
-      color: $color-text-primary;
-
-      .linkIcon {
-        color: $color-text-primary;
-      }
-    }
-
-    .linkIcon {
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-    }
-
-    .linkTitle {
-      text-align: left;
-      flex: 1;
-      font-weight: 500;
-    }
-  }
 }
 
 .loading,
