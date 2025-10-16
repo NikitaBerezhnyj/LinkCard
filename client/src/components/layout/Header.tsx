@@ -6,6 +6,7 @@ import { useUserStore } from "@/store/userStore";
 import { useState, useEffect } from "react";
 import Select from "@/components/ui/Select";
 import { useTranslation } from "react-i18next";
+import { Languages } from "@/i18n";
 
 interface HeaderProps {
   isAuth: boolean;
@@ -14,7 +15,7 @@ interface HeaderProps {
 export default function Header({ isAuth }: HeaderProps) {
   const { t, i18n } = useTranslation();
   const { username } = useUserStore();
-  const [language, setLanguage] = useState<"ua" | "en" | "es">("ua");
+  const [language, setLanguage] = useState<Languages>("en");
 
   const languageOptions = [
     { value: "ua", label: "UA" },

@@ -27,6 +27,12 @@ export default function Input({
   const inputId = props.id || `input-${label?.replace(/\s+/g, "-").toLowerCase()}`;
   const errorId = error ? `${inputId}-error` : undefined;
 
+  let inputType = type;
+
+  if (isPasswordType && showPasswordToggle) {
+    inputType = showPassword ? "text" : "password";
+  }
+
   return (
     <div className={clsx(styles.inputWrapper, className)}>
       {label && (
@@ -39,7 +45,7 @@ export default function Input({
           id={inputId}
           aria-invalid={!!error}
           aria-describedby={errorId}
-          type={isPasswordType && showPasswordToggle ? (showPassword ? "text" : "password") : type}
+          type={inputType}
           className={clsx(styles.input, error && styles.error)}
           {...props}
         />

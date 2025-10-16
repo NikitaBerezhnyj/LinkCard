@@ -50,12 +50,15 @@ export class ApiClient {
     config?: AxiosRequestConfig<D>
   ): Promise<ApiResponse<T>> {
     try {
-      const headers =
-        data === undefined
-          ? { "Content-Type": "application/json" }
-          : data instanceof FormData
-            ? {}
-            : { "Content-Type": "application/json" };
+      let headers: Record<string, string> = {};
+
+      if (data === undefined) {
+        headers = { "Content-Type": "application/json" };
+      } else if (data instanceof FormData) {
+        headers = {};
+      } else {
+        headers = { "Content-Type": "application/json" };
+      }
 
       const response = await this.client.request<T>({
         method,

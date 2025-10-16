@@ -18,6 +18,7 @@ import Loader from "@/components/modals/Loader";
 import Select from "@/components/ui/Select";
 import ErrorPage from "@/app/error";
 import styles from "@/styles/pages/User.module.scss";
+import { Languages } from "@/i18n";
 
 export default function UserPage() {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function UserPage() {
   const [flipped, setFlipped] = useState(false);
   const [isOwner, setIsOwner] = useState(false);
   const { t, i18n } = useTranslation();
-  const [language, setLanguage] = useState<"ua" | "en" | "es">("ua");
+  const [language, setLanguage] = useState<Languages>("en");
 
   const languageOptions = [
     { value: "ua", label: "UA" },
@@ -110,23 +111,24 @@ export default function UserPage() {
   const s = user.styles || {};
   const fontClassName = getFontClassName(s.font);
 
-  const backgroundStyle: React.CSSProperties =
-    s.background?.type === "color"
-      ? { backgroundColor: s.background.value.color }
-      : s.background?.type === "gradient"
-        ? {
-            background: `linear-gradient(${s.background.value.gradient?.angle || "135deg"}, ${
-              s.background.value.gradient?.start
-            }, ${s.background.value.gradient?.end})`
-          }
-        : s.background?.type === "image"
-          ? {
-              backgroundImage: `url(${s.background.value.image})`,
-              backgroundPosition: s.background.value.position,
-              backgroundSize: s.background.value.size,
-              backgroundRepeat: s.background.value.repeat
-            }
-          : {};
+  let backgroundStyle: React.CSSProperties = {};
+
+  if (s.background?.type === "color") {
+    backgroundStyle = { backgroundColor: s.background.value.color };
+  } else if (s.background?.type === "gradient") {
+    const gradient = s.background.value.gradient;
+    backgroundStyle = {
+      background: `linear-gradient(${gradient?.angle || "135deg"}, ${gradient?.start}, ${gradient?.end})`
+    };
+  } else if (s.background?.type === "image") {
+    const image = s.background.value.image;
+    backgroundStyle = {
+      backgroundImage: `url(${image})`,
+      backgroundPosition: s.background.value.position,
+      backgroundSize: s.background.value.size,
+      backgroundRepeat: s.background.value.repeat
+    };
+  }
 
   const cardStyle: React.CSSProperties = {
     ...(s.contentBackground && { backgroundColor: s.contentBackground }),

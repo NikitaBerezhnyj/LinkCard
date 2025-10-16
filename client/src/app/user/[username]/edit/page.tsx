@@ -168,6 +168,24 @@ export default function UserEditPage() {
     const file = event.target.files?.[0];
     if (!file) return;
 
+    const getErrorMessage = (error: unknown): string => {
+      if (axios.isAxiosError(error)) {
+        const data = error.response?.data;
+        if (typeof data === "object" && data && "message" in data) {
+          return (data as { message: string }).message;
+        } else if (typeof data === "string") {
+          return data;
+        }
+      } else if (error instanceof Error) {
+        return error.message;
+      }
+
+      return type === "avatar" ? t("edit.upload.avatarError") : t("edit.upload.backgroundError");
+    };
+
+    const getSuccessMessage = () =>
+      type === "avatar" ? t("edit.upload.avatarSuccess") : t("edit.upload.backgroundSuccess");
+
     if (file.size > maxSizeMB * 1024 * 1024) {
       toast.error(t("edit.upload.fileTooLarge", { maxSizeMB }));
       return;
@@ -185,27 +203,10 @@ export default function UserEditPage() {
       if (!newUrl) throw new Error(t("edit.upload.uploadFailed"));
 
       onSuccess(newUrl);
-      toast.success(
-        type === "avatar" ? t("edit.upload.avatarSuccess") : t("edit.upload.backgroundSuccess")
-      );
+      toast.success(getSuccessMessage());
     } catch (error: unknown) {
       console.error(`Download error ${type}:`, error);
-
-      let errorMessage =
-        type === "avatar" ? t("edit.upload.avatarError") : t("edit.upload.backgroundError");
-
-      if (axios.isAxiosError(error)) {
-        const data = error.response?.data;
-        if (typeof data === "object" && data && "message" in data) {
-          errorMessage = (data as { message: string }).message;
-        } else if (typeof data === "string") {
-          errorMessage = data;
-        }
-      } else if (error instanceof Error) {
-        errorMessage = error.message;
-      }
-
-      toast.error(errorMessage);
+      toast.error(getErrorMessage(error));
     } finally {
       onFinish?.();
     }
@@ -386,28 +387,29 @@ export default function UserEditPage() {
 
     const changes: Record<string, unknown> = {};
 
+    const isDifferent = (orig: unknown, curr: unknown): boolean => {
+      if (Array.isArray(curr)) return JSON.stringify(orig) !== JSON.stringify(curr);
+      if (typeof curr === "object" && curr !== null) {
+        const nested = getChangedFields(
+          orig as Record<string, unknown>,
+          curr as Record<string, unknown>
+        );
+        return nested !== undefined && Object.keys(nested).length > 0;
+      }
+      return orig !== curr;
+    };
+
     for (const key in current) {
       if (!Object.prototype.hasOwnProperty.call(current, key)) continue;
 
-      const origValue = original[key];
-      const currValue = current[key];
-
-      if (Array.isArray(currValue)) {
-        if (JSON.stringify(origValue) !== JSON.stringify(currValue)) {
-          changes[key] = currValue;
-        }
-      } else if (typeof currValue === "object" && currValue !== null) {
-        const nestedChanges = getChangedFields(
-          origValue as Record<string, unknown>,
-          currValue as Record<string, unknown>
-        );
-        if (nestedChanges && Object.keys(nestedChanges).length > 0) {
-          changes[key] = nestedChanges;
-        }
-      } else {
-        if (origValue !== currValue) {
-          changes[key] = currValue;
-        }
+      if (isDifferent(original[key], current[key])) {
+        changes[key] =
+          typeof current[key] === "object" && current[key] !== null && !Array.isArray(current[key])
+            ? getChangedFields(
+                original[key] as Record<string, unknown>,
+                current[key] as Record<string, unknown>
+              )
+            : current[key];
       }
     }
 
@@ -559,6 +561,59 @@ export default function UserEditPage() {
     throw new Error(t("edit.errors.userNotFound"));
   }
 
+  let avatarContent;
+  if (isUploadingAvatar) {
+    avatarContent = (
+      <div className={styles.avatarLoading} role="status" aria-live="polite">
+        <FiUpload aria-hidden="true" />
+        <span>{t("edit.avatar.uploading")}</span>
+      </div>
+    );
+  } else if (avatarUrl) {
+    avatarContent = (
+      <Image
+        src={avatarUrl}
+        alt={t("edit.avatar.currentAvatar", {
+          defaultValue: `Поточний аватар ${username || "користувача"}`
+        })}
+        width={140}
+        height={140}
+        unoptimized={true}
+        className={styles.avatarImage}
+      />
+    );
+  } else {
+    avatarContent = <FaUserCircle className={styles.avatarPlaceholder} aria-hidden="true" />;
+  }
+
+  let backgroundContent;
+  if (isUploadingBackground) {
+    backgroundContent = (
+      <div className={styles.backgroundLoading} role="status" aria-live="polite">
+        <FiUpload aria-hidden="true" />
+        <span>{t("common.loading", { defaultValue: "Завантаження..." })}</span>
+      </div>
+    );
+  } else if (backgroundUrl) {
+    backgroundContent = (
+      <Image
+        src={backgroundUrl}
+        alt={t("edit.styles.background.currentImage", { defaultValue: "Поточне зображення фону" })}
+        width={600}
+        height={200}
+        className={styles.backgroundImage}
+        unoptimized={true}
+      />
+    );
+  } else {
+    backgroundContent = (
+      <div className={styles.backgroundPlaceholder}>
+        <FiImage aria-hidden="true" />
+        <span>{t("edit.styles.background.uploadPrompt")}</span>
+      </div>
+    );
+  }
+
   return (
     <main className={styles.mainWrapper}>
       <div className={styles.formContainer}>
@@ -610,25 +665,7 @@ export default function UserEditPage() {
                   <div className={styles.avatarSection}>
                     <div className={styles.avatarContainer}>
                       <label htmlFor="avatarInput" className={styles.avatarLabel}>
-                        {isUploadingAvatar ? (
-                          <div className={styles.avatarLoading} role="status" aria-live="polite">
-                            <FiUpload aria-hidden="true" />
-                            <span>{t("edit.avatar.uploading")}</span>
-                          </div>
-                        ) : avatarUrl ? (
-                          <Image
-                            src={avatarUrl}
-                            alt={t("edit.avatar.currentAvatar", {
-                              defaultValue: `Поточний аватар ${username || "користувача"}`
-                            })}
-                            width={140}
-                            height={140}
-                            unoptimized={true}
-                            className={styles.avatarImage}
-                          />
-                        ) : (
-                          <FaUserCircle className={styles.avatarPlaceholder} aria-hidden="true" />
-                        )}
+                        {avatarContent}
                         <div className={styles.avatarOverlay} aria-hidden="true">
                           <FiUpload />
                         </div>
@@ -1006,34 +1043,7 @@ export default function UserEditPage() {
                           {userStyles.background.type === "image" && (
                             <div className={styles.backgroundSection}>
                               <label htmlFor="backgroundInput" className={styles.backgroundLabel}>
-                                {isUploadingBackground ? (
-                                  <div
-                                    className={styles.backgroundLoading}
-                                    role="status"
-                                    aria-live="polite"
-                                  >
-                                    <FiUpload aria-hidden="true" />
-                                    <span>
-                                      {t("common.loading", { defaultValue: "Завантаження..." })}
-                                    </span>
-                                  </div>
-                                ) : backgroundUrl ? (
-                                  <Image
-                                    src={backgroundUrl}
-                                    alt={t("edit.styles.background.currentImage", {
-                                      defaultValue: "Поточне зображення фону"
-                                    })}
-                                    width={600}
-                                    height={200}
-                                    className={styles.backgroundImage}
-                                    unoptimized={true}
-                                  />
-                                ) : (
-                                  <div className={styles.backgroundPlaceholder}>
-                                    <FiImage aria-hidden="true" />
-                                    <span>{t("edit.styles.background.uploadPrompt")}</span>
-                                  </div>
-                                )}
+                                {backgroundContent}
                                 <div className={styles.backgroundOverlay} aria-hidden="true">
                                   <FiUpload />
                                 </div>

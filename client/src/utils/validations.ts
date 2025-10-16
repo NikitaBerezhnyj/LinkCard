@@ -1,5 +1,5 @@
-const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const usernameRegex = /^\w{3,20}$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
 
 export const validateUsername = (username: string): string | null => {
