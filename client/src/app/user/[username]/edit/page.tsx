@@ -28,16 +28,16 @@ import ConfirmModal from "@/components/modals/ConfirmModal";
 import { IUser } from "@/types/IUser";
 import * as templates from "@/constants/templates";
 import * as fonts from "@/constants/fonts";
-import { formatUnitValue, parseUnitValue } from "@/utils/styleFormatter";
+import { parseUnitValue } from "@/utils/styleFormatter";
 import { validateEmail, validateUsername, validateLink } from "@/utils/validations";
 import { userService } from "@/services/UserService";
 import { authService } from "@/services/AuthService";
-import { uploadService } from "@/services/UploadService";
 import { useUserStore } from "@/store/userStore";
 import Loader from "@/components/modals/Loader";
-import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { accessManager } from "@/managers/accessManager";
+import { getChangedFields, prepareCurrentData } from "@/utils/dataUtils";
+import { useImageUpload } from "@/hooks/useImageUpload";
 
 type TabType = "profile" | "styles";
 type ConfirmAction =
@@ -45,17 +45,6 @@ type ConfirmAction =
   | { type: "cancelChanges" }
   | { type: "logout" }
   | { type: "deleteAccount" };
-
-type UploadType = "avatar" | "background";
-interface UploadOptions {
-  type: UploadType;
-  maxSizeMB: number;
-  onSuccess: (url: string) => void;
-  onStart?: () => void;
-  onFinish?: () => void;
-}
-
-type DeepPartial<T> = T extends object ? { [P in keyof T]?: DeepPartial<T[P]> } : T;
 
 export default function UserEditPage() {
   const router = useRouter();
@@ -84,6 +73,8 @@ export default function UserEditPage() {
   const [backgroundUrl, setBackgroundUrl] = useState<string | null>(null);
   const [isUploadingBackground, setIsUploadingBackground] = useState(false);
   const { t } = useTranslation();
+
+  const { handleImageUpload } = useImageUpload();
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -118,30 +109,33 @@ export default function UserEditPage() {
   } as const;
 
   useEffect(() => {
-    const initPage = async () => {
-      try {
-        if (!usernameParam) return;
+    const handleAccessRedirect = async (usernameParam: string) => {
+      const accessData = await accessManager.checkEditPageAccess(usernameParam);
 
-        setIsLoading(true);
-
-        const accessData = await accessManager.checkEditPageAccess(usernameParam);
-
-        if (!accessData) {
-          const currentUser = await accessManager.getCurrentUserCached();
-
-          if (!currentUser) {
-            router.push("/login");
-          } else {
-            router.replace(`/user/${usernameParam}`);
-          }
-          return;
+      if (!accessData) {
+        const currentUser = await accessManager.getCurrentUserCached();
+        if (!currentUser) {
+          router.push("/login");
+        } else {
+          router.replace(`/user/${usernameParam}`);
         }
+        return null;
+      }
 
-        const { pageUser } = accessData;
+      return accessData;
+    };
 
-        setUser(accessData.currentUser);
+    const initPage = async () => {
+      if (!usernameParam) return;
+      setIsLoading(true);
+      try {
+        const accessData = await handleAccessRedirect(usernameParam);
+        if (!accessData) return;
+
+        const { currentUser, pageUser } = accessData;
+
+        setUser(currentUser);
         setOriginalUserData(pageUser);
-
         setUsername(pageUser.username);
         setEmail(pageUser.email);
         setBio(pageUser.bio || "");
@@ -160,78 +154,25 @@ export default function UserEditPage() {
     initPage();
   }, [usernameParam, router, setUser]);
 
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-    options: UploadOptions
-  ) => {
-    const { type, maxSizeMB, onSuccess, onStart, onFinish } = options;
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const getErrorMessage = (error: unknown): string => {
-      if (axios.isAxiosError(error)) {
-        const data = error.response?.data;
-        if (typeof data === "object" && data && "message" in data) {
-          return (data as { message: string }).message;
-        } else if (typeof data === "string") {
-          return data;
-        }
-      } else if (error instanceof Error) {
-        return error.message;
-      }
-
-      return type === "avatar" ? t("edit.upload.avatarError") : t("edit.upload.backgroundError");
-    };
-
-    const getSuccessMessage = () =>
-      type === "avatar" ? t("edit.upload.avatarSuccess") : t("edit.upload.backgroundSuccess");
-
-    if (file.size > maxSizeMB * 1024 * 1024) {
-      toast.error(t("edit.upload.fileTooLarge", { maxSizeMB }));
-      return;
-    }
-
-    try {
-      onStart?.();
-
-      const response =
-        type === "avatar"
-          ? await uploadService.uploadAvatar(file)
-          : await uploadService.uploadBackground(file);
-
-      const newUrl = response.data?.filePath;
-      if (!newUrl) throw new Error(t("edit.upload.uploadFailed"));
-
-      onSuccess(newUrl);
-      toast.success(getSuccessMessage());
-    } catch (error: unknown) {
-      console.error(`Download error ${type}:`, error);
-      toast.error(getErrorMessage(error));
-    } finally {
-      onFinish?.();
-    }
-  };
-
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    handleImageUpload(event, {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageUpload(e, {
       type: "avatar",
       maxSizeMB: 5,
+      onSuccess: url => setAvatarUrl(url),
       onStart: () => setIsUploadingAvatar(true),
-      onFinish: () => setIsUploadingAvatar(false),
-      onSuccess: url => setAvatarUrl(url)
+      onFinish: () => setIsUploadingAvatar(false)
     });
+  };
 
-  const handleBackgroundUpload = (event: React.ChangeEvent<HTMLInputElement>) =>
-    handleImageUpload(event, {
+  const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleImageUpload(e, {
       type: "background",
       maxSizeMB: 10,
+      onSuccess: url => setBackgroundUrl(url),
       onStart: () => setIsUploadingBackground(true),
-      onFinish: () => setIsUploadingBackground(false),
-      onSuccess: url => {
-        setBackgroundUrl(url);
-        handleStyleChange("background.value.image", url);
-      }
+      onFinish: () => setIsUploadingBackground(false)
     });
+  };
 
   const handlePasswordResetRequest = async () => {
     try {
@@ -377,87 +318,6 @@ export default function UserEditPage() {
     }
   };
 
-  const getChangedFields = (
-    original: Record<string, unknown> | null | undefined,
-    current: Record<string, unknown>
-  ): DeepPartial<typeof current> | undefined => {
-    if (!original || typeof original !== "object" || Array.isArray(original)) {
-      return current;
-    }
-
-    const changes: Record<string, unknown> = {};
-
-    const isDifferent = (orig: unknown, curr: unknown): boolean => {
-      if (Array.isArray(curr)) return JSON.stringify(orig) !== JSON.stringify(curr);
-      if (typeof curr === "object" && curr !== null) {
-        const nested = getChangedFields(
-          orig as Record<string, unknown>,
-          curr as Record<string, unknown>
-        );
-        return nested !== undefined && Object.keys(nested).length > 0;
-      }
-      return orig !== curr;
-    };
-
-    for (const key in current) {
-      if (!Object.prototype.hasOwnProperty.call(current, key)) continue;
-
-      if (isDifferent(original[key], current[key])) {
-        changes[key] =
-          typeof current[key] === "object" && current[key] !== null && !Array.isArray(current[key])
-            ? getChangedFields(
-                original[key] as Record<string, unknown>,
-                current[key] as Record<string, unknown>
-              )
-            : current[key];
-      }
-    }
-
-    return Object.keys(changes).length > 0 ? changes : undefined;
-  };
-
-  const prepareCurrentData = (): Partial<IUser> => {
-    const formattedBackground = { ...userStyles.background.value };
-
-    if (backgroundUrl !== userStyles.background.value.image) {
-      formattedBackground.image = backgroundUrl ?? undefined;
-    }
-
-    const formattedStyles = {
-      ...userStyles,
-      fontSize: formatUnitValue(userStyles.fontSize, "px"),
-      borderRadius: formatUnitValue(userStyles.borderRadius, "px"),
-      contentPadding: formatUnitValue(userStyles.contentPadding, "px"),
-      contentGap: formatUnitValue(userStyles.contentGap, "px"),
-      background: {
-        ...userStyles.background,
-        value: {
-          ...formattedBackground,
-          gradient: userStyles.background.value.gradient
-            ? {
-                ...userStyles.background.value.gradient,
-                angle: formatUnitValue(userStyles.background.value.gradient.angle, "deg")
-              }
-            : undefined
-        }
-      }
-    };
-
-    const currentData: Partial<IUser> = {
-      username,
-      email,
-      bio,
-      links,
-      styles: formattedStyles
-    };
-
-    if (avatarUrl && avatarUrl !== originalUserData?.avatar) {
-      currentData.avatar = avatarUrl;
-    }
-
-    return currentData;
-  };
-
   const validateForm = () => {
     if (!originalUserData) return { hasErrors: true, errors: {} };
 
@@ -493,7 +353,16 @@ export default function UserEditPage() {
 
     setError(null);
 
-    const currentData = prepareCurrentData();
+    const currentData = prepareCurrentData(
+      userStyles,
+      username,
+      email,
+      bio,
+      links,
+      avatarUrl,
+      backgroundUrl,
+      originalUserData
+    );
 
     const changes = getChangedFields(
       originalUserData as unknown as Record<string, unknown>,
@@ -533,7 +402,16 @@ export default function UserEditPage() {
   const handleCancelChangesClick = () => {
     if (!originalUserData) return;
 
-    const currentData = prepareCurrentData();
+    const currentData = prepareCurrentData(
+      userStyles,
+      username,
+      email,
+      bio,
+      links,
+      avatarUrl,
+      backgroundUrl,
+      originalUserData
+    );
 
     const changes = getChangedFields(
       originalUserData as unknown as Record<string, unknown>,
@@ -553,65 +431,69 @@ export default function UserEditPage() {
     closeConfirmModal();
   };
 
+  const renderAvatar = () => {
+    if (isUploadingAvatar)
+      return (
+        <div className={styles.avatarLoading} role="status" aria-live="polite">
+          <FiUpload aria-hidden="true" />
+          <span>{t("edit.avatar.uploading")}</span>
+        </div>
+      );
+
+    if (avatarUrl)
+      return (
+        <Image
+          src={avatarUrl}
+          alt={t("edit.avatar.currentAvatar", {
+            defaultValue: `Поточний аватар ${username || "користувача"}`
+          })}
+          width={140}
+          height={140}
+          unoptimized
+          className={styles.avatarImage}
+        />
+      );
+
+    return <FaUserCircle className={styles.avatarPlaceholder} aria-hidden="true" />;
+  };
+
+  const renderBackground = () => {
+    if (isUploadingBackground)
+      return (
+        <div className={styles.backgroundLoading} role="status" aria-live="polite">
+          <FiUpload aria-hidden="true" />
+          <span>{t("common.loading", { defaultValue: "Завантаження..." })}</span>
+        </div>
+      );
+
+    if (backgroundUrl)
+      return (
+        <Image
+          src={backgroundUrl}
+          alt={t("edit.styles.background.currentImage", {
+            defaultValue: "Поточне зображення фону"
+          })}
+          width={600}
+          height={200}
+          className={styles.backgroundImage}
+          unoptimized
+        />
+      );
+
+    return (
+      <div className={styles.backgroundPlaceholder}>
+        <FiImage aria-hidden="true" />
+        <span>{t("edit.styles.background.uploadPrompt")}</span>
+      </div>
+    );
+  };
+
   if (isLoading) {
     return <Loader isOpen={true} />;
   }
 
   if (!originalUserData) {
     throw new Error(t("edit.errors.userNotFound"));
-  }
-
-  let avatarContent;
-  if (isUploadingAvatar) {
-    avatarContent = (
-      <div className={styles.avatarLoading} role="status" aria-live="polite">
-        <FiUpload aria-hidden="true" />
-        <span>{t("edit.avatar.uploading")}</span>
-      </div>
-    );
-  } else if (avatarUrl) {
-    avatarContent = (
-      <Image
-        src={avatarUrl}
-        alt={t("edit.avatar.currentAvatar", {
-          defaultValue: `Поточний аватар ${username || "користувача"}`
-        })}
-        width={140}
-        height={140}
-        unoptimized={true}
-        className={styles.avatarImage}
-      />
-    );
-  } else {
-    avatarContent = <FaUserCircle className={styles.avatarPlaceholder} aria-hidden="true" />;
-  }
-
-  let backgroundContent;
-  if (isUploadingBackground) {
-    backgroundContent = (
-      <div className={styles.backgroundLoading} role="status" aria-live="polite">
-        <FiUpload aria-hidden="true" />
-        <span>{t("common.loading", { defaultValue: "Завантаження..." })}</span>
-      </div>
-    );
-  } else if (backgroundUrl) {
-    backgroundContent = (
-      <Image
-        src={backgroundUrl}
-        alt={t("edit.styles.background.currentImage", { defaultValue: "Поточне зображення фону" })}
-        width={600}
-        height={200}
-        className={styles.backgroundImage}
-        unoptimized={true}
-      />
-    );
-  } else {
-    backgroundContent = (
-      <div className={styles.backgroundPlaceholder}>
-        <FiImage aria-hidden="true" />
-        <span>{t("edit.styles.background.uploadPrompt")}</span>
-      </div>
-    );
   }
 
   return (
@@ -665,7 +547,7 @@ export default function UserEditPage() {
                   <div className={styles.avatarSection}>
                     <div className={styles.avatarContainer}>
                       <label htmlFor="avatarInput" className={styles.avatarLabel}>
-                        {avatarContent}
+                        {renderAvatar()}
                         <div className={styles.avatarOverlay} aria-hidden="true">
                           <FiUpload />
                         </div>
@@ -1043,7 +925,7 @@ export default function UserEditPage() {
                           {userStyles.background.type === "image" && (
                             <div className={styles.backgroundSection}>
                               <label htmlFor="backgroundInput" className={styles.backgroundLabel}>
-                                {backgroundContent}
+                                {renderBackground()}
                                 <div className={styles.backgroundOverlay} aria-hidden="true">
                                   <FiUpload />
                                 </div>
