@@ -10,7 +10,7 @@ import {
   updateUser,
   deleteUser
 } from "../controllers/userController";
-import { authMiddleware, AuthRequest } from "../middleware/authMiddleware";
+import { authMiddleware, attachUserIfExists, AuthRequest } from "../middleware/authMiddleware";
 
 const router = Router();
 
@@ -31,7 +31,7 @@ router.post("/login", (req: Request, res: Response) => {
   });
 });
 
-router.post("/password/forgot", (req: Request, res: Response) => {
+router.post("/password/forgot", attachUserIfExists, (req: Request, res: Response) => {
   forgotPassword(req, res).catch(error => {
     console.error("Error in /password/forgot route:", error);
     return res.status(500).send({ message: "Internal Server Error" });

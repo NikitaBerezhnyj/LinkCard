@@ -176,16 +176,14 @@ export default function UserEditPage() {
 
   const handlePasswordResetRequest = async () => {
     try {
-      if (!email) {
-        setEmailError(t("edit.security.emailRequired"));
-        return;
-      }
-
-      await authService.forgotPassword({ email });
+      setIsLoading(true);
+      await authService.forgotPassword({});
       toast.success(t("edit.security.resetEmailSent"));
     } catch {
       console.error("Password reset request failed");
       toast.error(t("edit.security.resetEmailError"));
+    } finally {
+      setIsLoading(false);
     }
   };
 

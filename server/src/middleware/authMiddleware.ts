@@ -32,3 +32,30 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     res.status(403).json({ message: "Invalid token" });
   }
 };
+
+export const attachUserIfExists = (req: AuthRequest, _res: Response, next: NextFunction) => {
+  const token =
+    req.cookies?.token ||
+    (req.headers.authorization?.startsWith("Bearer ")
+      ? req.headers.authorization.split(" ")[1]
+      : undefined);
+
+  if (!token) {
+    return next();
+  }
+
+  const secret = process.env.JWT_PRIVATE_TOKEN;
+  if (!secret) {
+    console.error("JWT secret not configured in environment");
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, secret) as { userId: string };
+    req.user = { _id: decoded.userId };
+  } catch (err) {
+    console.warn("Invalid JWT token:", err);
+  }
+
+  next();
+};

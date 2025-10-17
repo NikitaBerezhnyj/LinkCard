@@ -162,16 +162,34 @@ export const loginUser = async (req: Request, res: Response): Promise<Response> 
   }
 };
 
-export const forgotPassword = async (req: Request, res: Response): Promise<Response> => {
+export const forgotPassword = async (
+  req: Request | AuthRequest,
+  res: Response
+): Promise<Response> => {
   try {
-    const { email } = req.body;
+    let email: string | undefined;
+    const authReq = req as AuthRequest;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      const response: ApiResponse<null> = { message: "User not found" };
-      return res.status(404).json(response);
+    if (authReq.user?._id) {
+      if (req.body.email) {
+        return res
+          .status(400)
+          .json({ message: "Authenticated users cannot specify email manually" });
+      }
+
+      const user = await User.findById(authReq.user._id);
+      if (!user) return res.status(404).json({ message: "User not found" });
+      email = user.email;
+    } else {
+      email = (req.body as { email?: string }).email;
     }
 
+    if (!email) return res.status(400).json({ message: "Email is required" });
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    await ResetToken.deleteMany({ userId: user._id });
     const resetToken = crypto.randomBytes(32).toString("hex");
     await ResetToken.create({ token: resetToken, userId: user._id });
 
@@ -182,12 +200,10 @@ export const forgotPassword = async (req: Request, res: Response): Promise<Respo
       text: `You requested a password reset. Click this link: ${resetURL}`
     });
 
-    const response: ApiResponse<null> = { message: "Password reset email sent" };
-    return res.status(200).json(response);
+    return res.status(200).json({ message: "Password reset email sent" });
   } catch (err) {
     console.error("Error sending password reset email:", err);
-    const response: ApiResponse<null> = { message: "Error sending password reset email" };
-    return res.status(500).json(response);
+    return res.status(500).json({ message: "Error sending password reset email" });
   }
 };
 
