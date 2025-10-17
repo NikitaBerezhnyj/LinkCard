@@ -1,72 +1,80 @@
 @apiURL = http://localhost:5000/api
 @resetToken = e3a1d2a2ebc2c4766a26242cf8e3b49fbe52228605b190f8c447e9ec18e86c73
-@jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGU1M2Y2NzQ5M2U0NTczZDEwN2UxZjYiLCJ1c2VybmFtZSI6Im5payIsImlhdCI6MTc2MDAwMTE3NCwiZXhwIjoxNzYwNjA1OTc0fQ.GM88WEp92ezVBRbKwYSqTZMW9CkSsPlrc7QpMW5_M5A
+@jwtToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OGU5MzZmOTc3YWU2NjU5NzY4MWM1ZGMiLCJpYXQiOjE3NjA0NzE3OTEsImV4cCI6MTc2MTA3NjU5MX0.BwB_iFeJwb6I6x1MpxjRpYJTlXHvkaSkV-LBeNNSTHo
 
 ### HealthCheck
 GET {{apiURL}}/healthcheck
 
-### Реєстрація
+
+### Реєстрація користувача
 POST {{apiURL}}/register
 Content-Type: application/json
 
 {
-    "username": "NikitaBerezhnyj",
-    "email": "nikita.berezhnyj@gmail.com",
-    "password": "Nik_0402"
+    "username": "TestUser123",
+    "email": "test.user@example.com",
+    "password": "TestPass123!"
 }
 
-### Авторизація
+
+### Авторизація користувача
 POST {{apiURL}}/login
 Content-Type: application/json
 
 {
-    "email": "kitnikita06@gmail.com",
-    "password": "Nik_0402"
+    "email": "test.user@example.com",
+    "password": "TestPass123!"
 }
 
-### Надсилання листа, якщо забули пароль
+
+### Надсилання листа для відновлення пароля
 POST {{apiURL}}/password/forgot
 Content-Type: application/json
 
 {
-  "email": "kitnikita06@gmail.com"
+  "email": "test.user@example.com"
 }
+
 
 ### Зміна пароля
 POST {{apiURL}}/password/reset/{{resetToken}}
 Content-Type: application/json
 
 {
-    "email": "kitnikita06@gmail.com",
-    "password": "Nik_0402"
+    "email": "test.user@example.com",
+    "password": "NewSecurePass123!"
 }
 
-### Отримання інформації про користувача
-GET {{apiURL}}/user/nik
 
-### Оновлення BIO
-PATCH {{apiURL}}/user/nik
+### Отримання інформації про користувача
+GET {{apiURL}}/user/TestUser123
+
+
+### Оновлення BIO користувача
+PATCH {{apiURL}}/user/TestUser123
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 
 {
-  "bio": "Name is nik..."
+  "bio": "Hello! I'm a demo user for API testing."
 }
 
+
 ### Оновлення одного елемента у links
-PATCH {{apiURL}}/user/nik
+PATCH {{apiURL}}/user/TestUser123
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 
 {
   "links": [
-    { "title": "Email", "url": "kitnikita06@gmail.com"},
-    { "title": "GitHub Profile", "url": "https://github.com/NikitaBerezhnyj" }
+    { "title": "Email", "url": "test.user@example.com" },
+    { "title": "GitHub Profile", "url": "https://github.com/demo-user" }
   ]
 }
 
-### Оновлення стилів
-PATCH {{apiURL}}/user/nik
+
+### Оновлення стилів користувача
+PATCH {{apiURL}}/user/TestUser123
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 
@@ -82,16 +90,18 @@ Authorization: Bearer {{jwtToken}}
   }
 }
 
-### 
-PATCH {{apiURL}}/user/nik
+
+### Оновлення username та email
+PATCH {{apiURL}}/user/TestUser123
 Content-Type: application/json
 Authorization: Bearer {{jwtToken}}
 
 {
-  "username": "NikName",
-  "email": "kitnikita06@gmail"
+  "username": "UpdatedUser",
+  "email": "updated.user@example.com"
 }
 
+
 ### Видалення користувача
-DELETE {{apiURL}}/user/NikName
+DELETE {{apiURL}}/user/UpdatedUser
 Authorization: Bearer {{jwtToken}}
