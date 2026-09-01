@@ -43,9 +43,9 @@ To get started with LinkCard, follow these steps:
 
 Once everything is running, you can access the services at the following local URLs:
 
-- Client: [http://localhost:3000](http://localhost:3000)
-- Server: [http://localhost:5000](http://localhost:5000)
-- MongoDB Express Web: [http://localhost:8081](http://localhost:8081)
+- Frontend: [http://localhost:3000](http://localhost:3000)
+- Backend: [http://localhost:8080](http://localhost:8080)
+- PGAdmin Web: [http://localhost:8081](http://localhost:8081)
 - MinIO Web: [http://localhost:9001](http://localhost:9001)
 
 ## Usage
