@@ -4,11 +4,20 @@ npm-debug.log
 yarn-error.log
 yarn-debug.log
 
+# .NET
+**/bin/
+**/obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
 # Build directories
 client/build/
 mobile/android/app/build/
 mobile/ios/build/
-server/dist/
 
 # React Native
 mobile/ios/Pods/
@@ -40,6 +49,7 @@ expo-env.d.ts
 # @end expo-cli
 
 # IDE and editor settings
+.vs/
 .vscode/
 .idea/
 *.sublime-project
@@ -50,3 +60,5 @@ expo-env.d.ts
 
 # Windows
 Thumbs.db
+
+server-old

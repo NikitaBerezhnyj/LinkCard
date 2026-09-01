@@ -1,0 +1,6 @@
+@LinkCard_HostAddress = http://localhost:5116
+
+GET {{LinkCard_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
