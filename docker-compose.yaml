@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   client:
     build:
@@ -12,7 +10,7 @@ services:
       - ./client:/app
       - /app/node_modules
     environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
     command: npm run dev
     depends_on:
       - server
@@ -23,49 +21,49 @@ services:
       dockerfile: Dockerfile
     container_name: linkcard_server
     ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"
+      - "${SERVER_PORT}:8080"
     volumes:
       - ./server:/app
-      - /app/node_modules
-    command: npm run dev
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      DOTNET_USE_POLLING_FILE_WATCHER: "1"
     env_file:
       - .env
     depends_on:
-      - mongo
+      - postgres
       - minio
 
-  mongo:
-    image: mongo:7.0
-    container_name: mongo
+  postgres:
+    image: postgres:17
+    container_name: linkcard_postgres
     restart: always
     ports:
-      - "${DB_PORT}:27017"
+      - "${DB_PORT}:5432"
     volumes:
-      - mongo_data:/data/db
+      - postgres_data:/var/lib/postgresql/data
     environment:
-      # Якщо ти не хочеш юзера зараз, залиш пусті
-      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
-      MONGO_INITDB_DATABASE: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
 
-  mongo-express:
-    image: mongo-express:1.0.0
-    container_name: mongo_express
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: linkcard_pgadmin
     restart: always
     ports:
-      - "8081:8081"
+      - "8081:80"
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_USERNAME}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}
-      ME_CONFIG_MONGODB_SERVER: ${DB_HOST}
-      ME_CONFIG_BASICAUTH_USERNAME: ${DB_BASICAUTH_USERNAME}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${DB_BASICAUTH_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
     depends_on:
-      - mongo
+      - postgres
 
   minio:
     image: minio/minio:latest
-    container_name: minio
+    container_name: linkcard_minio
     ports:
       - "${MINIO_API_PORT}:9000"
       - "${MINIO_WEB_PORT}:9001"
@@ -76,18 +74,7 @@ services:
     volumes:
       - minio_data:/data
 
-  cleanup:
-    build:
-      context: ./cleanup
-      dockerfile: Dockerfile
-    container_name: linkcard_cleanup
-    env_file:
-      - .env
-    depends_on:
-      - server
-      - mongo
-      - minio
-
 volumes:
-  mongo_data:
+  postgres_data:
+  pgadmin_data:
   minio_data:
