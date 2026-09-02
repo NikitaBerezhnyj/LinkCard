@@ -54,7 +54,6 @@ expo-env.d.ts
 .idea/
 *.sublime-project
 *.sublime-workspace
-.devnotes
 
 # macOS
 .DS_Store

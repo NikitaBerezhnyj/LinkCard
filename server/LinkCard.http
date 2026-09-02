@@ -1,6 +1,108 @@
-@LinkCard_HostAddress = http://localhost:5116
+@apiURL = http://localhost:8080
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjAxYTA2MTRjLTUzYTgtNzJmMS05OTNhLTA0ZGE1OTAwMDM3NSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJUZXN0VXNlcjEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InRlc3QudXNlckBleGFtcGxlLmNvbSIsImV4cCI6MTc4ODM0MDk1OSwiaXNzIjoiTGlua0NhcmQiLCJhdWQiOiJMaW5rQ2FyZCJ9.XaEdbZ2aF3Mmn71ljWhLW16lmsSn84a_aywqvrEJmb8
+@refreshToken = VnKKkrtDDDw0AZ/R9OTRV4hEa2xC5nnERQA8o/tZ75Q80QbtkV/XCEKUcX/PkvAxbuh5CMYc/XVRoTMSTXzxTw==
 
-GET {{LinkCard_HostAddress}}/weatherforecast/
-Accept: application/json
+### GET HealthCheck
+GET {{apiURL}}/healthcheck
 
-###
+### POST Registration
+POST {{apiURL}}/register
+Content-Type: application/json
+
+{
+  "username": "TestUser123",
+  "email": "test.user@example.com",
+  "password": "TestPass123!"
+}
+
+### POST Login
+POST {{apiURL}}/login
+Content-Type: application/json
+
+{
+  "email": "test.user@example.com",
+  "password": "TestPass123!"
+}
+
+### GET User by username
+GET {{apiURL}}/user/TestUser123
+
+### POST Refresh Token
+POST {{apiURL}}/auth/refresh
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### POST Logout
+POST {{apiURL}}/auth/logout
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### PATCH Update bio
+PATCH {{apiURL}}/user/me
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "bio": "Hello! I'm a demo user for API testing."
+}
+
+### PATCH Update links
+PATCH {{apiURL}}/user/me
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "links": [
+    { "title": "Email", "url": "test.user@example.com" },
+    { "title": "GitHub Profile", "url": "https://github.com/demo-user" }
+  ]
+}
+
+### PATCH Update styles (partial merge)
+PATCH {{apiURL}}/user/me
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "styles": {
+    "typography": { "fontSize": "20px" }
+  }
+}
+
+### PATCH Update username & email
+PATCH {{apiURL}}/user/me
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "username": "UpdatedUser",
+  "email": "updated.user@example.com"
+}
+
+### DELETE current user
+DELETE {{apiURL}}/user/me
+Authorization: Bearer {{accessToken}}
+
+### Надсилання листа для відновлення пароля
+# POST {{apiURL}}/password/forgot
+# Content-Type: application/json
+
+# {
+#   "email": "test.user@example.com"
+# }
+
+### Зміна пароля
+# POST {{apiURL}}/password/reset/{{resetToken}}
+# Content-Type: application/json
+
+# {
+#     "email": "test.user@example.com",
+#     "password": "NewSecurePass123!"
+# }
+
