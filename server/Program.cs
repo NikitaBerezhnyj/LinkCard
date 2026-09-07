@@ -1,4 +1,5 @@
 using System.Text;
+using Amazon.S3;
 using LinkCard.Entities;
 using LinkCard.Middleware;
 using LinkCard.Options;
@@ -31,6 +32,53 @@ var jwtOptions = new JwtOptions
     RefreshTokenDays = 30
 };
 builder.Services.AddSingleton(jwtOptions);
+
+var minioPort = builder.Configuration["MINIO_API_PORT"]
+    ?? throw new InvalidOperationException(
+        "MINIO_API_PORT is not configured.");
+
+var s3Options = new S3Options
+{
+    AccessKey = builder.Configuration["MINIO_ROOT_USER"]
+        ?? throw new InvalidOperationException(
+            "MINIO_ROOT_USER is not configured."),
+
+    SecretKey = builder.Configuration["MINIO_ROOT_PASSWORD"]
+        ?? throw new InvalidOperationException(
+            "MINIO_ROOT_PASSWORD is not configured."),
+
+    BucketName = builder.Configuration["MINIO_BUCKET"]
+        ?? throw new InvalidOperationException(
+            "MINIO_BUCKET is not configured."),
+
+    Endpoint = $"http://minio:{minioPort}",
+
+    PublicBaseUrl = builder.Configuration["MINIO_PUBLIC_BASE_URL"]
+        ?? throw new InvalidOperationException(
+            "MINIO_PUBLIC_BASE_URL is not configured.")
+};
+
+builder.Services.AddSingleton(s3Options);
+builder.Services.AddSingleton(s3Options);
+
+builder.Services.AddSingleton<IAmazonS3>(_ =>
+{
+    var config = new AmazonS3Config
+    {
+        RegionEndpoint = Amazon.RegionEndpoint.GetBySystemName(s3Options.Region)
+    };
+
+    if (!string.IsNullOrEmpty(s3Options.Endpoint))
+    {
+        config.ServiceURL = s3Options.Endpoint;
+        config.ForcePathStyle = true;
+    }
+
+    return new AmazonS3Client(
+        s3Options.AccessKey,
+        s3Options.SecretKey,
+        config);
+});
 
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
@@ -85,6 +133,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddScoped<IFileStorage, S3FileStorage>();
+builder.Services.AddScoped<IMediaUrlService, MediaUrlService>();
+builder.Services.AddScoped<IImageProcessor, ImageSharpProcessor>();
+builder.Services.AddScoped<IUploadService, UploadService>();
+
+builder.Services.AddHostedService<S3BucketInitializer>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

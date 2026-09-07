@@ -18,6 +18,7 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
                 ConflictException => (StatusCodes.Status409Conflict, new { message = ex.Message }),
                 ForbiddenException => (StatusCodes.Status403Forbidden, new { message = ex.Message }),
                 UnauthorizedException => (StatusCodes.Status401Unauthorized, new { message = ex.Message }),
+                BadRequestException => (StatusCodes.Status400BadRequest, new { message = ex.Message }),
                 ValidationException validationEx =>
                     (StatusCodes.Status400BadRequest, new { message = ex.Message, errors = validationEx.Errors }),
                 _ => (StatusCodes.Status500InternalServerError, new { message = "An unexpected error occurred." })

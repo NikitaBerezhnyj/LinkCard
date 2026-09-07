@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace LinkCard.Services;
 
-public class UserService(UserManager<ApplicationUser> userManager) : IUserService
+public class UserService(
+    UserManager<ApplicationUser> userManager,
+    IMediaUrlService mediaUrlService) : IUserService
 {
     public async Task<UserDTO> GetByUsernameAsync(string username)
     {
@@ -101,7 +103,6 @@ public class UserService(UserManager<ApplicationUser> userManager) : IUserServic
             if (background.Value is { } value)
             {
                 if (value.Color is not null) target.Background.Value.Color = value.Color;
-                if (value.Image is not null) target.Background.Value.Image = value.Image;
                 if (value.Position is not null) target.Background.Value.Position = value.Position;
                 if (value.Size is not null) target.Background.Value.Size = value.Size;
                 if (value.Repeat is not null) target.Background.Value.Repeat = value.Repeat;
@@ -116,11 +117,13 @@ public class UserService(UserManager<ApplicationUser> userManager) : IUserServic
         }
     }
 
-    private static UserDTO MapToDTO(ApplicationUser user) => new()
+    private UserDTO MapToDTO(ApplicationUser user) => new()
     {
         Username = user.UserName!,
         Email = user.Email!,
-        Avatar = user.Avatar,
+        Avatar = string.IsNullOrWhiteSpace(user.AvatarKey)
+        ? null
+        : mediaUrlService.GetUrl(user.AvatarKey),
         Bio = user.Bio,
         CreatedAt = user.CreatedAt,
         Links = user.Links,

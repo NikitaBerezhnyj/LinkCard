@@ -12,3 +12,5 @@ public class ValidationException(IEnumerable<string> errors) : Exception("Valida
 {
     public IEnumerable<string> Errors { get; } = errors;
 }
+
+public class BadRequestException(string message) : Exception(message);

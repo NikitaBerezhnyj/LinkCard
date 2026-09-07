@@ -104,7 +104,7 @@ public class AuthService(
         {
             Username = user.UserName!,
             Email = user.Email!,
-            Avatar = user.Avatar,
+            Avatar = user.AvatarKey,
             Bio = user.Bio,
             CreatedAt = user.CreatedAt,
             Links = user.Links,

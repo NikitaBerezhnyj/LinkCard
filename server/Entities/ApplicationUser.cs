@@ -4,7 +4,7 @@ namespace LinkCard.Entities;
 
 public class ApplicationUser : IdentityUser<Guid>
 {
-    public string? Avatar { get; set; } = string.Empty;
+    public string? AvatarKey { get; set; } = string.Empty;
     public string? Bio { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
@@ -71,7 +71,7 @@ public class BackgroundValue
 {
     public string Color { get; set; } = "#181818";
     public GradientStyle Gradient { get; set; } = new();
-    public string Image { get; set; } = string.Empty;
+    public string ImageKey { get; set; } = string.Empty;
     public string Position { get; set; } = "center";
     public string Size { get; set; } = "cover";
     public string Repeat { get; set; } = "no-repeat";
