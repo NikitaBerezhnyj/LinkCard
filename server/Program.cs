@@ -1,10 +1,12 @@
 using System.Text;
 using Amazon.S3;
 using LinkCard.Entities;
+using LinkCard.Configuration;
 using LinkCard.Middleware;
 using LinkCard.Options;
 using LinkCard.Services;
 using LinkCard.Services.Interfaces;
+using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +15,8 @@ using Microsoft.IdentityModel.Tokens;
 DotNetEnv.Env.Load(Path.Combine(Directory.GetCurrentDirectory(), "..", ".env"));
 
 var builder = WebApplication.CreateBuilder(args);
+
+MappingConfiguration.Register(TypeAdapterConfig.GlobalSettings);
 
 var connectionString = builder.Configuration["DB_HOST"] is not null
     ? $"Host={builder.Configuration["DB_HOST"]};" +
@@ -59,8 +63,6 @@ var s3Options = new S3Options
 };
 
 builder.Services.AddSingleton(s3Options);
-builder.Services.AddSingleton(s3Options);
-
 builder.Services.AddSingleton<IAmazonS3>(_ =>
 {
     var config = new AmazonS3Config

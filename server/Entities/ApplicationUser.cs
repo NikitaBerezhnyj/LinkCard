@@ -12,12 +12,6 @@ public class ApplicationUser : IdentityUser<Guid>
     public UserStyles Styles { get; set; } = new();
 }
 
-public class UserLink
-{
-    public string Title { get; set; } = string.Empty;
-    public string Url { get; set; } = string.Empty;
-}
-
 public enum TextAlign { Left, Center, Right }
 public enum BackgroundType { Color, Gradient, Image }
 

@@ -1,26 +1,36 @@
 using LinkCard.Common.Exceptions;
-using LinkCard.DTOs.Users;
+using LinkCard.DTOs.Users.Requests;
+using LinkCard.DTOs.Users.Responses;
 using LinkCard.Entities;
+using LinkCard.Mappers;
 using LinkCard.Services.Interfaces;
+using Mapster;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace LinkCard.Services;
 
 public class UserService(
     UserManager<ApplicationUser> userManager,
+    AppDbContext dbContext,
     IMediaUrlService mediaUrlService) : IUserService
 {
-    public async Task<UserDTO> GetByUsernameAsync(string username)
+    public async Task<UserResponse> GetByUsernameAsync(string username)
     {
-        var user = await userManager.FindByNameAsync(username)
+        var user = await dbContext.Users
+            .Include(u => u.Links.OrderBy(l => l.Order))
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.UserName == username)
             ?? throw new NotFoundException($"User '{username}' not found.");
 
-        return MapToDTO(user);
+        return user.ToResponse(mediaUrlService);
     }
 
-    public async Task<UserDTO> UpdateAsync(Guid userId, UpdateUserRequest request)
+    public async Task<UserResponse> UpdateAsync(Guid userId, UpdateUserRequest request)
     {
-        var user = await userManager.FindByIdAsync(userId.ToString())
+        var user = await dbContext.Users
+            .Include(u => u.Links)
+            .FirstOrDefaultAsync(u => u.Id == userId)
             ?? throw new NotFoundException("User not found.");
 
         if (request.Username is { } newUsername && newUsername != user.UserName)
@@ -41,16 +51,14 @@ public class UserService(
             user.Bio = request.Bio;
 
         if (request.Links is not null)
-            user.Links = request.Links.Select(l => new UserLink { Title = l.Title, Url = l.Url }).ToList();
+            await SyncLinks(user, request.Links);
 
         if (request.Styles is not null)
             ApplyStylesUpdate(user.Styles, request.Styles);
 
-        var updateResult = await userManager.UpdateAsync(user);
-        if (!updateResult.Succeeded)
-            throw new ValidationException(updateResult.Errors.Select(e => e.Description));
+        await dbContext.SaveChangesAsync();
 
-        return MapToDTO(user);
+        return user.ToResponse(mediaUrlService);
     }
 
     public async Task DeleteAsync(Guid userId)
@@ -63,70 +71,33 @@ public class UserService(
             throw new ValidationException(result.Errors.Select(e => e.Description));
     }
 
-    private static void ApplyStylesUpdate(UserStyles target, UpdateStylesRequest update)
+    private async Task SyncLinks(
+    ApplicationUser user,
+    List<UpdateLinkRequest> incoming)
     {
-        if (update.Typography is { } typography)
+        dbContext.UserLinks.RemoveRange(user.Links);
+
+        await dbContext.SaveChangesAsync();
+
+        var newLinks = incoming.Select((dto, index) => new UserLink
         {
-            if (typography.Font is not null) target.Typography.Font = typography.Font;
-            if (typography.FontSize is not null) target.Typography.FontSize = typography.FontSize;
-            if (typography.FontWeight is not null) target.Typography.FontWeight = typography.FontWeight;
-            if (typography.TextAlign is not null) target.Typography.TextAlign = typography.TextAlign.Value;
-        }
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            Title = dto.Title,
+            Url = dto.Url,
+            Order = index
+        });
 
-        if (update.Colors is { } colors)
-        {
-            if (colors.Text is not null) target.Colors.Text = colors.Text;
-            if (colors.LinkText is not null) target.Colors.LinkText = colors.LinkText;
-            if (colors.Border is not null) target.Colors.Border = colors.Border;
-            if (colors.ContentBackground is not null) target.Colors.ContentBackground = colors.ContentBackground;
-
-            if (colors.Button is { } button)
-            {
-                if (button.Text is not null) target.Colors.Button.Text = button.Text;
-                if (button.Background is not null) target.Colors.Button.Background = button.Background;
-                if (button.HoverText is not null) target.Colors.Button.HoverText = button.HoverText;
-                if (button.HoverBackground is not null) target.Colors.Button.HoverBackground = button.HoverBackground;
-            }
-        }
-
-        if (update.Layout is { } layout)
-        {
-            if (layout.BorderRadius is not null) target.Layout.BorderRadius = layout.BorderRadius;
-            if (layout.ContentPadding is not null) target.Layout.ContentPadding = layout.ContentPadding;
-            if (layout.ContentGap is not null) target.Layout.ContentGap = layout.ContentGap;
-        }
-
-        if (update.Background is { } background)
-        {
-            if (background.Type is not null) target.Background.Type = background.Type.Value;
-
-            if (background.Value is { } value)
-            {
-                if (value.Color is not null) target.Background.Value.Color = value.Color;
-                if (value.Position is not null) target.Background.Value.Position = value.Position;
-                if (value.Size is not null) target.Background.Value.Size = value.Size;
-                if (value.Repeat is not null) target.Background.Value.Repeat = value.Repeat;
-
-                if (value.Gradient is { } gradient)
-                {
-                    if (gradient.Start is not null) target.Background.Value.Gradient.Start = gradient.Start;
-                    if (gradient.End is not null) target.Background.Value.Gradient.End = gradient.End;
-                    if (gradient.Angle is not null) target.Background.Value.Gradient.Angle = gradient.Angle;
-                }
-            }
-        }
+        await dbContext.UserLinks.AddRangeAsync(newLinks);
     }
 
-    private UserDTO MapToDTO(ApplicationUser user) => new()
+    private static void ApplyStylesUpdate(
+    UserStyles target,
+    UpdateStylesRequest update)
     {
-        Username = user.UserName!,
-        Email = user.Email!,
-        Avatar = string.IsNullOrWhiteSpace(user.AvatarKey)
-        ? null
-        : mediaUrlService.GetUrl(user.AvatarKey),
-        Bio = user.Bio,
-        CreatedAt = user.CreatedAt,
-        Links = user.Links,
-        Styles = user.Styles
-    };
+        update.Typography?.Adapt(target.Typography);
+        update.Colors?.Adapt(target.Colors);
+        update.Layout?.Adapt(target.Layout);
+        update.Background?.Adapt(target.Background);
+    }
 }

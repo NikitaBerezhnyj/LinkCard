@@ -1,5 +1,5 @@
 using LinkCard.Common.Exceptions;
-using LinkCard.DTOs.Uploads;
+using LinkCard.DTOs.Media;
 using LinkCard.Entities;
 using LinkCard.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using LinkCard.Common.Exceptions;
-using LinkCard.DTOs.Users;
+using LinkCard.DTOs.Users.Responses;
+using LinkCard.DTOs.Users.Requests;
 using LinkCard.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +13,7 @@ namespace LinkCard.Controllers;
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpGet("{username}")]
-    public async Task<ActionResult<UserDTO>> GetByUsername(string username)
+    public async Task<ActionResult<UserResponse>> GetByUsername(string username)
     {
         var user = await userService.GetByUsernameAsync(username);
         return Ok(user);
@@ -20,7 +21,7 @@ public class UserController(IUserService userService) : ControllerBase
 
     [HttpPatch("me")]
     [Authorize]
-    public async Task<ActionResult<UserDTO>> UpdateMe(UpdateUserRequest request)
+    public async Task<ActionResult<UserResponse>> UpdateMe(UpdateUserRequest request)
     {
         var user = await userService.UpdateAsync(GetUserId(), request);
         return Ok(user);

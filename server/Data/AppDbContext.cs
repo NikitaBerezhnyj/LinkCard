@@ -10,17 +10,32 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
     {
     }
 
+    public DbSet<UserLink> UserLinks => Set<UserLink>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<ApplicationUser>()
-            .OwnsMany(u => u.Links, links =>
-            {
-                links.ToJson();
-            });
+        builder.Entity<UserLink>(entity =>
+        {
+            entity.HasKey(l => l.Id);
+
+            entity.HasIndex(l => new { l.UserId, l.Order });
+
+            entity.Property(l => l.Title)
+                .HasMaxLength(100)
+                .IsRequired();
+
+            entity.Property(l => l.Url)
+                .HasMaxLength(2048)
+                .IsRequired();
+
+            entity.HasOne(l => l.User)
+                .WithMany(u => u.Links)
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         builder.Entity<ApplicationUser>()
             .OwnsOne(u => u.Styles, styles =>
@@ -47,7 +62,11 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
 
         builder.Entity<RefreshToken>(entity =>
         {
-            entity.HasIndex(rt => rt.TokenHash).IsUnique();
+            entity.HasKey(rt => rt.Id);
+
+            entity.HasIndex(rt => rt.TokenHash)
+                .IsUnique();
+
             entity.HasOne(rt => rt.User)
                 .WithMany()
                 .HasForeignKey(rt => rt.UserId)

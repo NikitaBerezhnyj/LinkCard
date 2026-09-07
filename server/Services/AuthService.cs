@@ -1,8 +1,8 @@
 using LinkCard.Common.Exceptions;
 using LinkCard.DTOs.Auth;
-using LinkCard.DTOs.Users;
 using LinkCard.Entities;
 using LinkCard.Options;
+using LinkCard.Mappers;
 using LinkCard.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,7 +14,8 @@ public class AuthService(
     SignInManager<ApplicationUser> signInManager,
     ITokenService tokenService,
     AppDbContext dbContext,
-    JwtOptions jwtOptions) : IAuthService
+    JwtOptions jwtOptions,
+    IMediaUrlService mediaUrlService) : IAuthService
 {
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request, string? ipAddress)
     {
@@ -94,21 +95,17 @@ public class AuthService(
         };
     }
 
-    private static AuthResponse ToAuthResponse(TokenResponse tokens, ApplicationUser user) => new()
+    private AuthResponse ToAuthResponse(
+    TokenResponse tokens,
+    ApplicationUser user)
     {
-        AccessToken = tokens.AccessToken,
-        AccessTokenExpiresAt = tokens.AccessTokenExpiresAt,
-        RefreshToken = tokens.RefreshToken,
-        RefreshTokenExpiresAt = tokens.RefreshTokenExpiresAt,
-        User = new UserDTO
+        return new AuthResponse
         {
-            Username = user.UserName!,
-            Email = user.Email!,
-            Avatar = user.AvatarKey,
-            Bio = user.Bio,
-            CreatedAt = user.CreatedAt,
-            Links = user.Links,
-            Styles = user.Styles
-        }
-    };
+            AccessToken = tokens.AccessToken,
+            AccessTokenExpiresAt = tokens.AccessTokenExpiresAt,
+            RefreshToken = tokens.RefreshToken,
+            RefreshTokenExpiresAt = tokens.RefreshTokenExpiresAt,
+            User = user.ToResponse(mediaUrlService)
+        };
+    }
 }

@@ -1,4 +1,4 @@
-using LinkCard.DTOs.Uploads;
+using LinkCard.DTOs.Media;
 
 namespace LinkCard.Services.Interfaces;
 

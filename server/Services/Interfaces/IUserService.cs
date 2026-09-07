@@ -1,10 +1,11 @@
-using LinkCard.DTOs.Users;
+using LinkCard.DTOs.Users.Requests;
+using LinkCard.DTOs.Users.Responses;
 
 namespace LinkCard.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<UserDTO> GetByUsernameAsync(string username);
-    Task<UserDTO> UpdateAsync(Guid userId, UpdateUserRequest request);
+    Task<UserResponse> GetByUsernameAsync(string username);
+    Task<UserResponse> UpdateAsync(Guid userId, UpdateUserRequest request);
     Task DeleteAsync(Guid userId);
 }
