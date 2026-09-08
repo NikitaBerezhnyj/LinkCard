@@ -6,6 +6,8 @@ using LinkCard.Mappers;
 using LinkCard.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace LinkCard.Services;
 
@@ -15,6 +17,8 @@ public class AuthService(
     ITokenService tokenService,
     AppDbContext dbContext,
     JwtOptions jwtOptions,
+    EmailOptions emailOptions,
+    IEmailSender emailSender,
     IMediaUrlService mediaUrlService) : IAuthService
 {
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request, string? ipAddress)
@@ -63,6 +67,42 @@ public class AuthService(
 
         await dbContext.SaveChangesAsync();
         return tokens;
+    }
+
+    public async Task ForgotPasswordAsync(ForgotPasswordRequest request)
+    {
+        var user = await userManager.FindByEmailAsync(request.Email);
+        if (user is null)
+            return;
+
+        var token = await userManager.GeneratePasswordResetTokenAsync(user);
+        var urlSafeToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+        var resetLink = $"{emailOptions.PasswordResetUrl}?token={urlSafeToken}" +
+                         $"&email={Uri.EscapeDataString(user.Email!)}";
+
+        var html = EmailTemplateRenderer.RenderPasswordReset(resetLink);
+        await emailSender.SendAsync(user.Email!, "Скидання пароля LinkCard", html);
+    }
+
+    public async Task ResetPasswordAsync(string resetToken, ResetPasswordRequest request)
+    {
+        var user = await userManager.FindByEmailAsync(request.Email)
+            ?? throw new ValidationException(["Invalid or expired reset token."]);
+
+        string decodedToken;
+        try
+        {
+            decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(resetToken));
+        }
+        catch (FormatException)
+        {
+            throw new ValidationException(["Invalid or expired reset token."]);
+        }
+
+        var result = await userManager.ResetPasswordAsync(user, decodedToken, request.NewPassword);
+        if (!result.Succeeded)
+            throw new ValidationException(result.Errors.Select(e => e.Description));
     }
 
     public async Task LogoutAsync(string refreshToken)
