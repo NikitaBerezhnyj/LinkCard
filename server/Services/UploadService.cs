@@ -1,6 +1,7 @@
 using LinkCard.Common.Exceptions;
 using LinkCard.DTOs.Media;
 using LinkCard.Entities;
+using LinkCard.Entities.Enums;
 using LinkCard.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 

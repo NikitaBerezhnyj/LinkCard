@@ -1,4 +1,4 @@
-using LinkCard.Entities;
+using LinkCard.Entities.Enums;
 
 namespace LinkCard.DTOs.Users.Responses;
 

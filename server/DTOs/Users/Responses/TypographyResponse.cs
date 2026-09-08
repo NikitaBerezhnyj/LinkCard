@@ -1,9 +1,11 @@
+using LinkCard.Entities.Enums;
+
 namespace LinkCard.DTOs.Users.Responses;
 
 public class TypographyResponse
 {
     public string? Font { get; set; }
     public string? FontSize { get; set; }
-    public string? FontWeight { get; set; }
-    public string? TextAlign { get; set; }
+    public FontWeight? FontWeight { get; set; }
+    public TextAlign? TextAlign { get; set; }
 }

@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using LinkCard.Entities.Enums;
 
 namespace LinkCard.Entities;
 
@@ -12,9 +13,6 @@ public class ApplicationUser : IdentityUser<Guid>
     public UserStyles Styles { get; set; } = new();
 }
 
-public enum TextAlign { Left, Center, Right }
-public enum BackgroundType { Color, Gradient, Image }
-
 public class UserStyles
 {
     public Typography Typography { get; set; } = new();
@@ -27,7 +25,7 @@ public class Typography
 {
     public string Font { get; set; } = "Roboto";
     public string FontSize { get; set; } = "16px";
-    public string FontWeight { get; set; } = "400";
+    public FontWeight FontWeight { get; set; } = FontWeight.Normal;
     public TextAlign TextAlign { get; set; } = TextAlign.Center;
 }
 
@@ -66,9 +64,9 @@ public class BackgroundValue
     public string Color { get; set; } = "#181818";
     public GradientStyle Gradient { get; set; } = new();
     public string ImageKey { get; set; } = string.Empty;
-    public string Position { get; set; } = "center";
-    public string Size { get; set; } = "cover";
-    public string Repeat { get; set; } = "no-repeat";
+    public BackgroundPosition Position { get; set; } = BackgroundPosition.Center;
+    public BackgroundSize Size { get; set; } = BackgroundSize.Cover;
+    public BackgroundRepeat Repeat { get; set; } = BackgroundRepeat.NoRepeat;
 }
 
 public class GradientStyle
