@@ -1,5 +1,4 @@
-using System.Security.Claims;
-using LinkCard.Common.Exceptions;
+using LinkCard.Common.Extensions;
 using LinkCard.DTOs.Media;
 using LinkCard.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +19,7 @@ public class UserMediaController(
         CancellationToken ct)
     {
         var result = await uploadService.UploadAvatarAsync(
-            GetUserId(),
+            User.GetUserId(),
             file,
             ct);
 
@@ -34,21 +33,10 @@ public class UserMediaController(
         CancellationToken ct)
     {
         var result = await uploadService.UploadBackgroundAsync(
-            GetUserId(),
+            User.GetUserId(),
             file,
             ct);
 
         return Ok(result);
-    }
-
-    private Guid GetUserId()
-    {
-        var idClaim = User.FindFirstValue(
-            ClaimTypes.NameIdentifier);
-
-        if (idClaim is null || !Guid.TryParse(idClaim, out var userId))
-            throw new UnauthorizedException("Invalid token.");
-
-        return userId;
     }
 }

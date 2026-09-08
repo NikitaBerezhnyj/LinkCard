@@ -1,7 +1,6 @@
-using System.Security.Claims;
-using LinkCard.Common.Exceptions;
-using LinkCard.DTOs.Users.Responses;
+using LinkCard.Common.Extensions;
 using LinkCard.DTOs.Users.Requests;
+using LinkCard.DTOs.Users.Responses;
 using LinkCard.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +22,10 @@ public class UserController(IUserService userService) : ControllerBase
     [Authorize]
     public async Task<ActionResult<UserResponse>> UpdateMe(UpdateUserRequest request)
     {
-        var user = await userService.UpdateAsync(GetUserId(), request);
+        var user = await userService.UpdateAsync(
+            User.GetUserId(),
+            request);
+
         return Ok(user);
     }
 
@@ -31,14 +33,8 @@ public class UserController(IUserService userService) : ControllerBase
     [Authorize]
     public async Task<IActionResult> DeleteMe()
     {
-        await userService.DeleteAsync(GetUserId());
-        return NoContent();
-    }
+        await userService.DeleteAsync(User.GetUserId());
 
-    private Guid GetUserId()
-    {
-        var idClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
-            ?? throw new UnauthorizedException("Invalid token.");
-        return Guid.Parse(idClaim);
+        return NoContent();
     }
 }
