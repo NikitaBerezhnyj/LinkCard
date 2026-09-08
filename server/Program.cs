@@ -10,6 +10,7 @@ using LinkCard.Services;
 using LinkCard.Services.Interfaces;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -89,6 +90,10 @@ MappingConfiguration.Register(TypeAdapterConfig.GlobalSettings);
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+builder.Services.AddDataProtection()
+    .PersistKeysToDbContext<AppDbContext>()
+    .SetApplicationName("LinkCard");
 
 builder.Services
     .AddIdentityCore<ApplicationUser>(options =>
