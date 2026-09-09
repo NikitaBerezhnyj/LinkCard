@@ -91,13 +91,34 @@ public class UserService(
         await dbContext.UserLinks.AddRangeAsync(newLinks);
     }
 
-    private static void ApplyStylesUpdate(
-    UserStyles target,
-    UpdateStylesRequest update)
+    private static void ApplyStylesUpdate(UserStyles target, UpdateStylesRequest update)
     {
         update.Typography?.Adapt(target.Typography);
         update.Colors?.Adapt(target.Colors);
         update.Layout?.Adapt(target.Layout);
-        update.Background?.Adapt(target.Background);
+
+        if (update.Background is { } background)
+            ApplyBackgroundUpdate(target.Background, background);
+    }
+
+    private static void ApplyBackgroundUpdate(BackgroundStyle target, UpdateBackgroundRequest update)
+    {
+        if (update.Type is { } type)
+            target.Type = type;
+
+        if (update.Color is { } color)
+            target.Value.Color = color;
+
+        if (update.Gradient is not null)
+            update.Gradient.Adapt(target.Value.Gradient);
+
+        if (update.Position is { } position)
+            target.Value.Position = position;
+
+        if (update.Size is { } size)
+            target.Value.Size = size;
+
+        if (update.Repeat is { } repeat)
+            target.Value.Repeat = repeat;
     }
 }

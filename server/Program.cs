@@ -267,6 +267,8 @@ builder.Services
     {
         options.JsonSerializerOptions.Converters.Add(
             new System.Text.Json.Serialization.JsonStringEnumConverter());
+        options.JsonSerializerOptions.UnmappedMemberHandling =
+            System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow;
     });
 
 builder.Services.AddOpenApi();

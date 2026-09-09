@@ -1,6 +1,16 @@
+using System.Text.Json.Serialization;
+
 namespace LinkCard.Entities.Enums;
 
 public enum BackgroundPosition
 {
-    Center, Top, Bottom, Left, Right, TopLeft, TopRight, BottomLeft, BottomRight
+    [JsonStringEnumMemberName("center")] Center,
+    [JsonStringEnumMemberName("top")] Top,
+    [JsonStringEnumMemberName("bottom")] Bottom,
+    [JsonStringEnumMemberName("left")] Left,
+    [JsonStringEnumMemberName("right")] Right,
+    [JsonStringEnumMemberName("top left")] TopLeft,
+    [JsonStringEnumMemberName("top right")] TopRight,
+    [JsonStringEnumMemberName("bottom left")] BottomLeft,
+    [JsonStringEnumMemberName("bottom right")] BottomRight
 }
