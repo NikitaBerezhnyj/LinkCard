@@ -2,6 +2,7 @@ using LinkCard.Common.Exceptions;
 using LinkCard.Services.Interfaces;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Formats.Gif;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Formats.Png;
 using SixLabors.ImageSharp.Formats.Webp;
@@ -11,6 +12,8 @@ namespace LinkCard.Services;
 
 public class ImageSharpProcessor : IImageProcessor
 {
+    private const int MaxSourceDimension = 8000;
+
     private static readonly Dictionary<ImageKind, (int Width, int Height)> MinDimensions = new()
     {
         [ImageKind.Avatar] = (100, 100),
@@ -20,27 +23,38 @@ public class ImageSharpProcessor : IImageProcessor
     public async Task<(Stream Stream, string ContentType, string Extension)> ProcessAsync(
         Stream input, string contentType, ImageKind kind, CancellationToken ct = default)
     {
-        if (contentType is "image/svg+xml" or "image/avif")
-        {
-            var passthroughExtension = contentType == "image/svg+xml" ? "svg" : "avif";
-            return (input, contentType, passthroughExtension);
-        }
-
         var buffer = new MemoryStream();
         await input.CopyToAsync(buffer, ct);
         buffer.Position = 0;
 
+        ImageInfo info;
+        try
+        {
+            info = await Image.IdentifyAsync(buffer, ct)
+                ?? throw new BadRequestException("File is not a recognizable image.");
+        }
+        catch (Exception ex) when (ex is ImageFormatException or NotSupportedException)
+        {
+            throw new BadRequestException("File is not a valid or supported image.");
+        }
+
+        if (info.Width > MaxSourceDimension || info.Height > MaxSourceDimension)
+            throw new BadRequestException(
+                $"Image dimensions too large: {info.Width}x{info.Height}px (maximum {MaxSourceDimension}x{MaxSourceDimension}px).");
+
+        buffer.Position = 0;
         using var image = await Image.LoadAsync(buffer, ct);
+        var detectedFormat = image.Metadata.DecodedImageFormat;
 
         var minDims = MinDimensions[kind];
         if (image.Width < minDims.Width || image.Height < minDims.Height)
             throw new BadRequestException(
                 $"Image is too small: {image.Width}x{image.Height}px (minimum {minDims.Width}x{minDims.Height}px).");
 
-        if (contentType == "image/gif")
+        if (detectedFormat is GifFormat)
         {
             buffer.Position = 0;
-            return (buffer, contentType, "gif");
+            return (buffer, "image/gif", "gif");
         }
 
         var output = new MemoryStream();
@@ -57,11 +71,11 @@ public class ImageSharpProcessor : IImageProcessor
             image.Mutate(x => x.Resize(3840, (int)(image.Height * ratio)));
         }
 
-        return contentType switch
+        return detectedFormat switch
         {
-            "image/png" => await EncodeAsync(image, output,
+            PngFormat => await EncodeAsync(image, output,
                 new PngEncoder { CompressionLevel = PngCompressionLevel.BestCompression }, "image/png", "png", ct),
-            "image/webp" => await EncodeAsync(image, output,
+            WebpFormat => await EncodeAsync(image, output,
                 new WebpEncoder { Quality = 85 }, "image/webp", "webp", ct),
             _ => await EncodeAsync(image, output,
                 new JpegEncoder { Quality = 85 }, "image/jpeg", "jpg", ct)

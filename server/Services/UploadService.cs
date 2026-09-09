@@ -133,18 +133,16 @@ public class UploadService(
         await fileStorage.DeleteAsync(previousKey, ct);
     }
 
-    private static void ValidateFile(IFormFile file)
+    private static void ValidateFile(IFormFile? file)
     {
-        if (file.Length == 0)
-            throw new BadRequestException("File is empty.");
+        if (file is null || file.Length == 0)
+            throw new BadRequestException("File is required.");
 
         if (file.Length > MaxFileSizeBytes)
-            throw new BadRequestException(
-                "File exceeds the 10 MB size limit.");
+            throw new BadRequestException("File exceeds the 10 MB size limit.");
 
         if (!AllowedContentTypes.Contains(file.ContentType))
-            throw new BadRequestException(
-                "Unsupported file type.");
+            throw new BadRequestException("Unsupported file type.");
     }
 
     private async Task<ApplicationUser> GetUserAsync(Guid userId)
