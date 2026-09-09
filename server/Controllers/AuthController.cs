@@ -1,6 +1,7 @@
 using LinkCard.DTOs.Auth;
 using LinkCard.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LinkCard.Controllers;
 
@@ -11,6 +12,7 @@ public class AuthController(
     IWebHostEnvironment env) : ControllerBase
 {
     [HttpPost("register")]
+    [EnableRateLimiting("sensitive")]
     public async Task<ActionResult<AuthResponse>> Register(
         RegisterRequest request)
     {
@@ -26,6 +28,7 @@ public class AuthController(
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("sensitive")]
     public async Task<ActionResult<AuthResponse>> Login(
         LoginRequest request)
     {
@@ -65,6 +68,7 @@ public class AuthController(
     }
 
     [HttpPost("password/forgot")]
+    [EnableRateLimiting("sensitive")]
     public async Task<IActionResult> ForgotPassword(
         ForgotPasswordRequest request)
     {
@@ -74,6 +78,7 @@ public class AuthController(
     }
 
     [HttpPost("password/reset/{resetToken}")]
+    [EnableRateLimiting("sensitive")]
     public async Task<IActionResult> ResetPassword(
         string resetToken,
         ResetPasswordRequest request)

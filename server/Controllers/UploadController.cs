@@ -3,12 +3,14 @@ using LinkCard.DTOs.Media;
 using LinkCard.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace LinkCard.Controllers;
 
 [ApiController]
 [Route("users/me")]
 [Authorize]
+[EnableRateLimiting("upload")]
 public class UserMediaController(
     IUploadService uploadService) : ControllerBase
 {
