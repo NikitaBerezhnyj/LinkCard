@@ -20,6 +20,11 @@ public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
                 .Must(links => links.Count <= MaxLinksCount)
                 .WithMessage($"Maximum {MaxLinksCount} links allowed.");
 
+            RuleFor(x => x.Links!)
+                .Must(links => links.Where(l => l.Id is not null).Select(l => l.Id).Distinct().Count()
+                    == links.Count(l => l.Id is not null))
+                .WithMessage("Duplicate link ids are not allowed.");
+
             RuleForEach(x => x.Links!).SetValidator(new UpdateLinkRequestValidator());
         });
 

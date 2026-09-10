@@ -51,7 +51,7 @@ public class UserService(
             user.Bio = request.Bio;
 
         if (request.Links is not null)
-            await SyncLinks(user, request.Links);
+            SyncLinks(user, dbContext, request.Links);
 
         if (request.Styles is not null)
             ApplyStylesUpdate(user.Styles, request.Styles);
@@ -71,24 +71,39 @@ public class UserService(
             throw new ValidationException(result.Errors.Select(e => e.Description));
     }
 
-    private async Task SyncLinks(
-    ApplicationUser user,
-    List<UpdateLinkRequest> incoming)
+    private static void SyncLinks(ApplicationUser user, AppDbContext dbContext, List<UpdateLinkRequest> incoming)
     {
-        dbContext.UserLinks.RemoveRange(user.Links);
+        var existingById = user.Links.ToDictionary(l => l.Id);
+        var incomingIds = incoming
+            .Where(dto => dto.Id is not null)
+            .Select(dto => dto.Id!.Value)
+            .ToHashSet();
 
-        await dbContext.SaveChangesAsync();
+        var toRemove = user.Links.Where(l => !incomingIds.Contains(l.Id)).ToList();
+        dbContext.UserLinks.RemoveRange(toRemove);
 
-        var newLinks = incoming.Select((dto, index) => new UserLink
+        for (var index = 0; index < incoming.Count; index++)
         {
-            Id = Guid.NewGuid(),
-            UserId = user.Id,
-            Title = dto.Title,
-            Url = dto.Url,
-            Order = index
-        });
+            var dto = incoming[index];
 
-        await dbContext.UserLinks.AddRangeAsync(newLinks);
+            if (dto.Id is { } id && existingById.TryGetValue(id, out var existing))
+            {
+                existing.Title = dto.Title;
+                existing.Url = dto.Url;
+                existing.Order = index;
+            }
+            else
+            {
+                dbContext.UserLinks.Add(new UserLink
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = user.Id,
+                    Title = dto.Title,
+                    Url = dto.Url,
+                    Order = index
+                });
+            }
+        }
     }
 
     private static void ApplyStylesUpdate(UserStyles target, UpdateStylesRequest update)
