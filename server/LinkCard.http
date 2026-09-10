@@ -1,50 +1,84 @@
-@apiURL = http://localhost:8080
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjAxYTA2MTRjLTUzYTgtNzJmMS05OTNhLTA0ZGE1OTAwMDM3NSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJUZXN0VXNlcjEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InRlc3QudXNlckBleGFtcGxlLmNvbSIsImV4cCI6MTc4ODM0MDk1OSwiaXNzIjoiTGlua0NhcmQiLCJhdWQiOiJMaW5rQ2FyZCJ9.XaEdbZ2aF3Mmn71ljWhLW16lmsSn84a_aywqvrEJmb8
-@refreshToken = VnKKkrtDDDw0AZ/R9OTRV4hEa2xC5nnERQA8o/tZ75Q80QbtkV/XCEKUcX/PkvAxbuh5CMYc/XVRoTMSTXzxTw==
+@apiUrl = http://localhost:8080
 
-### GET HealthCheck
-GET {{apiURL}}/healthcheck
+@testUsername = TestUser123
+@testEmail = test.user@example.com
+@testPassword = TestPass123!
 
-### POST Registration
-POST {{apiURL}}/register
+@resetToken = Q2ZESjhOdGptdndHVW01Smw4STEyMGtBYUNtZUlKdjE3WGhua29uN1FBcFZCQzZoYVczRW5pNVRTcTc0WlVsRnVTQ0lFdkdldnRBRW1rTC9yY2M4RlJWdUozMXFsbFNDMWVmOWpLam01V29QRzdmYTZuaFExcnRKbXk2andkUitTbDVHZjRHaW5raEplcVExZERhWmVQaEFaR1EraEROcjkrdVBtanR6TWZTK3RSM3FqVWZFd3FNRDh0NDhiUFQ3ZUVTakh4cGY2WFNMbEhyaHlIdEJ5OFlsK2FoUnF6TVFtRWNBeDhoNlhvMHp2QXhs
+
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjAxYTA2MTRjLTUzYTgtNzJmMS05OTNhLTA0ZGE1OTAwMDM3NSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJUZXN0VXNlcjEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InRlc3QudXNlckBleGFtcGxlLmNvbSIsImV4cCI6MTc4OTA1Mjg4MywiaXNzIjoiTGlua0NhcmQiLCJhdWQiOiJMaW5rQ2FyZCJ9.xfJLLAkOcZb7Az3FdQrFZJTbpV5bA6mFMDReE4WJVKs
+@refreshToken = Pi5bM6JQWwiOrEO90NDBnxrrcVPg+gm8kM/IzFLmOcwmYBzwBl9DYqvZwCVG1rrMYwxpt+DwY60/S/jEZLqLng==
+
+### Health Check
+GET {{apiUrl}}/healthcheck
+
+### Register
+POST {{apiUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "TestUser123",
-  "email": "test.user@example.com",
-  "password": "TestPass123!"
+  "username": "{{testUsername}}",
+  "email": "{{testEmail}}",
+  "password": "{{testPassword}}"
 }
 
-### POST Login
-POST {{apiURL}}/login
+### Login
+POST {{apiUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "test.user@example.com",
-  "password": "TestPass123!"
+  "email": "{{testEmail}}",
+  "password": "{{testPassword}}"
 }
 
-### GET User by username
-GET {{apiURL}}/user/TestUser123
+### Send password reset email
+POST {{apiUrl}}/auth/password/forgot
+Content-Type: application/json
 
-### POST Refresh Token
-POST {{apiURL}}/auth/refresh
+{
+  "email": "{{testEmail}}"
+}
+
+### Reset password
+POST {{apiUrl}}/auth/password/reset/{{resetToken}}
+Content-Type: application/json
+
+{
+  "email": "{{testEmail}}",
+  "newPassword": "{{testPassword}}"
+}
+
+### Refresh token
+POST {{apiUrl}}/auth/refresh
 Content-Type: application/json
 
 {
   "refreshToken": "{{refreshToken}}"
 }
 
-### POST Logout
-POST {{apiURL}}/auth/logout
+### Logout
+POST {{apiUrl}}/auth/logout
 Content-Type: application/json
 
 {
   "refreshToken": "{{refreshToken}}"
 }
 
-### PATCH Update bio
-PATCH {{apiURL}}/user/me
+### Get user by username
+GET {{apiUrl}}/users/{{testUsername}}
+
+### Update username & email
+PATCH {{apiUrl}}/users/me
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "username": "{{testEmail}}",
+  "email": "{{testPassword}}"
+}
+
+### Update bio
+PATCH {{apiUrl}}/users/me
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
@@ -52,57 +86,69 @@ Authorization: Bearer {{accessToken}}
   "bio": "Hello! I'm a demo user for API testing."
 }
 
-### PATCH Update links
-PATCH {{apiURL}}/user/me
+### Update links
+PATCH {{apiUrl}}/users/me
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
   "links": [
-    { "title": "Email", "url": "test.user@example.com" },
-    { "title": "GitHub Profile", "url": "https://github.com/demo-user" }
+    {
+      "title": "Email",
+      "url": "mailto:test.user@example.com"
+    },
+    {
+      "title": "GitHub Profile",
+      "url": "https://github.com/demo-user"
+    },
+    {
+      "title": "My Blog",
+      "url": "https://myblog.example.com"
+    }
   ]
 }
 
-### PATCH Update styles (partial merge)
-PATCH {{apiURL}}/user/me
+### Update styles
+PATCH {{apiUrl}}/users/me
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
   "styles": {
-    "typography": { "fontSize": "20px" }
+    "typography": {
+      "fontSize": "16px",
+      "textAlign": "center"
+    },
+    "background": {
+      "repeat": "no-repeat"
+    }
   }
 }
 
-### PATCH Update username & email
-PATCH {{apiURL}}/user/me
-Content-Type: application/json
+### Upload avatar
+PUT {{apiUrl}}/users/me/avatar
 Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=boundary
 
-{
-  "username": "UpdatedUser",
-  "email": "updated.user@example.com"
-}
+--boundary
+Content-Disposition: form-data; name="file"; filename="avatar.jpg"
+Content-Type: image/jpeg
 
-### DELETE current user
-DELETE {{apiURL}}/user/me
+< ../client/public/images/avatar.jpg
+--boundary--
+
+### Upload background
+PUT {{apiUrl}}/users/me/background
 Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data; boundary=boundary
 
-### Надсилання листа для відновлення пароля
-# POST {{apiURL}}/password/forgot
-# Content-Type: application/json
+--boundary
+Content-Disposition: form-data; name="file"; filename="background.jpg"
+Content-Type: image/jpeg
 
-# {
-#   "email": "test.user@example.com"
-# }
+< ../client/public/images/avatar.jpg
+--boundary--
 
-### Зміна пароля
-# POST {{apiURL}}/password/reset/{{resetToken}}
-# Content-Type: application/json
-
-# {
-#     "email": "test.user@example.com",
-#     "password": "NewSecurePass123!"
-# }
-
+### Delete current user
+DELETE {{apiUrl}}/users/me
+Authorization: Bearer {{accessToken}}
