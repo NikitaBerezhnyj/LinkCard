@@ -11,7 +11,7 @@ namespace LinkCard.Controllers;
 [Route("users/me")]
 [Authorize]
 [EnableRateLimiting("upload")]
-public class UserMediaController(
+public class UploadController(
     IUploadService uploadService) : ControllerBase
 {
     [HttpPut("avatar")]

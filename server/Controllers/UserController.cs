@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using LinkCard.Common.Extensions;
 using LinkCard.DTOs.Users.Requests;
 using LinkCard.DTOs.Users.Responses;
@@ -16,6 +17,20 @@ public class UserController(IUserService userService) : ControllerBase
     {
         var user = await userService.GetByUsernameAsync(username);
         return Ok(user);
+    }
+
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<ActionResult<UserResponse>> GetMe()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (userId is null)
+            return Unauthorized();
+
+        var result = await userService.GetMeAsync(userId);
+
+        return Ok(result);
     }
 
     [HttpPatch("me")]

@@ -26,6 +26,21 @@ public class UserService(
         return user.ToResponse(mediaUrlService);
     }
 
+    public async Task<CurrentUserResponse> GetMeAsync(string userId)
+    {
+        var user = await userManager.FindByIdAsync(userId)
+            ?? throw new UnauthorizedException("User not found.");
+
+        return new CurrentUserResponse
+        {
+            Username = user.UserName!,
+            Email = user.Email!,
+            Avatar = user.AvatarKey is null
+                ? null
+                : mediaUrlService.GetUrl(user.AvatarKey)
+        };
+    }
+
     public async Task<UserResponse> UpdateAsync(Guid userId, UpdateUserRequest request)
     {
         var user = await dbContext.Users
