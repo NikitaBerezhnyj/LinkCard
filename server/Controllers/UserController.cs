@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LinkCard.Controllers;
 
 [ApiController]
-[Route("user")]
+[Route("users")]
 public class UserController(IUserService userService) : ControllerBase
 {
     [HttpGet("{username}")]

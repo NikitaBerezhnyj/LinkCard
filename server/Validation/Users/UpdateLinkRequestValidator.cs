@@ -15,6 +15,6 @@ public class UpdateLinkRequestValidator : AbstractValidator<UpdateLinkRequest>
         RuleFor(x => x.Url)
             .NotEmpty()
             .MaximumLength(2048)
-            .IsHttpUrl();
+            .IsLinkUrl();
     }
 }
