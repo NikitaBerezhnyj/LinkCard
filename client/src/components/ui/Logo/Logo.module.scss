@@ -1,0 +1,12 @@
+@use "../../../styles/variables" as *;
+
+.logo {
+  font-family: var(--font-piazzolla);
+  font-size: 20px;
+  font-weight: 600;
+  color: $color-ink;
+}
+
+.accent {
+  color: $color-pine;
+}

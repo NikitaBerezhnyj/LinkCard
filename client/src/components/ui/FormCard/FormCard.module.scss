@@ -1,0 +1,51 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.card {
+  width: 100%;
+  max-width: 400px;
+  background: $color-surface;
+  border: 1px solid $color-line;
+  border-radius: $radius-lg;
+  overflow: hidden;
+}
+
+.stub {
+  @include ticket-stub;
+}
+
+.content {
+  padding: 40px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  text-align: left;
+}
+
+.title {
+  font-size: 30px;
+  margin: 0;
+}
+
+.subtitle {
+  font-family: var(--font-manrope);
+  font-size: 14px;
+  color: $color-ink-soft;
+  margin: -12px 0 0;
+}
+
+.footer {
+  margin-top: 4px;
+  font-family: var(--font-manrope);
+  font-size: 14px;
+  color: $color-ink-soft;
+
+  a {
+    color: $color-pine;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

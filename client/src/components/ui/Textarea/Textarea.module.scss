@@ -1,0 +1,48 @@
+@use "../../../styles/variables" as *;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  width: 100%;
+}
+
+.label {
+  font-family: var(--font-manrope);
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-ink-soft;
+}
+
+.textarea {
+  min-height: 96px;
+  padding: 12px 14px;
+  border: 1px solid $color-line;
+  border-radius: $radius-sm;
+  background: $color-surface;
+  color: $color-ink;
+  font-family: var(--font-manrope);
+  font-size: 15px;
+  resize: vertical;
+
+  &::placeholder {
+    color: $color-ink-soft;
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: $color-pine;
+    box-shadow: 0 0 0 3px rgba(44, 95, 74, 0.14);
+  }
+}
+
+.textareaError {
+  border-color: $color-clay;
+}
+
+.error {
+  font-family: var(--font-manrope);
+  font-size: 13px;
+  color: $color-clay;
+}

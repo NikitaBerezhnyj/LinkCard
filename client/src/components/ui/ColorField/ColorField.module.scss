@@ -1,0 +1,59 @@
+@use "../../../styles/variables" as *;
+
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-family: var(--font-manrope);
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-ink-soft;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: $radius-sm;
+  border: 1px solid $color-line;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.hexInput {
+  width: 100px;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid $color-line;
+  border-radius: $radius-sm;
+  background: $color-surface;
+  color: $color-ink;
+  font-family: var(--font-space-mono);
+  font-size: 13px;
+
+  &:focus-visible {
+    outline: none;
+    border-color: $color-pine;
+  }
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 10;
+  padding: 12px;
+  background: $color-surface;
+  border: 1px solid $color-line;
+  border-radius: $radius-sm;
+  box-shadow: 0 8px 24px rgba(34, 32, 27, 0.12);
+}

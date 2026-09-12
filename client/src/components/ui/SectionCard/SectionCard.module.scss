@@ -1,0 +1,35 @@
+@use "../../../styles/variables" as *;
+
+.card {
+  background: $color-surface;
+  border: 1px solid $color-line;
+  border-radius: $radius-md;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.title {
+  font-size: 20px;
+  margin: 0;
+}
+
+.description {
+  font-family: var(--font-manrope);
+  font-size: 14px;
+  color: $color-ink-soft;
+  margin: 0;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}

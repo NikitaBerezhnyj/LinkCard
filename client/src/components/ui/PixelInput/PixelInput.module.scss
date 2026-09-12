@@ -1,0 +1,33 @@
+@use "../../../styles/variables" as *;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-family: var(--font-manrope);
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-ink-soft;
+}
+
+.control {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.slider {
+  flex: 1;
+  accent-color: $color-pine;
+}
+
+.value {
+  font-family: var(--font-space-mono);
+  font-size: 13px;
+  color: $color-ink;
+  min-width: 46px;
+  text-align: right;
+}
