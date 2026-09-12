@@ -8,10 +8,10 @@ services:
       - "3000:3000"
     volumes:
       - ./client:/app
-      - /app/node_modules
     environment:
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
-    command: npm run dev
+      NEXT_PUBLIC_BACKEND_API_URL: ${NEXT_PUBLIC_BACKEND_API_URL}
+      BACKEND_API_URL: ${BACKEND_API_URL}
     depends_on:
       - server
 
