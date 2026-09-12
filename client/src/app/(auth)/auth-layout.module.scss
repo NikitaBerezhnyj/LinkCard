@@ -1,0 +1,21 @@
+@use "../../styles/variables" as *;
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: $color-paper;
+}
+
+.header {
+  padding: 24px 32px;
+  border-bottom: 1px solid $color-line;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
