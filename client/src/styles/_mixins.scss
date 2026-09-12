@@ -1,0 +1,41 @@
+@use "./variables" as *;
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin respond-to($breakpoint) {
+  @media (max-width: $breakpoint) {
+    @content;
+  }
+}
+
+@mixin surface-card {
+  background: $color-surface;
+  border: 1px solid $color-line;
+  border-radius: $radius-md;
+}
+
+@mixin ticket-stub($color: $color-gold) {
+  height: 6px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    $color 0,
+    $color 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+@mixin focus-ring {
+  outline: 2px solid $color-pine;
+  outline-offset: 2px;
+}
