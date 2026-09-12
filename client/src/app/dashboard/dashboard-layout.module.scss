@@ -1,0 +1,21 @@
+@use "../../styles/variables" as *;
+
+.page {
+  min-height: 100vh;
+  background: $color-paper;
+}
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-manrope);
+  color: $color-ink-soft;
+}
+
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}

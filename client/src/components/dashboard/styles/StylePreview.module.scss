@@ -1,0 +1,50 @@
+@use "../../../styles/variables" as *;
+
+.wrapper {
+  position: sticky;
+  top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  width: 100%;
+  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--card-content-gap, 14px);
+  padding: var(--card-content-padding, 28px);
+  border: 1px solid var(--card-border-color, #{$color-line});
+  border-radius: var(--card-border-radius, 16px);
+  background-color: var(--card-bg-color, #{$color-surface});
+  background-image: var(--card-bg-image, none);
+  background-repeat: var(--card-bg-repeat, no-repeat);
+  background-size: var(--card-bg-size, cover);
+  background-position: var(--card-bg-position, center);
+  color: var(--card-text-color, #{$color-ink});
+  font-family: var(--card-font-family, var(--font-manrope));
+  font-size: var(--card-font-size, inherit);
+  font-weight: var(--card-font-weight, 400);
+  text-align: var(--card-text-align, center);
+}
+
+.avatar {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--card-border-color, #{$color-line});
+}
+
+.username {
+  font-size: 20px;
+  margin: 0;
+}
+
+.bio {
+  font-family: var(--font-manrope);
+  font-size: 13px;
+  opacity: 0.75;
+  margin: -6px 0 4px;
+}

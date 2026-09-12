@@ -1,0 +1,47 @@
+@use "../../styles/variables" as *;
+
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  border-bottom: 1px solid $color-line;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.viewLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-manrope);
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-pine;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.logoutButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid $color-line;
+  background: $color-surface;
+  color: $color-ink-soft;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $color-clay;
+    color: $color-clay;
+  }
+}
