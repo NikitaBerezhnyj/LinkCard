@@ -1,0 +1,24 @@
+@use "../../../styles/variables" as *;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.frame {
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid $color-line;
+  border-radius: $radius-sm;
+  line-height: 0;
+}
+
+.caption {
+  font-family: var(--font-space-mono);
+  font-size: 13px;
+  color: var(--card-text-color, #{$color-ink});
+  word-break: break-all;
+  text-align: center;
+}
