@@ -26,19 +26,15 @@ public class UserService(
         return user.ToResponse(mediaUrlService);
     }
 
-    public async Task<CurrentUserResponse> GetMeAsync(string userId)
+    public async Task<UserResponse> GetMeAsync(Guid userId)
     {
-        var user = await userManager.FindByIdAsync(userId)
-            ?? throw new UnauthorizedException("User not found.");
+        var user = await dbContext.Users
+            .Include(u => u.Links.OrderBy(l => l.Order))
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw new NotFoundException("User not found.");
 
-        return new CurrentUserResponse
-        {
-            Username = user.UserName!,
-            Email = user.Email!,
-            Avatar = user.AvatarKey is null
-                ? null
-                : mediaUrlService.GetUrl(user.AvatarKey)
-        };
+        return user.ToResponse(mediaUrlService);
     }
 
     public async Task<UserResponse> UpdateAsync(Guid userId, UpdateUserRequest request)

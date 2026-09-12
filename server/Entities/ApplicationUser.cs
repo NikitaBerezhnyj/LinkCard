@@ -23,7 +23,7 @@ public class UserStyles
 
 public class Typography
 {
-    public string Font { get; set; } = "Roboto";
+    public string Font { get; set; } = "Piazzolla";
     public string FontSize { get; set; } = "16px";
     public FontWeight FontWeight { get; set; } = FontWeight.Normal;
     public TextAlign TextAlign { get; set; } = TextAlign.Center;
@@ -31,24 +31,24 @@ public class Typography
 
 public class ColorScheme
 {
-    public string Text { get; set; } = "#f3f4f6";
-    public string LinkText { get; set; } = "#60a5fa";
-    public string Border { get; set; } = "#2c2c2c";
-    public string ContentBackground { get; set; } = "#1e1e1e";
+    public string Text { get; set; } = "#22201b";
+    public string LinkText { get; set; } = "#2c5f4a";
+    public string Border { get; set; } = "#e4dcc9";
+    public string ContentBackground { get; set; } = "#ffffff";
     public ButtonColors Button { get; set; } = new();
 }
 
 public class ButtonColors
 {
-    public string Text { get; set; } = "#f3f4f6";
-    public string Background { get; set; } = "#181818";
-    public string HoverText { get; set; } = "#f3f4f6";
-    public string HoverBackground { get; set; } = "#60a5fa";
+    public string Text { get; set; } = "#ffffff";
+    public string Background { get; set; } = "#2c5f4a";
+    public string HoverText { get; set; } = "#ffffff";
+    public string HoverBackground { get; set; } = "#1e4636";
 }
 
 public class Layout
 {
-    public string BorderRadius { get; set; } = "10px";
+    public string BorderRadius { get; set; } = "14px";
     public string ContentPadding { get; set; } = "24px";
     public string ContentGap { get; set; } = "16px";
 }
@@ -61,7 +61,7 @@ public class BackgroundStyle
 
 public class BackgroundValue
 {
-    public string Color { get; set; } = "#181818";
+    public string Color { get; set; } = "#f6f1e6";
     public GradientStyle Gradient { get; set; } = new();
     public string ImageKey { get; set; } = string.Empty;
     public BackgroundPosition Position { get; set; } = BackgroundPosition.Center;
@@ -71,7 +71,7 @@ public class BackgroundValue
 
 public class GradientStyle
 {
-    public string Start { get; set; } = "#1e1e1e";
-    public string End { get; set; } = "#181818";
+    public string Start { get; set; } = "#f6f1e6";
+    public string End { get; set; } = "#e4dcc9";
     public string Angle { get; set; } = "135deg";
 }

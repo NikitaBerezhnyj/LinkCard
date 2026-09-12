@@ -6,7 +6,7 @@ namespace LinkCard.Validation.Users;
 
 public class UpdateTypographyRequestValidator : AbstractValidator<UpdateTypographyRequest>
 {
-    private static readonly string[] AllowedFonts = ["Roboto", "Inter", "Poppins", "Montserrat", "Open Sans"];
+    private static readonly string[] AllowedFonts = ["Piazzolla", "Manrope", "Space_Mono", "Montserrat", "Roboto"];
 
     public UpdateTypographyRequestValidator()
     {

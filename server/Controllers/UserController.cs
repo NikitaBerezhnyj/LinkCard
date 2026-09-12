@@ -23,13 +23,7 @@ public class UserController(IUserService userService) : ControllerBase
     [Authorize]
     public async Task<ActionResult<UserResponse>> GetMe()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-        if (userId is null)
-            return Unauthorized();
-
-        var result = await userService.GetMeAsync(userId);
-
+        var result = await userService.GetMeAsync(User.GetUserId());
         return Ok(result);
     }
 
