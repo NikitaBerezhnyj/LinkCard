@@ -18,12 +18,26 @@ export interface IUser {
   styles: IUserStyles;
 }
 
-export type IDeepPartial<T> = T extends object ? { [P in keyof T]?: IDeepPartial<T[P]> } : T;
+export interface IUpdateLinkPayload {
+  id?: string;
+  title: string;
+  url: string;
+}
 
-export interface IUpdateUserDto {
+export interface IUpdateUserPayload {
   username?: string;
   email?: string;
   bio?: string;
-  links?: IUserLink[];
+  links?: IUpdateLinkPayload[];
   styles?: IDeepPartial<IUserStyles>;
 }
+
+export interface IUploadAvatarResponse {
+  avatarUrl: string;
+}
+
+export interface IUploadBackgroundResponse {
+  backgroundUrl: string;
+}
+
+export type IDeepPartial<T> = T extends object ? { [P in keyof T]?: IDeepPartial<T[P]> } : T;

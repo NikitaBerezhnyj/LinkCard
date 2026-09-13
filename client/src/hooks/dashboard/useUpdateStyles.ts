@@ -1,9 +1,9 @@
+import { updateCurrentUser } from "@/services/userServices";
+import { IUpdateUserPayload, IUser } from "@/types/user";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { IUser } from "@/types/user";
-import { updateCurrentUser, UpdateUserPayload } from "@/services/userServices";
 
-type UpdateStylesPayload = NonNullable<UpdateUserPayload["styles"]>;
+type UpdateStylesPayload = NonNullable<IUpdateUserPayload["styles"]>;
 
 export function useUpdateStyles() {
   const queryClient = useQueryClient();

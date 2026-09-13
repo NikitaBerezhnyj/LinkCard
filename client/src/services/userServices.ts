@@ -1,31 +1,12 @@
 import { clientApi } from "@/lib/clientApi";
-import { IUserStyles } from "@/types/styles";
-import { IUser } from "@/types/user";
-
-export interface UpdateLinkPayload {
-  id?: string;
-  title: string;
-  url: string;
-}
-
-export type PartialUserStyles = {
-  [K in keyof IUserStyles]?: Partial<IUserStyles[K]>;
-};
-
-export type UpdateUserPayload = {
-  username?: string;
-  email?: string;
-  bio?: string;
-  links?: UpdateLinkPayload[];
-  styles?: PartialUserStyles;
-};
+import { IUpdateUserPayload, IUser } from "@/types/user";
 
 export async function getCurrentUser(): Promise<IUser> {
   const { data } = await clientApi.get<IUser>("/users/me");
   return data;
 }
 
-export async function updateCurrentUser(payload: UpdateUserPayload): Promise<IUser> {
+export async function updateCurrentUser(payload: IUpdateUserPayload): Promise<IUser> {
   const { data } = await clientApi.patch<IUser>("/users/me", payload);
   return data;
 }
