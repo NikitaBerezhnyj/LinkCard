@@ -13,17 +13,6 @@
   gap: 16px;
 }
 
-.badge {
-  font-family: var(--font-space-mono), monospace;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: $color-clay;
-  border: 1px solid $color-clay;
-  border-radius: 999px;
-  padding: 4px 12px;
-}
-
 .title {
   font-size: clamp(1.8rem, 4vw, 2.6rem);
   color: $color-ink;
@@ -34,6 +23,7 @@
 }
 
 .form {
+  position: relative;
   display: flex;
   gap: 12px;
   width: 100%;
@@ -75,6 +65,74 @@
   font-size: 1rem;
   color: $color-ink;
   font-family: var(--font-manrope), sans-serif;
+}
+
+.results {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+
+  @include surface-card;
+
+  overflow: hidden;
+  padding: 6px;
+}
+
+.result {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: $color-ink;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font-manrope), sans-serif;
+
+  &:hover {
+    background: rgba($color-pine, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-pine;
+    outline-offset: -2px;
+  }
+}
+
+.avatar,
+.avatarPlaceholder {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+
+.avatar {
+  object-fit: cover;
+}
+
+.avatarPlaceholder {
+  @include flex-center;
+  background: $color-surface;
+  color: $color-ink-soft;
+  font-weight: 600;
+}
+
+.username {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loading {
+  padding: 12px;
+  color: $color-ink-soft;
+  text-align: center;
 }
 
 .srOnly {

@@ -18,6 +18,12 @@ export interface IUser {
   styles: IUserStyles;
 }
 
+export interface IUserSearchResult {
+  id: string;
+  username: string;
+  avatar: string | null;
+}
+
 export interface IUpdateLinkPayload {
   id?: string;
   title: string;
