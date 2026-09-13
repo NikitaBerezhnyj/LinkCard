@@ -26,6 +26,45 @@ public class UserService(
         return user.ToResponse(mediaUrlService);
     }
 
+    public async Task<List<UserSearchResponse>> SearchAsync(string? username)
+    {
+        var query = dbContext.Users
+            .AsNoTracking()
+            .Where(u => u.UserName != null);
+
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            return await query
+                .OrderBy(_ => Guid.NewGuid())
+                .Take(5)
+                .Select(u => new UserSearchResponse
+                {
+                    Id = u.Id,
+                    Username = u.UserName!,
+                    Avatar = string.IsNullOrWhiteSpace(u.AvatarKey)
+                        ? null
+                        : mediaUrlService.GetUrl(u.AvatarKey)
+                })
+                .ToListAsync();
+        }
+
+        username = username.Trim();
+
+        return await query
+            .Where(u => EF.Functions.ILike(u.UserName!, $"%{username}%"))
+            .OrderBy(u => u.UserName)
+            .Take(5)
+            .Select(u => new UserSearchResponse
+            {
+                Id = u.Id,
+                Username = u.UserName!,
+                Avatar = string.IsNullOrWhiteSpace(u.AvatarKey)
+                    ? null
+                    : mediaUrlService.GetUrl(u.AvatarKey)
+            })
+            .ToListAsync();
+    }
+
     public async Task<UserResponse> GetMeAsync(Guid userId)
     {
         var user = await dbContext.Users

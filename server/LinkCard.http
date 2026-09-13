@@ -6,8 +6,8 @@
 
 @resetToken = Q2ZESjhOdGptdndHVW01Smw4STEyMGtBYUNtZUlKdjE3WGhua29uN1FBcFZCQzZoYVczRW5pNVRTcTc0WlVsRnVTQ0lFdkdldnRBRW1rTC9yY2M4RlJWdUozMXFsbFNDMWVmOWpLam01V29QRzdmYTZuaFExcnRKbXk2andkUitTbDVHZjRHaW5raEplcVExZERhWmVQaEFaR1EraEROcjkrdVBtanR6TWZTK3RSM3FqVWZFd3FNRDh0NDhiUFQ3ZUVTakh4cGY2WFNMbEhyaHlIdEJ5OFlsK2FoUnF6TVFtRWNBeDhoNlhvMHp2QXhs
 
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjAxYTA2MTRjLTUzYTgtNzJmMS05OTNhLTA0ZGE1OTAwMDM3NSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJUZXN0VXNlcjEyMyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InRlc3QudXNlckBleGFtcGxlLmNvbSIsImV4cCI6MTc4OTA2Mzg1NiwiaXNzIjoiTGlua0NhcmQiLCJhdWQiOiJMaW5rQ2FyZCJ9.FJ1cLPLf7bg87gOxqWjwIlT8BeNE2r0RZBoXmlWO_8U
-@refreshToken = WczeImmN4pJ0H7c2R7qOLOdfd68ATFmjm6hh4gCqiL0VtgjxcNoo14A7FZtnLv79OuCcUgMAJ1+uSVKtzUiJZg==
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjAxYTA4Zjk4LWYzMjItNzRkOC1hODZjLTE2MDljYmE0NmQ1MyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJOaWtOYW1lIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZW1haWxhZGRyZXNzIjoia2l0bmlraXRhMDZAZ21haWwuY29tIiwiZXhwIjoxNzg5MTE3NDQ1LCJpc3MiOiJMaW5rQ2FyZCIsImF1ZCI6IkxpbmtDYXJkIn0.gwZLzKP-6Q9SIw_NvmkDcMBSOl_ghFEb-7TpUo0KYCA
+@refreshToken = 69gHUZD+9NREiGYnoMinAy7oW7/sZ14IwRTpeqPfuXeUJoY82bgXdhc2aJYpvoX9RMnsp/A/JbuCaUm9Wj9k8g==
 
 ### Health Check
 GET {{apiUrl}}/healthcheck
@@ -67,6 +67,12 @@ Content-Type: application/json
 ### Get user by username
 GET {{apiUrl}}/users/{{testUsername}}
 
+### Search users - random
+GET {{apiUrl}}/users/search
+
+### Search users - by username
+GET {{apiUrl}}/users/search?username={{testUsername}}
+
 ### Get current user
 GET {{apiUrl}}/users/me
 Content-Type: application/json
@@ -121,7 +127,7 @@ Authorization: Bearer {{accessToken}}
 {
   "styles": {
     "typography": {
-      "fontSize": "16px",
+      "fontSize": "24px",
       "textAlign": "center"
     },
     "background": {

@@ -6,6 +6,7 @@ namespace LinkCard.Services.Interfaces;
 public interface IUserService
 {
     Task<UserResponse> GetByUsernameAsync(string username);
+    Task<List<UserSearchResponse>> SearchAsync(string? username);
     Task<UserResponse> GetMeAsync(Guid userId);
     Task<UserResponse> UpdateAsync(Guid userId, UpdateUserRequest request);
     Task DeleteAsync(Guid userId);

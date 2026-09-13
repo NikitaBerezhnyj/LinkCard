@@ -19,6 +19,15 @@ public class UserController(IUserService userService) : ControllerBase
         return Ok(user);
     }
 
+    [HttpGet("search")]
+    public async Task<ActionResult<List<UserSearchResponse>>> Search(
+    [FromQuery] string? username)
+    {
+        var result = await userService.SearchAsync(username);
+
+        return Ok(result);
+    }
+
     [HttpGet("me")]
     [Authorize]
     public async Task<ActionResult<UserResponse>> GetMe()
