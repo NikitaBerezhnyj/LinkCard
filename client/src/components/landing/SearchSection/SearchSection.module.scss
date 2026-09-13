@@ -1,0 +1,86 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.section {
+  @include full-screen-section;
+  background: $color-surface;
+}
+
+.inner {
+  max-width: 620px;
+  @include flex-center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.badge {
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-clay;
+  border: 1px solid $color-clay;
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+.title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: $color-ink;
+}
+
+.subtitle {
+  color: $color-ink-soft;
+}
+
+.form {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  margin-top: 8px;
+
+  @include respond-to($breakpoint-sm) {
+    flex-direction: column;
+  }
+}
+
+.inputWrapper {
+  @include surface-card;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:focus-within {
+    border-color: $color-pine;
+    box-shadow: 0 0 0 3px rgba($color-pine, 0.15);
+  }
+}
+
+.icon {
+  color: $color-ink-soft;
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  height: 48px;
+  font-size: 1rem;
+  color: $color-ink;
+  font-family: var(--font-manrope), sans-serif;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}

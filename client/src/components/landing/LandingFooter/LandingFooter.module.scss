@@ -1,0 +1,55 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.footer {
+  background: $color-ink;
+  color: rgba($color-paper, 0.7);
+  padding: 56px 24px 28px;
+}
+
+.top {
+  max-width: 1200px;
+  margin: 0 auto;
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  :global(a) {
+    color: $color-paper;
+  }
+}
+
+.tagline {
+  font-size: 0.9rem;
+  color: rgba($color-paper, 0.55);
+  max-width: 32ch;
+}
+
+.links a {
+  font-size: 0.9rem;
+  color: rgba($color-paper, 0.7);
+
+  &:hover {
+    color: $color-gold;
+  }
+}
+
+.divider {
+  max-width: 1200px;
+  margin: 40px auto 20px;
+  height: 1px;
+  background: rgba($color-paper, 0.15);
+}
+
+.copyright {
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgba($color-paper, 0.45);
+}

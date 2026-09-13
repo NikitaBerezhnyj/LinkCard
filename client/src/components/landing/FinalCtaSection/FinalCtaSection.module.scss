@@ -1,0 +1,23 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.section {
+  @include full-screen-section;
+  background: $color-pine-deep;
+}
+
+.inner {
+  @include flex-center;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 560px;
+}
+
+.title {
+  color: $color-paper;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+}
+
+.subtitle {
+  color: rgba($color-paper, 0.75);
+}

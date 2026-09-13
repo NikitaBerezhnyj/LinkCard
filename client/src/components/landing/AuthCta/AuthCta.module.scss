@@ -1,0 +1,30 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.wrapper {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header {
+  @include respond-to($breakpoint-sm) {
+    :global(.fullWidth) {
+      display: none;
+    }
+  }
+}
+
+.hero,
+.final {
+  @include flex-center;
+
+  @include respond-to($breakpoint-sm) {
+    flex-direction: column;
+    width: 100%;
+
+    a {
+      width: 100%;
+    }
+  }
+}

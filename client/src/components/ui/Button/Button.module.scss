@@ -49,6 +49,30 @@
   }
 }
 
+.invertedPrimary {
+  background: $color-line;
+  color: $color-ink;
+
+  &:hover:not(:disabled) {
+    background: $color-paper;
+  }
+}
+
+.invertedGhost {
+  background: transparent;
+  border-color: rgba($color-paper, 0.4);
+  color: $color-paper;
+
+  &:hover:not(:disabled) {
+    border-color: $color-paper;
+    background: rgba($color-paper, 0.08);
+  }
+
+  &:focus-visible {
+    outline-color: $color-paper;
+  }
+}
+
 .fullWidth {
   width: 100%;
 }

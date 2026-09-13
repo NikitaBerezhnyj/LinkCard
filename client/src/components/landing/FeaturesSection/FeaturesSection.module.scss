@@ -1,0 +1,62 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.section {
+  @include full-screen-section;
+  justify-content: center;
+}
+
+.inner {
+  max-width: 1100px;
+  width: 100%;
+}
+
+.eyebrow {
+  font-family: var(--font-space-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8rem;
+  color: $color-pine;
+}
+
+.title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  margin: 12px 0 40px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  text-align: left;
+
+  @include respond-to($breakpoint-lg) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to($breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  @include surface-card;
+  padding: 24px;
+}
+
+.icon {
+  font-size: 1.6rem;
+  color: $color-pine;
+  margin-bottom: 12px;
+}
+
+.cardTitle {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+.cardText {
+  color: $color-ink-soft;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}

@@ -1,0 +1,55 @@
+@use "../../../styles/variables" as *;
+@use "../../../styles/mixins" as *;
+
+.section {
+  @include full-screen-section;
+}
+
+.inner {
+  max-width: 1100px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  text-align: left;
+
+  @include respond-to($breakpoint-lg) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.text {
+  flex: 1;
+  max-width: 480px;
+}
+
+.eyebrow {
+  font-family: var(--font-space-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.8rem;
+  color: $color-pine;
+}
+
+.title {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  margin: 12px 0 16px;
+}
+
+.subtitle {
+  color: $color-ink-soft;
+}
+
+.cardWrapper {
+  flex-shrink: 0;
+  width: 360px;
+  max-width: 100%;
+}
+
+.previewCard {
+  min-height: auto !important;
+  padding: 0 !important;
+  background: transparent !important;
+}

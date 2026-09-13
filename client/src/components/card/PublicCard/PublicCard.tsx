@@ -9,12 +9,18 @@ import { CardLinksList } from "../CardLinksList/CardLinksList";
 import { CardQr } from "../CardQr/CardQr";
 import styles from "./PublicCard.module.scss";
 
-export function PublicCard({ user, cardUrl }: { user: IUser; cardUrl: string }) {
+interface PublicCardProps {
+  user: IUser;
+  cardUrl: string;
+  className?: string;
+}
+
+export function PublicCard({ user, cardUrl, className }: PublicCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const cardStyle = buildCardStyle(user.styles);
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} ${className ?? ""}`}>
       <div className={`${styles.card} ${isFlipped ? styles.flipped : ""}`} style={cardStyle}>
         <div className={styles.front}>
           <button

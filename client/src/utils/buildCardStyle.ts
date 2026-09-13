@@ -1,5 +1,5 @@
-import { CSSProperties } from "react";
 import { IUserStyles } from "@/types/styles";
+import { CSSProperties } from "react";
 
 type CardCssVars = CSSProperties & { [key: `--${string}`]: string | number | undefined };
 
@@ -29,7 +29,9 @@ function buildBackgroundVars(styles: IUserStyles): Partial<CardCssVars> {
 }
 
 export function buildCardStyle(styles: IUserStyles): CardCssVars {
-  const { typography, colors, layout } = styles;
+  const typography = styles.typography ?? {};
+  const colors = styles.colors ?? { button: {} };
+  const layout = styles.layout ?? {};
 
   return {
     "--card-font-family": typography.font,
