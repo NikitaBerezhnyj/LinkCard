@@ -2,8 +2,7 @@ namespace LinkCard.DTOs.Users.Responses;
 
 public class UserStylesResponse
 {
-    public TypographyResponse Typography { get; set; } = new();
-    public ColorSchemeResponse Colors { get; set; } = new();
-    public LayoutResponse Layout { get; set; } = new();
+    public string Font { get; set; } = string.Empty;
+    public string AccentColor { get; set; } = string.Empty;
     public BackgroundResponse Background { get; set; } = new();
 }

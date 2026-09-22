@@ -44,31 +44,8 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid
             {
                 styles.ToJson();
 
-                styles.OwnsOne(s => s.Typography, typography =>
-                {
-                    typography.Property(t => t.FontWeight).HasConversion<string>();
-                    typography.Property(t => t.TextAlign).HasConversion<string>();
-                });
-
-                styles.OwnsOne(s => s.Colors, colors =>
-                {
-                    colors.OwnsOne(c => c.Button);
-                });
-
-                styles.OwnsOne(s => s.Layout);
-
-                styles.OwnsOne(s => s.Background, background =>
-                {
-                    background.OwnsOne(b => b.Value, value =>
-                    {
-                        value.Property(v => v.Position).HasConversion<string>();
-                        value.Property(v => v.Size).HasConversion<string>();
-                        value.Property(v => v.Repeat).HasConversion<string>();
-                        value.OwnsOne(v => v.Gradient);
-                    });
-                });
-            }
-        );
+                styles.OwnsOne(s => s.Background);
+            });
 
         builder.Entity<RefreshToken>(entity =>
         {

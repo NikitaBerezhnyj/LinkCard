@@ -17,10 +17,10 @@ public static class UserMapper
             ? null
             : mediaUrlService.GetUrl(user.AvatarKey);
 
-        response.Styles.Background.Value.Image =
-            string.IsNullOrWhiteSpace(user.Styles.Background.Value.ImageKey)
+        response.Styles.Background.Image =
+            string.IsNullOrWhiteSpace(user.Styles.Background.ImageKey)
                 ? null
-                : mediaUrlService.GetUrl(user.Styles.Background.Value.ImageKey);
+                : mediaUrlService.GetUrl(user.Styles.Background.ImageKey);
 
         return response;
     }

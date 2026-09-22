@@ -8,14 +8,10 @@ public class UpdateBackgroundRequestValidator : AbstractValidator<UpdateBackgrou
 {
     public UpdateBackgroundRequestValidator()
     {
-        When(x => x.Type is not null, () => RuleFor(x => x.Type!.Value).IsInEnum());
-        When(x => x.Color is not null, () => RuleFor(x => x.Color!).IsHexColor());
-        When(x => x.Position is not null, () => RuleFor(x => x.Position!.Value).IsInEnum());
-        When(x => x.Size is not null, () => RuleFor(x => x.Size!.Value).IsInEnum());
-        When(x => x.Repeat is not null, () => RuleFor(x => x.Repeat!.Value).IsInEnum());
+        When(x => x.Type is not null, () =>
+            RuleFor(x => x.Type!.Value).IsInEnum());
 
-        RuleFor(x => x.Gradient!)
-            .SetValidator(new UpdateGradientRequestValidator())
-            .When(x => x.Gradient is not null);
+        When(x => x.Color is not null, () =>
+            RuleFor(x => x.Color!).IsHexColor());
     }
 }

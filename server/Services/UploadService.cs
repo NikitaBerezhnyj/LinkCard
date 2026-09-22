@@ -24,67 +24,39 @@ public class UploadService(
 
     private const long MaxFileSizeBytes = 10 * 1024 * 1024;
 
-    public async Task<AvatarUploadResponse> UploadAvatarAsync(
-        Guid userId,
-        IFormFile file,
-        CancellationToken ct = default)
+    public async Task<AvatarUploadResponse> UploadAvatarAsync(Guid userId, IFormFile file, CancellationToken ct = default)
     {
-        var processed = await ProcessAndUploadAsync(
-            userId,
-            file,
-            ImageKind.Avatar,
-            "avatars",
-            ct);
+        var processed = await ProcessAndUploadAsync(userId, file, ImageKind.Avatar, "avatars", ct);
 
-        var user = await GetUserAsync(userId);
+        string? previousKey = null;
 
-        var previousKey = user.AvatarKey;
-
-        user.AvatarKey = processed.Key;
-
-        await SaveUserAsync(user);
-
-        await DeletePreviousAsync(
-            previousKey,
-            processed.Key,
-            ct);
-
-        return new AvatarUploadResponse
+        await SaveUserAsync(userId, user =>
         {
-            AvatarUrl = mediaUrlService.GetUrl(processed.Key)
-        };
+            previousKey = user.AvatarKey;
+            user.AvatarKey = processed.Key;
+        }, ct);
+
+        await DeletePreviousAsync(previousKey, processed.Key, ct);
+
+        return new AvatarUploadResponse { AvatarUrl = mediaUrlService.GetUrl(processed.Key) };
     }
 
-    public async Task<BackgroundUploadResponse> UploadBackgroundAsync(
-        Guid userId,
-        IFormFile file,
-        CancellationToken ct = default)
+    public async Task<BackgroundUploadResponse> UploadBackgroundAsync(Guid userId, IFormFile file, CancellationToken ct = default)
     {
-        var processed = await ProcessAndUploadAsync(
-            userId,
-            file,
-            ImageKind.Background,
-            "backgrounds",
-            ct);
+        var processed = await ProcessAndUploadAsync(userId, file, ImageKind.Background, "backgrounds", ct);
 
-        var user = await GetUserAsync(userId);
+        string? previousKey = null;
 
-        var previousKey = user.Styles.Background.Value.ImageKey;
-
-        user.Styles.Background.Type = BackgroundType.Image;
-        user.Styles.Background.Value.ImageKey = processed.Key;
-
-        await SaveUserAsync(user);
-
-        await DeletePreviousAsync(
-            previousKey,
-            processed.Key,
-            ct);
-
-        return new BackgroundUploadResponse
+        await SaveUserAsync(userId, user =>
         {
-            BackgroundUrl = mediaUrlService.GetUrl(processed.Key)
-        };
+            previousKey = user.Styles.Background.ImageKey;
+            user.Styles.Background.Type = BackgroundType.Image;
+            user.Styles.Background.ImageKey = processed.Key;
+        }, ct);
+
+        await DeletePreviousAsync(previousKey, processed.Key, ct);
+
+        return new BackgroundUploadResponse { BackgroundUrl = mediaUrlService.GetUrl(processed.Key) };
     }
 
     private async Task<UploadedImage> ProcessAndUploadAsync(
@@ -151,14 +123,31 @@ public class UploadService(
             ?? throw new NotFoundException("User not found.");
     }
 
-    private async Task SaveUserAsync(ApplicationUser user)
+    private async Task SaveUserAsync(
+    Guid userId,
+    Action<ApplicationUser> applyChange,
+    CancellationToken ct)
     {
-        var result = await userManager.UpdateAsync(user);
+        const int maxAttempts = 3;
 
-        if (!result.Succeeded)
+        for (var attempt = 1; attempt <= maxAttempts; attempt++)
         {
-            throw new ValidationException(
-                result.Errors.Select(e => e.Description));
+            var user = await GetUserAsync(userId);
+            applyChange(user);
+
+            var result = await userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+                return;
+
+            var isConcurrencyFailure = result.Errors
+                .Any(e => e.Code == "ConcurrencyFailure");
+
+            if (!isConcurrencyFailure || attempt == maxAttempts)
+            {
+                throw new ValidationException(
+                    result.Errors.Select(e => e.Description));
+            }
         }
     }
 

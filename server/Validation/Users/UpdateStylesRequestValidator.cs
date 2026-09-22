@@ -1,5 +1,6 @@
 using FluentValidation;
 using LinkCard.DTOs.Users.Requests;
+using LinkCard.Validation.Common;
 
 namespace LinkCard.Validation.Users;
 
@@ -7,17 +8,8 @@ public class UpdateStylesRequestValidator : AbstractValidator<UpdateStylesReques
 {
     public UpdateStylesRequestValidator()
     {
-        RuleFor(x => x.Typography!)
-            .SetValidator(new UpdateTypographyRequestValidator())
-            .When(x => x.Typography is not null);
-
-        RuleFor(x => x.Colors!)
-            .SetValidator(new UpdateColorSchemeRequestValidator())
-            .When(x => x.Colors is not null);
-
-        RuleFor(x => x.Layout!)
-            .SetValidator(new UpdateLayoutRequestValidator())
-            .When(x => x.Layout is not null);
+        When(x => x.AccentColor is not null, () =>
+            RuleFor(x => x.AccentColor!).IsHexColor());
 
         RuleFor(x => x.Background!)
             .SetValidator(new UpdateBackgroundRequestValidator())
