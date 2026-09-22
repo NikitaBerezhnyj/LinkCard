@@ -26,7 +26,7 @@ export function AuthCta({ variant = "hero" }: AuthCtaProps) {
         <Link href="/dashboard">
           <Button variant={buttons.primary}>Перейти в Dashboard</Button>
         </Link>
-        <Link href={`/user/${user.username}`}>
+        <Link href={`/users/${user.username}`}>
           <Button variant={buttons.secondary}>Моя картка</Button>
         </Link>
       </div>

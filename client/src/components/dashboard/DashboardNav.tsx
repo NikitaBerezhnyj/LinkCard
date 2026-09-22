@@ -13,7 +13,7 @@ export function DashboardNav({ username }: { username: string }) {
     <header className={styles.nav}>
       <Logo />
       <div className={styles.actions}>
-        <Link href={`/user/${username}`} target="_blank" className={styles.viewLink}>
+        <Link href={`/users/${username}`} target="_blank" className={styles.viewLink}>
           Переглянути картку <FaArrowUpRightFromSquare />
         </Link>
         <button

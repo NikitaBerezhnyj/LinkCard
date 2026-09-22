@@ -81,7 +81,7 @@ export function SearchSection() {
   }
 
   function handleUserSelect(user: IUserSearchResult) {
-    router.push(`/user/${user.username}`);
+    router.push(`/users/${user.username}`);
   }
 
   const showResults = isFocused && (results.length > 0 || isLoading);

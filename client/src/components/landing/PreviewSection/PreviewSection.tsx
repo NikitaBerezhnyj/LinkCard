@@ -65,7 +65,7 @@ export function PreviewSection() {
         <div className={styles.cardWrapper}>
           <PublicCard
             user={demoUser}
-            cardUrl="https://linkcard.app/user/TestUser123"
+            cardUrl="https://linkcard.app/users/TestUser123"
             className={styles.previewCard}
           />
         </div>
