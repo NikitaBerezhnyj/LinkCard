@@ -1,3 +1,5 @@
+@use "../../../styles/variables" as *;
+
 .layout {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -11,8 +13,33 @@
   gap: 20px;
 }
 
-.panel {
-  min-height: 180px;
+.selectField {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-family: var(--font-manrope);
+  font-size: 13px;
+  font-weight: 600;
+  color: $color-ink-soft;
+}
+
+.select {
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid $color-line;
+  border-radius: $radius-sm;
+  background: $color-surface;
+  color: $color-ink;
+  font-family: var(--font-manrope);
+  font-size: 14px;
+
+  &:focus-visible {
+    outline: none;
+    border-color: $color-pine;
+  }
 }
 
 .actions {

@@ -17,11 +17,11 @@ interface PublicCardProps {
 
 export function PublicCard({ user, cardUrl, className }: PublicCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
-  const cardStyle = buildCardStyle(user.styles);
+  const pageStyle = buildCardStyle(user.styles);
 
   return (
-    <div className={`${styles.wrapper} ${className ?? ""}`}>
-      <div className={`${styles.card} ${isFlipped ? styles.flipped : ""}`} style={cardStyle}>
+    <div className={`${styles.wrapper} ${className ?? ""}`} style={pageStyle}>
+      <div className={`${styles.card} ${isFlipped ? styles.flipped : ""}`}>
         <div className={styles.front}>
           <button
             type="button"

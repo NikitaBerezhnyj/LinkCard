@@ -1,54 +1,32 @@
 import { IUserStyles } from "@/types/styles";
+import { isLightColor, shade } from "@/utils/color";
 import { CSSProperties } from "react";
 
-type CardCssVars = CSSProperties & { [key: `--${string}`]: string | number | undefined };
+const DEFAULT_FONT = "Manrope, sans-serif";
+const DEFAULT_ACCENT = "#2c5f4a";
 
-function buildBackgroundVars(styles: IUserStyles): Partial<CardCssVars> {
-  const { background } = styles;
-  const value = background;
+export function buildCardStyle(styles: IUserStyles | undefined | null): CSSProperties {
+  const font = styles?.font ?? DEFAULT_FONT;
+  const accentColor = styles?.accentColor ?? DEFAULT_ACCENT;
+  const background = styles?.background ?? { type: "color" as const };
 
-  switch (background.type) {
-    case "color":
-      return { "--card-bg-color": value.color };
-    case "gradient":
-      if (!value.gradient) return {};
-      return {
-        "--card-bg-image": `linear-gradient(${value.gradient.angle ?? "180deg"}, ${value.gradient.start ?? "#000"}, ${value.gradient.end ?? "#000"})`
-      };
-    case "image":
-      if (!value.image) return {};
-      return {
-        "--card-bg-image": `url(${value.image})`,
-        "--card-bg-repeat": value.repeat,
-        "--card-bg-size": value.size,
-        "--card-bg-position": value.position
-      };
-    default:
-      return {};
-  }
-}
-
-export function buildCardStyle(styles: IUserStyles): CardCssVars {
-  const typography = styles.typography ?? {};
-  const colors = styles.colors ?? { button: {} };
-  const layout = styles.layout ?? {};
-
-  return {
-    "--card-font-family": typography.font,
-    "--card-font-size": typography.fontSize,
-    "--card-font-weight": typography.fontWeight,
-    "--card-text-align": typography.textAlign,
-    "--card-text-color": colors.text,
-    "--card-link-text-color": colors.linkText,
-    "--card-border-color": colors.border,
-    "--card-content-bg": colors.contentBackground,
-    "--card-button-text": colors.button?.text,
-    "--card-button-bg": colors.button?.background,
-    "--card-button-hover-text": colors.button?.hoverText,
-    "--card-button-hover-bg": colors.button?.hoverBackground,
-    "--card-border-radius": layout.borderRadius,
-    "--card-content-padding": layout.contentPadding,
-    "--card-content-gap": layout.contentGap,
-    ...buildBackgroundVars(styles)
+  const vars: Record<string, string> = {
+    "--card-font-family": font,
+    "--card-accent-color": accentColor,
+    "--card-accent-contrast": isLightColor(accentColor) ? "#1a1a1a" : "#ffffff",
+    "--page-bg-color": accentColor,
+    "--page-bg-image": "none"
   };
+
+  if (background.type === "color") {
+    vars["--page-bg-color"] = background.color ?? accentColor;
+  } else if (background.type === "gradient") {
+    vars["--page-bg-color"] = shade(accentColor, 55);
+    vars["--page-bg-image"] =
+      `linear-gradient(135deg, ${shade(accentColor, 55)}, ${shade(accentColor, -15)})`;
+  } else if (background.type === "image" && background.image) {
+    vars["--page-bg-image"] = `url(${background.image})`;
+  }
+
+  return vars as CSSProperties;
 }

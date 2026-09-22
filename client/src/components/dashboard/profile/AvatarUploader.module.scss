@@ -2,11 +2,10 @@
 
 .wrapper {
   display: flex;
-  align-items: center;
-  gap: 20px;
 }
 
 .preview {
+  position: relative;
   width: 72px;
   height: 72px;
   border-radius: 50%;
@@ -17,6 +16,17 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  padding: 0;
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-pine;
+    outline-offset: 2px;
+  }
 }
 
 .image {
@@ -29,6 +39,32 @@
   font-family: var(--font-piazzolla);
   font-size: 22px;
   color: $color-ink-soft;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4px;
+  font-family: var(--font-manrope);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: transparent;
+  background: rgba(0, 0, 0, 0);
+  transition:
+    background 0.15s,
+    color 0.15s;
+
+  .preview:hover &,
+  .preview:focus-visible &,
+  .preview:disabled & {
+    background: rgba(0, 0, 0, 0.45);
+    color: white;
+  }
 }
 
 .hiddenInput {

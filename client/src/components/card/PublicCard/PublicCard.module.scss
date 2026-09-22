@@ -6,7 +6,11 @@
   align-items: center;
   justify-content: center;
   padding: 24px;
-  background: $color-paper;
+  background-color: var(--page-bg-color, #{$color-paper});
+  background-image: var(--page-bg-image, none);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 .card {
@@ -30,20 +34,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--card-content-gap, 14px);
-  padding: var(--card-content-padding, 28px);
-  border: 1px solid var(--card-border-color, #{$color-line});
-  border-radius: var(--card-border-radius, 16px);
-  background-color: var(--card-bg-color, #{$color-surface});
-  background-image: var(--card-bg-image, none);
-  background-repeat: var(--card-bg-repeat, no-repeat);
-  background-size: var(--card-bg-size, cover);
-  background-position: var(--card-bg-position, center);
-  color: var(--card-text-color, #{$color-ink});
+  gap: 14px;
+  padding: 28px;
+  border: 1px solid $color-line;
+  border-radius: 16px;
+  background-color: $color-surface;
+  color: $color-ink;
   font-family: var(--card-font-family, var(--font-manrope));
-  font-size: var(--card-font-size, inherit);
-  font-weight: var(--card-font-weight, 400);
-  text-align: var(--card-text-align, center);
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
 .back {
@@ -61,9 +60,9 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  border: 1px solid var(--card-border-color, #{$color-line});
-  background: var(--card-bg-color, #{$color-surface});
-  color: var(--card-text-color, #{$color-ink});
+  border: 1px solid $color-line;
+  background: $color-surface;
+  color: $color-ink;
   font-size: 15px;
   cursor: pointer;
   transition:
@@ -71,8 +70,8 @@
     color 0.15s ease;
 
   &:hover {
-    background: var(--card-button-bg, #{$color-pine});
-    color: var(--card-button-text, #{$color-paper});
+    background: var(--card-accent-color, #{$color-pine});
+    color: var(--card-accent-contrast, #{$color-paper});
   }
 
   &:focus-visible {
@@ -86,7 +85,7 @@
   height: 84px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid var(--card-border-color, #{$color-line});
+  border: 1px solid $color-line;
   margin-top: 8px;
 }
 
@@ -98,7 +97,7 @@
 .bio {
   font-family: var(--font-manrope);
   font-size: 14px;
-  color: var(--card-text-color, #{$color-ink});
+  color: $color-ink;
   opacity: 0.75;
   margin: -8px 0 4px;
 }

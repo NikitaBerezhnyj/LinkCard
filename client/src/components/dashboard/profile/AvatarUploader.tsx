@@ -1,8 +1,7 @@
 "use client";
 
-import { ChangeEvent, useRef } from "react";
 import { useUploadAvatar } from "@/hooks/dashboard/useUploadAvatar";
-import { Button } from "@/components/ui/Button/Button";
+import { ChangeEvent, useRef } from "react";
 import styles from "./AvatarUploader.module.scss";
 
 export function AvatarUploader({ avatarUrl, username }: { avatarUrl?: string; username: string }) {
@@ -17,31 +16,32 @@ export function AvatarUploader({ avatarUrl, username }: { avatarUrl?: string; us
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.preview}>
+      <button
+        type="button"
+        className={styles.preview}
+        onClick={() => inputRef.current?.click()}
+        disabled={uploadAvatar.isPending}
+        aria-label="Змінити фото профілю"
+      >
         {avatarUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={avatarUrl} alt={username} className={styles.image} />
         ) : (
           <span className={styles.placeholder}>{username.slice(0, 2).toUpperCase()}</span>
         )}
-      </div>
-      <div>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          className={styles.hiddenInput}
-          onChange={handleFileChange}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => inputRef.current?.click()}
-          disabled={uploadAvatar.isPending}
-        >
+
+        <span className={styles.overlay}>
           {uploadAvatar.isPending ? "Завантаження..." : "Змінити фото"}
-        </Button>
-      </div>
+        </span>
+      </button>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className={styles.hiddenInput}
+        onChange={handleFileChange}
+      />
     </div>
   );
 }

@@ -5,6 +5,13 @@
   top: 24px;
   display: flex;
   justify-content: center;
+  padding: 24px;
+  border-radius: 20px;
+  background-color: var(--page-bg-color, #{$color-paper});
+  background-image: var(--page-bg-image, none);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 .card {
@@ -13,20 +20,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--card-content-gap, 14px);
-  padding: var(--card-content-padding, 28px);
-  border: 1px solid var(--card-border-color, #{$color-line});
-  border-radius: var(--card-border-radius, 16px);
-  background-color: var(--card-bg-color, #{$color-surface});
-  background-image: var(--card-bg-image, none);
-  background-repeat: var(--card-bg-repeat, no-repeat);
-  background-size: var(--card-bg-size, cover);
-  background-position: var(--card-bg-position, center);
-  color: var(--card-text-color, #{$color-ink});
+  gap: 16px;
+  padding: 28px;
+  border: 1px solid $color-line;
+  border-radius: 16px;
+  background-color: $color-surface;
+  color: $color-ink;
   font-family: var(--card-font-family, var(--font-manrope));
-  font-size: var(--card-font-size, inherit);
-  font-weight: var(--card-font-weight, 400);
-  text-align: var(--card-text-align, center);
+  text-align: center;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
 }
 
 .avatar {
@@ -34,7 +36,7 @@
   height: 84px;
   border-radius: 50%;
   object-fit: cover;
-  border: 1px solid var(--card-border-color, #{$color-line});
+  border: 1px solid $color-line;
 }
 
 .username {

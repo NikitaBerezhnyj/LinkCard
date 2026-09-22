@@ -7,14 +7,19 @@ import styles from "./StylePreview.module.scss";
 interface StylePreviewProps {
   user: IUser;
   draftStyles: IUserStyles;
+  previewImageOverride?: string;
 }
 
-export function StylePreview({ user, draftStyles }: StylePreviewProps) {
-  const cardStyle = buildCardStyle(draftStyles);
+export function StylePreview({ user, draftStyles, previewImageOverride }: StylePreviewProps) {
+  const effectiveStyles: IUserStyles = previewImageOverride
+    ? { ...draftStyles, background: { ...draftStyles.background, image: previewImageOverride } }
+    : draftStyles;
+
+  const pageStyle = buildCardStyle(effectiveStyles);
 
   return (
-    <div className={styles.wrapper}>
-      <div className={styles.card} style={cardStyle}>
+    <div className={styles.wrapper} style={pageStyle}>
+      <div className={styles.card}>
         {user.avatar && (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={user.avatar} alt={user.username} className={styles.avatar} />

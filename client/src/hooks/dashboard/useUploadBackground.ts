@@ -1,6 +1,6 @@
+import { uploadBackgroundImage } from "@/services/userServices";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { uploadBackgroundImage } from "@/services/userServices";
 
 export function useUploadBackground() {
   return useMutation({
