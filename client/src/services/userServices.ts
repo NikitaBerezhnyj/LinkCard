@@ -3,7 +3,7 @@ import { IUpdateUserPayload, IUser, IUserSearchResult } from "@/types/user";
 
 export async function getPublicUser(username: string): Promise<IUser | null> {
   const res = await fetch(`${process.env.BACKEND_API_URL}/users/${username}`, {
-    next: { revalidate: 60 }
+    cache: "no-store"
   });
 
   if (res.status === 404) {
