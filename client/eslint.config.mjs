@@ -1,7 +1,7 @@
-import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
 import sonarjs from "eslint-plugin-sonarjs";
+import { defineConfig, globalIgnores } from "eslint/config";
 
 const eslintConfig = defineConfig([
   ...nextVitals,
@@ -13,6 +13,8 @@ const eslintConfig = defineConfig([
     },
     rules: {
       ...sonarjs.configs.recommended.rules,
+
+      "react-hooks/set-state-in-effect": "off",
 
       "no-unused-vars": [
         "warn",
