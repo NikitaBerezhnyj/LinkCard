@@ -11,7 +11,7 @@ import type { Metadata } from "next";
 const siteUrl = "https://linkcard.example.com"; // TODO: реальний домен
 
 export const metadata: Metadata = {
-  title: "LinkCard — одна картка для всіх твоїх посилань",
+  title: "LinkCard",
   description:
     "Створи персональну link-in-bio картку: зберігай всі свої посилання, соцмережі та контакти в одному місці, кастомізуй вигляд і ділись через QR-код.",
   keywords: [
@@ -27,13 +27,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "uk_UA",
     url: siteUrl,
-    title: "LinkCard — одна картка для всіх твоїх посилань",
+    title: "LinkCard",
     description: "Персональна link-in-bio картка з посиланнями, стилем та QR-кодом.",
     siteName: "LinkCard"
   },
   twitter: {
     card: "summary_large_image",
-    title: "LinkCard — одна картка для всіх твоїх посилань",
+    title: "LinkCard",
     description: "Персональна link-in-bio картка з кастомним стилем і QR-кодом."
   }
 };

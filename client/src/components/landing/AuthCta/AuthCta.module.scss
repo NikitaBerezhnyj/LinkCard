@@ -9,9 +9,7 @@
 
 .header {
   @include respond-to($breakpoint-sm) {
-    :global(.fullWidth) {
-      display: none;
-    }
+    display: none;
   }
 }
 
