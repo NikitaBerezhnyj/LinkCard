@@ -23,11 +23,9 @@ public class AuthService(
 {
     public async Task<AuthResponse> RegisterAsync(RegisterRequest request, string? ipAddress)
     {
-        var user = new ApplicationUser
-        {
-            UserName = request.Username,
-            Email = request.Email
-        };
+        var user = ApplicationUser.Create(
+            request.Username,
+            request.Email);
 
         var result = await userManager.CreateAsync(user, request.Password);
         if (!result.Succeeded)

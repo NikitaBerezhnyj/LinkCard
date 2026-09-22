@@ -11,6 +11,24 @@ public class ApplicationUser : IdentityUser<Guid>
 
     public List<UserLink> Links { get; set; } = [];
     public UserStyles Styles { get; set; } = new();
+
+    public static ApplicationUser Create(string username, string email)
+    {
+        var user = new ApplicationUser
+        {
+            UserName = username,
+            Email = email
+        };
+
+        user.Links.Add(new UserLink
+        {
+            Title = "Email",
+            Url = $"mailto:{email}",
+            Order = 0
+        });
+
+        return user;
+    }
 }
 
 public class UserStyles
