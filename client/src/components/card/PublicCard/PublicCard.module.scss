@@ -1,32 +1,46 @@
 @use "../../../styles/variables" as *;
 
 .wrapper {
+  position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
+
   background-color: var(--page-bg-color, #{$color-paper});
   background-image: var(--page-bg-image, none);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+
+  perspective: 1200px;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  padding: 20px 32px;
 }
 
 .card {
   position: relative;
+
   width: 100%;
   max-width: 400px;
-  min-height: 500px;
+  height: 500px;
+
   transform-style: preserve-3d;
-  transition: transform 0.6s;
+  transition: transform 0.6s ease;
 
   &.flipped {
     transform: rotateY(180deg);
   }
 
   @media (max-width: 480px) {
-    min-height: 480px;
+    height: 480px;
   }
 }
 
@@ -34,44 +48,63 @@
 .back {
   position: absolute;
   inset: 0;
-  backface-visibility: hidden;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: 28px;
+
   border: 1px solid $color-line;
   border-radius: 16px;
+
   background-color: $color-surface;
   color: $color-ink;
+
   font-family: var(--card-font-family, var(--font-manrope));
   text-align: center;
+
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.front {
+  padding: 28px 28px 20px;
 }
 
 .back {
-  transform: rotateY(180deg);
   justify-content: center;
+  padding: 28px;
+
+  transform: rotateY(180deg);
 }
 
 .flipButton {
   position: absolute;
   top: 16px;
   right: 16px;
+
   width: 36px;
   height: 36px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+
   border: 1px solid $color-line;
+  border-radius: 50%;
+
   background: $color-surface;
   color: $color-ink;
+
   font-size: 15px;
   cursor: pointer;
+
   transition:
     background-color 0.15s ease,
     color 0.15s ease;
+
+  flex-shrink: 0;
 
   &:hover {
     background: var(--card-accent-color, #{$color-pine});
@@ -84,24 +117,60 @@
   }
 }
 
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+
+  flex-shrink: 0;
+  padding-bottom: 14px;
+}
+
 .avatar {
   width: 84px;
   height: 84px;
-  border-radius: 50%;
-  object-fit: cover;
+
   border: 1px solid $color-line;
+  border-radius: 50%;
+
+  object-fit: cover;
+
   margin-top: 8px;
 }
 
 .username {
+  margin: 0;
+
   font-family: inherit;
   font-size: 22px;
-  margin: 0;
 }
 
 .bio {
-  font-size: 14px;
+  margin: -8px 0 0;
+
   color: $color-ink;
+  font-size: 14px;
   opacity: 0.75;
-  margin: -8px 0 4px;
+}
+
+.linksScroll {
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  padding-right: 4px;
+
+  scrollbar-width: thin;
+  scrollbar-color: $color-line transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-line;
+    border-radius: 4px;
+  }
 }

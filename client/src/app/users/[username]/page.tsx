@@ -16,5 +16,5 @@ export default async function PublicCardPage({
 
   const cardUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/${username}`;
 
-  return <PublicCard user={user} cardUrl={cardUrl} />;
+  return <PublicCard user={user} cardUrl={cardUrl} withHeader={true} />;
 }
