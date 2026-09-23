@@ -1,11 +1,13 @@
 "use client";
 
-import { FaGripVertical, FaTrash } from "react-icons/fa6";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { getLinkIcon } from "@/utils/getLinkIcon";
 import { TextField } from "@/components/ui/TextField/TextField";
 import { IEditableLink } from "@/types/links";
+import { getLinkIcon } from "@/utils/getLinkIcon";
+import { getRandomLinkPlaceholder } from "@/utils/getRandomLinkPlaceholder";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { useState } from "react";
+import { FaGripVertical, FaTrash } from "react-icons/fa6";
 import styles from "./LinkRow.module.scss";
 
 interface LinkRowProps {
@@ -16,6 +18,7 @@ interface LinkRowProps {
 }
 
 export function LinkRow({ link, dragId, onChange, onRemove }: LinkRowProps) {
+  const [placeholder] = useState(getRandomLinkPlaceholder);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: dragId
   });
@@ -42,14 +45,14 @@ export function LinkRow({ link, dragId, onChange, onRemove }: LinkRowProps) {
         <TextField
           id={`link-title-${dragId}`}
           label="Назва"
-          placeholder="Instagram"
+          placeholder={placeholder.name}
           value={link.title}
           onChange={e => onChange({ title: e.target.value })}
         />
         <TextField
           id={`link-url-${dragId}`}
           label="Посилання"
-          placeholder="https://instagram.com/yourname"
+          placeholder={placeholder.url}
           value={link.url}
           onChange={e => onChange({ url: e.target.value })}
         />
