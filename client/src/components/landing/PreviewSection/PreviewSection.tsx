@@ -14,7 +14,6 @@ const demoStyles: IUserStyles = {
 
 const demoUser: IUser = {
   id: "demo",
-  avatar: "public/images/avatar.jpg",
   username: "TestUser123",
   email: "demo@linkcard.app",
   bio: "Розробник • Ділюсь проєктами та посиланнями",

@@ -1,5 +1,6 @@
 "use client";
 
+import { AvatarPlaceholder } from "@/components/ui/AvatarPlaceholder/AvatarPlaceholder";
 import { useUserSearch } from "@/hooks/landing/useUserSearch";
 import { IUserSearchResult } from "@/types/user";
 import { useRouter } from "next/navigation";
@@ -136,9 +137,11 @@ export function SearchSection() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={user.avatar} alt="" className={styles.avatar} />
                     ) : (
-                      <div className={styles.avatarPlaceholder}>
-                        {user.username.charAt(0).toUpperCase()}
-                      </div>
+                      <AvatarPlaceholder
+                        username={user.username}
+                        size={84}
+                        className={styles.avatar}
+                      />
                     )}
 
                     <span className={styles.username}>{user.username}</span>

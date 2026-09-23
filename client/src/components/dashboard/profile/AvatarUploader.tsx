@@ -1,5 +1,6 @@
 "use client";
 
+import { AvatarPlaceholder } from "@/components/ui/AvatarPlaceholder/AvatarPlaceholder";
 import { CropModal } from "@/components/ui/CropModal/CropModal";
 import { useUploadAvatar } from "@/hooks/dashboard/useUploadAvatar";
 import { ChangeEvent, useRef, useState } from "react";
@@ -40,7 +41,7 @@ export function AvatarUploader({ avatarUrl, username }: { avatarUrl?: string; us
           // eslint-disable-next-line @next/next/no-img-element
           <img src={avatarUrl} alt={username} className={styles.image} />
         ) : (
-          <span className={styles.placeholder}>{username.slice(0, 2).toUpperCase()}</span>
+          <AvatarPlaceholder username={username} size={72} />
         )}
 
         <span className={styles.overlay}>
