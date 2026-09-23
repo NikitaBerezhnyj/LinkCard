@@ -22,9 +22,9 @@ export function buildCardStyle(styles: IUserStyles | undefined | null): CSSPrope
   if (background.type === "color") {
     vars["--page-bg-color"] = background.color ?? accentColor;
   } else if (background.type === "gradient") {
-    vars["--page-bg-color"] = shade(accentColor, 55);
-    vars["--page-bg-image"] =
-      `linear-gradient(135deg, ${shade(accentColor, 55)}, ${shade(accentColor, -15)})`;
+    const base = background.gradientColor ?? accentColor;
+    vars["--page-bg-color"] = shade(base, 55);
+    vars["--page-bg-image"] = `linear-gradient(135deg, ${shade(base, 55)}, ${shade(base, -15)})`;
   } else if (background.type === "image" && background.image) {
     vars["--page-bg-image"] = `url(${background.image})`;
   }

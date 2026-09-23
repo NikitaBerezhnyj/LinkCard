@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/Button/Button";
 import { ColorField } from "@/components/ui/ColorField/ColorField";
 import { ToggleGroup } from "@/components/ui/ToggleGroup/ToggleGroup";
+import { BACKGROUND_COLOR_PRESETS } from "@/constants/colorPresets";
 import { IBackground, IBackgroundType } from "@/types/styles";
 import { ChangeEvent, useRef } from "react";
 import styles from "./Controls.module.scss";
@@ -50,11 +51,17 @@ export function BackgroundControls({
           label="Колір фону"
           value={value.color ?? accentColor}
           onChange={color => onChange({ color })}
+          presets={BACKGROUND_COLOR_PRESETS}
         />
       )}
 
       {value.type === "gradient" && (
-        <p className={styles.hint}>Градієнт формується автоматично на основі акцентного кольору.</p>
+        <ColorField
+          label="Базовий колір градієнту"
+          value={value.gradientColor ?? accentColor}
+          onChange={gradientColor => onChange({ gradientColor })}
+          presets={BACKGROUND_COLOR_PRESETS}
+        />
       )}
 
       {value.type === "image" && (

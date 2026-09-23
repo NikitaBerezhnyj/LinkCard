@@ -3,6 +3,7 @@ export type IBackgroundType = "color" | "gradient" | "image";
 export interface IBackground {
   type: IBackgroundType;
   color?: string;
+  gradientColor?: string;
   image?: string;
 }
 
