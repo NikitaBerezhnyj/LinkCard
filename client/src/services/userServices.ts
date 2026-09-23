@@ -35,9 +35,9 @@ export async function updateCurrentUser(payload: IUpdateUserPayload): Promise<IU
   return data;
 }
 
-export async function uploadAvatar(file: File): Promise<{ avatarUrl: string }> {
+export async function uploadAvatar(file: File | Blob): Promise<{ avatarUrl: string }> {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("file", file, "avatar.jpg");
 
   const { data } = await clientApi.put<{ avatarUrl: string }>("/users/me/avatar", formData, {
     headers: {

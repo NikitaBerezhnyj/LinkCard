@@ -1,13 +1,13 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { uploadAvatar } from "@/services/userServices";
 import { IUser } from "@/types/user";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export function useUploadAvatar() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (file: File) => uploadAvatar(file),
+    mutationFn: (file: File | Blob) => uploadAvatar(file),
     onSuccess: ({ avatarUrl }) => {
       queryClient.setQueryData<IUser | undefined>(["currentUser"], current =>
         current ? { ...current, avatar: avatarUrl } : current

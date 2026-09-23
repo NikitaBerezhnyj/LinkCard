@@ -1,17 +1,30 @@
 "use client";
 
+import { CropModal } from "@/components/ui/CropModal/CropModal";
 import { useUploadAvatar } from "@/hooks/dashboard/useUploadAvatar";
-import { ChangeEvent, useRef } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import styles from "./AvatarUploader.module.scss";
 
 export function AvatarUploader({ avatarUrl, username }: { avatarUrl?: string; username: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const uploadAvatar = useUploadAvatar();
+  const [pendingImageSrc, setPendingImageSrc] = useState<string | null>(null);
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-    if (file) uploadAvatar.mutate(file);
+    if (file) setPendingImageSrc(URL.createObjectURL(file));
     event.target.value = "";
+  }
+
+  function handleCropConfirm(blob: Blob) {
+    if (pendingImageSrc) URL.revokeObjectURL(pendingImageSrc);
+    setPendingImageSrc(null);
+    uploadAvatar.mutate(blob);
+  }
+
+  function handleCropCancel() {
+    if (pendingImageSrc) URL.revokeObjectURL(pendingImageSrc);
+    setPendingImageSrc(null);
   }
 
   return (
@@ -42,6 +55,16 @@ export function AvatarUploader({ avatarUrl, username }: { avatarUrl?: string; us
         className={styles.hiddenInput}
         onChange={handleFileChange}
       />
+
+      {pendingImageSrc && (
+        <CropModal
+          imageSrc={pendingImageSrc}
+          aspect={1}
+          cropShape="round"
+          onConfirm={handleCropConfirm}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   );
 }
