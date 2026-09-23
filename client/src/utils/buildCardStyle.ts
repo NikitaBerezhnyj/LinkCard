@@ -1,8 +1,9 @@
+import { DEFAULT_CARD_FONT } from "@/constants/cardFonts";
 import { IUserStyles } from "@/types/styles";
 import { isLightColor, shade } from "@/utils/color";
 import { CSSProperties } from "react";
 
-const DEFAULT_FONT = "Manrope, sans-serif";
+const DEFAULT_FONT = DEFAULT_CARD_FONT;
 const DEFAULT_ACCENT = "#2c5f4a";
 
 export function buildCardStyle(styles: IUserStyles | undefined | null): CSSProperties {

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/Button/Button";
 import { ColorField } from "@/components/ui/ColorField/ColorField";
 import { SectionCard } from "@/components/ui/SectionCard/SectionCard";
+import { CARD_FONT_OPTIONS } from "@/constants/cardFonts";
 import { useUpdateStyles } from "@/hooks/dashboard/useUpdateStyles";
 import { useUploadBackground } from "@/hooks/dashboard/useUploadBackground";
 import { IBackground, IBackgroundType, IUserStyles } from "@/types/styles";
@@ -12,13 +13,6 @@ import { useState } from "react";
 import { BackgroundControls } from "./controls/BackgroundControls";
 import { StylePreview } from "./StylePreview";
 import styles from "./StylesSection.module.scss";
-
-const FONT_OPTIONS = [
-  { value: "Manrope, sans-serif", label: "Manrope" },
-  { value: "Georgia, serif", label: "Georgia" },
-  { value: '"Courier New", monospace', label: "Courier New" },
-  { value: '"Trebuchet MS", sans-serif', label: "Trebuchet MS" }
-];
 
 interface PendingBackgroundImage {
   file: File;
@@ -107,8 +101,12 @@ export function StylesSection({ user }: { user: IUser }) {
               value={draft.font}
               onChange={e => updateFont(e.target.value)}
             >
-              {FONT_OPTIONS.map(option => (
-                <option key={option.value} value={option.value}>
+              {CARD_FONT_OPTIONS.map(option => (
+                <option
+                  key={option.value}
+                  value={option.value}
+                  style={{ fontFamily: option.previewFamily }}
+                >
                   {option.label}
                 </option>
               ))}

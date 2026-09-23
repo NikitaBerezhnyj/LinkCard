@@ -17,7 +17,7 @@
   border-radius: $radius-sm;
   color: var(--card-accent-contrast, #{$color-paper});
   background: var(--card-accent-color, #{$color-pine});
-  font-family: var(--font-manrope);
+  font-family: var(--card-font-family, var(--font-manrope));
   transition: filter 0.15s ease;
 
   &:hover {

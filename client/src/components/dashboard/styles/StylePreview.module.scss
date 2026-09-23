@@ -40,12 +40,13 @@
 }
 
 .username {
+  font-family: inherit;
   font-size: 20px;
   margin: 0;
 }
 
 .bio {
-  font-family: var(--font-manrope);
+  font-family: inherit;
   font-size: 13px;
   opacity: 0.75;
   margin: -6px 0 4px;

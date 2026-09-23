@@ -94,12 +94,12 @@
 }
 
 .username {
+  font-family: inherit;
   font-size: 22px;
   margin: 0;
 }
 
 .bio {
-  font-family: var(--font-manrope);
   font-size: 14px;
   color: $color-ink;
   opacity: 0.75;
