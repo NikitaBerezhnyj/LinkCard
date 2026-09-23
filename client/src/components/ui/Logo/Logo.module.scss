@@ -8,5 +8,5 @@
 }
 
 .accent {
-  color: $color-pine;
+  color: var(--logo-accent-color, #{$color-pine});
 }

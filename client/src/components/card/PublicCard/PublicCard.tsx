@@ -21,12 +21,13 @@ interface PublicCardProps {
 export function PublicCard({ user, cardUrl, className, withHeader = false }: PublicCardProps) {
   const [isFlipped, setIsFlipped] = useState(false);
   const pageStyle = buildCardStyle(user.styles);
+  const accentColor = user.styles?.accentColor;
 
   return (
     <div className={`${styles.wrapper} ${className ?? ""}`} style={pageStyle}>
       {withHeader && (
         <header className={styles.header}>
-          <Logo />
+          <Logo accentColor={accentColor} />
         </header>
       )}
 
