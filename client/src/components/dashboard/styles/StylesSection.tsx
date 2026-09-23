@@ -122,7 +122,10 @@ export function StylesSection({ user }: { user: IUser }) {
           />
 
           <BackgroundControls
-            value={draft.background}
+            value={{
+              ...draft.background,
+              image: pendingImage?.previewUrl ?? draft.background.image
+            }}
             accentColor={draft.accentColor}
             isUploading={uploadBackground.isPending}
             onTypeChange={updateBackgroundType}
