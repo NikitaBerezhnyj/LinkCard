@@ -1,6 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@/components/ui/Button/Button";
+import { SectionCard } from "@/components/ui/SectionCard/SectionCard";
+import { useUpdateLinks } from "@/hooks/dashboard/useUpdateLinks";
+import { IEditableLink } from "@/types/links";
+import { IUser } from "@/types/user";
+import { normalizeLinkUrl } from "@/utils/linkNormalize";
+import { createEmptyLink, toEditableLinks } from "@/utils/toEditableLinks";
 import {
   DndContext,
   DragEndEvent,
@@ -10,13 +16,8 @@ import {
   useSensors
 } from "@dnd-kit/core";
 import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { useState } from "react";
 import { FaPlus } from "react-icons/fa6";
-import { IUser } from "@/types/user";
-import { SectionCard } from "@/components/ui/SectionCard/SectionCard";
-import { Button } from "@/components/ui/Button/Button";
-import { useUpdateLinks } from "@/hooks/dashboard/useUpdateLinks";
-import { IEditableLink } from "@/types/links";
-import { toEditableLinks, createEmptyLink } from "@/utils/toEditableLinks";
 import { LinkRow } from "./LinkRow";
 import styles from "./LinksSection.module.scss";
 
@@ -52,7 +53,11 @@ export function LinksSection({ user }: { user: IUser }) {
   function handleSave() {
     const payload = links
       .filter(link => link.title.trim() && link.url.trim())
-      .map(link => ({ id: link.id, title: link.title.trim(), url: link.url.trim() }));
+      .map(link => ({
+        id: link.id,
+        title: link.title.trim(),
+        url: normalizeLinkUrl(link.url.trim())
+      }));
 
     updateLinks.mutate(payload, {
       onSuccess: updatedUser => {

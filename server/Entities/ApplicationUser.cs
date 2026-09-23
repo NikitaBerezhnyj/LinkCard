@@ -42,5 +42,6 @@ public class BackgroundStyle
 {
     public BackgroundType Type { get; set; } = BackgroundType.Color;
     public string? Color { get; set; }
+    public string? GradientColor { get; set; }
     public string? ImageKey { get; set; }
 }

@@ -8,9 +8,10 @@ interface ColorFieldProps {
   label: string;
   value?: string;
   onChange: (value: string) => void;
+  presets?: string[];
 }
 
-export function ColorField({ label, value, onChange }: ColorFieldProps) {
+export function ColorField({ label, value, onChange, presets }: ColorFieldProps) {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const color = value || "#ffffff";
@@ -43,6 +44,25 @@ export function ColorField({ label, value, onChange }: ColorFieldProps) {
           onChange={e => onChange(e.target.value)}
         />
       </div>
+
+      {presets && presets.length > 0 && (
+        <div className={styles.presets}>
+          {presets.map(preset => (
+            <button
+              key={preset}
+              type="button"
+              className={`${styles.presetSwatch} ${
+                preset.toLowerCase() === color.toLowerCase() ? styles.presetActive : ""
+              }`}
+              style={{ background: preset }}
+              onClick={() => onChange(preset)}
+              aria-label={`Обрати колір ${preset}`}
+              title={preset}
+            />
+          ))}
+        </div>
+      )}
+
       {isOpen && (
         <div className={styles.popover}>
           <HexColorPicker color={color} onChange={onChange} />

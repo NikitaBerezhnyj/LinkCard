@@ -1,5 +1,6 @@
-import { IUserLink } from "@/types/user";
 import { IEditableLink } from "@/types/links";
+import { IUserLink } from "@/types/user";
+import { denormalizeLinkUrl } from "./linkNormalize";
 
 function generateClientId(): string {
   return typeof crypto !== "undefined" && "randomUUID" in crypto
@@ -10,9 +11,18 @@ function generateClientId(): string {
 export function toEditableLinks(links: IUserLink[]): IEditableLink[] {
   return [...links]
     .sort((a, b) => a.order - b.order)
-    .map(({ id, title, url }) => ({ key: generateClientId(), id, title, url }));
+    .map(link => ({
+      key: link.id,
+      id: link.id,
+      title: link.title,
+      url: denormalizeLinkUrl(link.url)
+    }));
 }
 
 export function createEmptyLink(): IEditableLink {
-  return { key: generateClientId(), title: "", url: "" };
+  return {
+    key: generateClientId(),
+    title: "",
+    url: ""
+  };
 }

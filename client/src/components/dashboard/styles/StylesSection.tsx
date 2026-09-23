@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button/Button";
 import { ColorField } from "@/components/ui/ColorField/ColorField";
 import { SectionCard } from "@/components/ui/SectionCard/SectionCard";
 import { CARD_FONT_OPTIONS } from "@/constants/cardFonts";
+import { ACCENT_COLOR_PRESETS } from "@/constants/colorPresets";
 import { useUpdateStyles } from "@/hooks/dashboard/useUpdateStyles";
 import { useUploadBackground } from "@/hooks/dashboard/useUploadBackground";
 import { IBackground, IBackgroundType, IUserStyles } from "@/types/styles";
@@ -117,6 +118,7 @@ export function StylesSection({ user }: { user: IUser }) {
             label="Акцентний колір"
             value={draft.accentColor}
             onChange={updateAccentColor}
+            presets={ACCENT_COLOR_PRESETS}
           />
 
           <BackgroundControls

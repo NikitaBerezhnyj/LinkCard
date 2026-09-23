@@ -169,5 +169,6 @@ public class UserService(
     {
         if (update.Type is { } type) target.Type = type;
         if (update.Color is { } color) target.Color = color;
+        if (update.GradientColor is { } gradientColor) target.GradientColor = gradientColor;
     }
 }

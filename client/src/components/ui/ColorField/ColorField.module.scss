@@ -46,6 +46,35 @@
   }
 }
 
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.presetSwatch {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid $color-line;
+  cursor: pointer;
+  padding: 0;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.presetActive {
+  box-shadow:
+    0 0 0 2px $color-surface,
+    0 0 0 4px $color-pine;
+}
+
 .popover {
   position: absolute;
   top: calc(100% + 8px);

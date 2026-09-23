@@ -13,5 +13,8 @@ public class UpdateBackgroundRequestValidator : AbstractValidator<UpdateBackgrou
 
         When(x => x.Color is not null, () =>
             RuleFor(x => x.Color!).IsHexColor());
+
+        When(x => x.GradientColor is not null, () =>
+            RuleFor(x => x.GradientColor!).IsHexColor());
     }
 }

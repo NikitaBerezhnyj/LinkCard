@@ -6,4 +6,5 @@ public class UpdateBackgroundRequest
 {
     public BackgroundType? Type { get; set; }
     public string? Color { get; set; }
+    public string? GradientColor { get; set; }
 }
