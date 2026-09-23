@@ -4,29 +4,8 @@ import { IUser } from "@/types/user";
 import styles from "./PreviewSection.module.scss";
 
 const demoStyles: IUserStyles = {
-  typography: {
-    font: "var(--font-manrope)",
-    fontSize: "16px",
-    fontWeight: "500",
-    textAlign: "center"
-  },
-  colors: {
-    text: "#22201b",
-    linkText: "#2c5f4a",
-    border: "#e4dcc9",
-    contentBackground: "#ffffff",
-    button: {
-      text: "#ffffff",
-      background: "#2c5f4a",
-      hoverText: "#ffffff",
-      hoverBackground: "#1e4636"
-    }
-  },
-  layout: {
-    borderRadius: "14px",
-    contentPadding: "24px",
-    contentGap: "12px"
-  },
+  font: "var(--font-manrope)",
+  accentColor: "#2c5f4a",
   background: {
     type: "color",
     color: "#f6f1e6"
