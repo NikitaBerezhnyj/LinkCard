@@ -1,12 +1,11 @@
 @use "../../../styles/variables" as *;
 
 .wrapper {
-  position: sticky;
-  top: 24px;
   display: flex;
   justify-content: center;
   padding: 24px;
-  border-radius: 20px;
+  border: 1px solid $color-line;
+  border-radius: $radius-lg;
   background-color: var(--page-bg-color, #{$color-paper});
   background-image: var(--page-bg-image, none);
   background-repeat: no-repeat;

@@ -1,5 +1,33 @@
+@use "../../styles/variables" as *;
+
+.intro {
+  margin-bottom: 32px;
+}
+
+.eyebrow {
+  font-family: var(--font-manrope);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: $color-pine;
+}
+
+.title {
+  margin-top: 8px;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin-top: 8px;
+  font-family: var(--font-manrope);
+  font-size: 15px;
+  color: $color-ink-soft;
+}
+
 .sections {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
 }

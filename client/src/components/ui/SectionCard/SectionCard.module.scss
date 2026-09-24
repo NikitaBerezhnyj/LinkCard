@@ -3,33 +3,80 @@
 .card {
   background: $color-surface;
   border: 1px solid $color-line;
-  border-radius: $radius-md;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-card;
 }
 
-.head {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+.header {
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid $color-line;
 }
 
 .title {
-  font-size: 20px;
-  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
 }
 
 .description {
+  margin-top: 6px;
   font-family: var(--font-manrope);
   font-size: 14px;
+  line-height: 1.5;
   color: $color-ink-soft;
-  margin: 0;
 }
 
 .body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
+  padding: 28px;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 28px;
+  border-top: 1px solid $color-line;
+  border-radius: 0 0 $radius-lg $radius-lg;
+  background: rgba($color-paper, 0.55);
+}
+
+.hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-manrope);
+  font-size: 13px;
+  color: $color-ink-soft;
+
+  &::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $color-gold;
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 20px 20px 16px;
+  }
+
+  .body {
+    padding: 20px;
+  }
+
+  .footer {
+    padding: 14px 20px;
+  }
 }

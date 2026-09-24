@@ -63,27 +63,15 @@
 
 .overlay {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 4px;
+  right: 10px;
+  bottom: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
   font-family: var(--font-manrope);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
-  color: transparent;
-  background: rgba(0, 0, 0, 0);
-  transition:
-    background 0.15s,
-    color 0.15s;
-
-  .preview:hover &,
-  .preview:focus-visible &,
-  .preview:disabled & {
-    background: rgba(0, 0, 0, 0.45);
-    color: white;
-  }
 }
 
 .hiddenInput {

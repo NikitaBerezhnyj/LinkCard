@@ -82,25 +82,38 @@ export function StylesSection({ user }: { user: IUser }) {
     setDraft(user.styles);
   }
 
+  const selectedFont = CARD_FONT_OPTIONS.find(option => option.value === draft.font);
   const isDirty = pendingImage !== null || JSON.stringify(draft) !== JSON.stringify(user.styles);
   const isSaving = updateStyles.isPending || uploadBackground.isPending;
 
   return (
-    <SectionCard title="Стилі картки" description="Налаштуйте вигляд вашої публічної картки.">
+    <SectionCard
+      title="Стилі картки"
+      description="Налаштуйте вигляд вашої публічної картки."
+      hint={isDirty ? "Є незбережені зміни" : undefined}
+      footer={
+        <>
+          <Button type="button" variant="ghost" onClick={handleReset} disabled={!isDirty}>
+            Скасувати
+          </Button>
+          <Button type="button" onClick={handleSave} disabled={!isDirty || isSaving}>
+            {isSaving ? "Збереження..." : "Зберегти стилі"}
+          </Button>
+        </>
+      }
+    >
       <div className={styles.layout}>
-        <StylePreview
-          user={user}
-          draftStyles={draft}
-          previewImageOverride={pendingImage?.previewUrl}
-        />
-
         <div className={styles.controls}>
-          <div className={styles.selectField}>
-            <span className={styles.label}>Шрифт</span>
+          <div className={styles.field}>
+            <label className={styles.label} htmlFor="card-font">
+              Шрифт
+            </label>
             <select
+              id="card-font"
               className={styles.select}
               value={draft.font}
               onChange={e => updateFont(e.target.value)}
+              style={{ fontFamily: selectedFont?.previewFamily }}
             >
               {CARD_FONT_OPTIONS.map(option => (
                 <option
@@ -132,15 +145,15 @@ export function StylesSection({ user }: { user: IUser }) {
             onChange={updateBackground}
             onSelectImage={handleSelectBackgroundImage}
           />
+        </div>
 
-          <div className={styles.actions}>
-            <Button type="button" variant="ghost" onClick={handleReset} disabled={!isDirty}>
-              Скасувати
-            </Button>
-            <Button type="button" onClick={handleSave} disabled={!isDirty || isSaving}>
-              {isSaving ? "Збереження..." : "Зберегти стилі"}
-            </Button>
-          </div>
+        <div className={styles.previewSlot}>
+          <span className={styles.label}>Попередній перегляд</span>
+          <StylePreview
+            user={user}
+            draftStyles={draft}
+            previewImageOverride={pendingImage?.previewUrl}
+          />
         </div>
       </div>
     </SectionCard>

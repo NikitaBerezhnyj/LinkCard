@@ -1,14 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { profileSchema, ProfileFormValues } from "@/schemas/profileSchema";
-import { useUpdateProfile } from "@/hooks/dashboard/useUpdateProfile";
-import { IUser } from "@/types/user";
+import { Button } from "@/components/ui/Button/Button";
 import { SectionCard } from "@/components/ui/SectionCard/SectionCard";
 import { TextField } from "@/components/ui/TextField/TextField";
 import { Textarea } from "@/components/ui/Textarea/Textarea";
-import { Button } from "@/components/ui/Button/Button";
+import { useUpdateProfile } from "@/hooks/dashboard/useUpdateProfile";
+import { ProfileFormValues, profileSchema } from "@/schemas/profileSchema";
+import { IUser } from "@/types/user";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { AvatarUploader } from "./AvatarUploader";
 import styles from "./ProfileSection.module.scss";
 
@@ -28,9 +28,20 @@ export function ProfileSection({ user }: { user: IUser }) {
   const updateProfile = useUpdateProfile();
 
   return (
-    <SectionCard title="Профіль" description="Основна інформація про вас та вашу картку.">
+    <SectionCard
+      title="Профіль"
+      description="Основна інформація про вас та вашу картку."
+      hint={isDirty ? "Є незбережені зміни" : undefined}
+      footer={
+        <Button type="submit" form="profile-form" disabled={!isDirty || updateProfile.isPending}>
+          {updateProfile.isPending ? "Збереження..." : "Зберегти зміни"}
+        </Button>
+      }
+    >
       <AvatarUploader avatarUrl={user.avatar} username={user.username} />
+
       <form
+        id="profile-form"
         className={styles.form}
         onSubmit={handleSubmit(values => {
           const payload = {
@@ -41,19 +52,22 @@ export function ProfileSection({ user }: { user: IUser }) {
           updateProfile.mutate(payload);
         })}
       >
-        <TextField
-          id="username"
-          label="Ім'я користувача"
-          error={errors.username?.message}
-          {...register("username")}
-        />
-        <TextField
-          id="email"
-          type="email"
-          label="Email"
-          error={errors.email?.message}
-          {...register("email")}
-        />
+        <div className={styles.row}>
+          <TextField
+            id="username"
+            label="Ім'я користувача"
+            error={errors.username?.message}
+            {...register("username")}
+          />
+          <TextField
+            id="email"
+            type="email"
+            label="Email"
+            error={errors.email?.message}
+            {...register("email")}
+          />
+        </div>
+
         <Textarea
           id="bio"
           label="Про себе"
@@ -62,9 +76,6 @@ export function ProfileSection({ user }: { user: IUser }) {
           error={errors.bio?.message}
           {...register("bio")}
         />
-        <Button type="submit" disabled={!isDirty || updateProfile.isPending}>
-          {updateProfile.isPending ? "Збереження..." : "Зберегти зміни"}
-        </Button>
       </form>
     </SectionCard>
   );

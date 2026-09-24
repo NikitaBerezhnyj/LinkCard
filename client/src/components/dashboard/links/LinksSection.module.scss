@@ -1,10 +1,60 @@
+@use "../../../styles/variables" as *;
+
+.editor,
 .list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.actions {
+.empty {
+  padding: 28px 20px;
+  text-align: center;
+  border: 1px dashed rgba($color-ink-soft, 0.35);
+  border-radius: $radius-md;
+  background: rgba($color-paper, 0.5);
+}
+
+.emptyTitle {
+  font-family: var(--font-manrope);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.emptyText {
+  margin-top: 4px;
+  font-family: var(--font-manrope);
+  font-size: 13px;
+  color: $color-ink-soft;
+}
+
+.addButton {
   display: flex;
-  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  border: 1px dashed rgba($color-ink-soft, 0.35);
+  border-radius: $radius-md;
+  background: transparent;
+  font-family: var(--font-manrope);
+  font-size: 14px;
+  font-weight: 600;
+  color: $color-ink-soft;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    color 0.15s,
+    background 0.15s;
+
+  &:hover {
+    border-color: $color-pine;
+    color: $color-pine;
+    background: rgba($color-pine, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-pine;
+    outline-offset: 2px;
+  }
 }

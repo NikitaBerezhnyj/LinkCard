@@ -31,7 +31,7 @@ export function BackgroundControls({
   onSelectImage
 }: BackgroundControlsProps) {
   return (
-    <div className={styles.grid} style={{ gridTemplateColumns: "1fr" }}>
+    <div className={styles.stack}>
       <div className={styles.selectField}>
         <span className={styles.label}>Тип фону</span>
         <ToggleGroup options={TYPE_OPTIONS} value={value.type} onChange={onTypeChange} />

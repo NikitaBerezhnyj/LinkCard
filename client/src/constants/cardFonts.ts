@@ -1,4 +1,3 @@
-// constants/cardFonts.ts
 export interface CardFontOption {
   value: string;
   label: string;

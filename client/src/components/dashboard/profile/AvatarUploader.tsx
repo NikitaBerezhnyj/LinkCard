@@ -4,6 +4,7 @@ import { AvatarPlaceholder } from "@/components/ui/AvatarPlaceholder/AvatarPlace
 import { CropModal } from "@/components/ui/CropModal/CropModal";
 import { useUploadAvatar } from "@/hooks/dashboard/useUploadAvatar";
 import { ChangeEvent, useRef, useState } from "react";
+import { FaCamera } from "react-icons/fa6";
 import styles from "./AvatarUploader.module.scss";
 
 export function AvatarUploader({ avatarUrl, username }: { avatarUrl?: string; username: string }) {
@@ -28,26 +29,55 @@ export function AvatarUploader({ avatarUrl, username }: { avatarUrl?: string; us
     setPendingImageSrc(null);
   }
 
+  const openPicker = () => inputRef.current?.click();
+
+  const getUploadButtonText = () => {
+    if (avatarUrl) {
+      return "Змінити фото";
+    }
+
+    if (uploadAvatar.isPending) {
+      return "Завантаження...";
+    }
+
+    return "Завантажити фото";
+  };
+
   return (
     <div className={styles.wrapper}>
       <button
         type="button"
         className={styles.preview}
-        onClick={() => inputRef.current?.click()}
+        onClick={openPicker}
         disabled={uploadAvatar.isPending}
-        aria-label="Змінити фото профілю"
+        tabIndex={-1}
+        aria-hidden
       >
-        {avatarUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatarUrl} alt={username} className={styles.image} />
-        ) : (
-          <AvatarPlaceholder username={username} size={72} />
-        )}
-
-        <span className={styles.overlay}>
-          {uploadAvatar.isPending ? "Завантаження..." : "Змінити фото"}
+        <span className={styles.avatar}>
+          {avatarUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={avatarUrl} alt={username} className={styles.image} />
+          ) : (
+            <AvatarPlaceholder username={username} size={88} />
+          )}
+        </span>
+        <span className={styles.badge}>
+          {uploadAvatar.isPending ? <span className={styles.spinner} /> : <FaCamera />}
         </span>
       </button>
+
+      <div className={styles.info}>
+        <p className={styles.name}>Фото профілю</p>
+        <p className={styles.hint}>Оберіть зображення — перед збереженням його можна обрізати.</p>
+        <button
+          type="button"
+          className={styles.changeButton}
+          onClick={openPicker}
+          disabled={uploadAvatar.isPending}
+        >
+          {getUploadButtonText()}
+        </button>
+      </div>
 
       <input
         ref={inputRef}

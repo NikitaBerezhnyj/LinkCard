@@ -11,20 +11,22 @@ export function DashboardNav({ username }: { username: string }) {
 
   return (
     <header className={styles.nav}>
-      <Logo />
-      <div className={styles.actions}>
-        <Link href={`/users/${username}`} target="_blank" className={styles.viewLink}>
-          Переглянути картку <FaArrowUpRightFromSquare />
-        </Link>
-        <button
-          type="button"
-          className={styles.logoutButton}
-          onClick={() => logout.mutate()}
-          disabled={logout.isPending}
-          aria-label="Вийти"
-        >
-          <FaArrowRightFromBracket />
-        </button>
+      <div className={styles.inner}>
+        <Logo />
+        <div className={styles.actions}>
+          <Link href={`/users/${username}`} target="_blank" className={styles.viewLink}>
+            Переглянути картку <FaArrowUpRightFromSquare />
+          </Link>
+          <button
+            type="button"
+            className={styles.logoutButton}
+            onClick={() => logout.mutate()}
+            disabled={logout.isPending}
+            aria-label="Вийти"
+          >
+            <FaArrowRightFromBracket />
+          </button>
+        </div>
       </div>
     </header>
   );

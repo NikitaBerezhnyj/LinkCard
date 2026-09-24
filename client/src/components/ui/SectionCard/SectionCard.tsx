@@ -4,17 +4,27 @@ import styles from "./SectionCard.module.scss";
 interface SectionCardProps {
   title: string;
   description?: string;
+  hint?: string;
+  footer?: ReactNode;
   children: ReactNode;
 }
 
-export function SectionCard({ title, description, children }: SectionCardProps) {
+export function SectionCard({ title, description, hint, footer, children }: SectionCardProps) {
   return (
     <section className={styles.card}>
-      <div className={styles.head}>
+      <header className={styles.header}>
         <h2 className={styles.title}>{title}</h2>
         {description && <p className={styles.description}>{description}</p>}
-      </div>
+      </header>
+
       <div className={styles.body}>{children}</div>
+
+      {footer && (
+        <footer className={styles.footer}>
+          {hint && <span className={styles.hint}>{hint}</span>}
+          <div className={styles.actions}>{footer}</div>
+        </footer>
+      )}
     </section>
   );
 }

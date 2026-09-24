@@ -25,12 +25,15 @@ export function LinkRow({ link, dragId, onChange, onRemove }: LinkRowProps) {
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1
+    transition
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={styles.row}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`${styles.row} ${isDragging ? styles.dragging : ""}`}
+    >
       <button
         type="button"
         className={styles.handle}

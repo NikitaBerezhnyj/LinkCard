@@ -1,11 +1,23 @@
 @use "../../styles/variables" as *;
 
 .nav {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba($color-paper, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid $color-line;
+}
+
+.inner {
+  width: 100%;
+  margin: 0 auto;
+  padding: 14px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 32px;
-  border-bottom: 1px solid $color-line;
+  gap: 16px;
 }
 
 .actions {
@@ -18,13 +30,26 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid $color-pine;
+  border-radius: 999px;
   font-family: var(--font-manrope);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: $color-pine;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   &:hover {
-    text-decoration: underline;
+    background: $color-pine;
+    color: $color-paper;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-pine;
+    outline-offset: 2px;
   }
 }
 

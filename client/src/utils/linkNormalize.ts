@@ -1,5 +1,5 @@
 import { isPhone } from "./validations";
-
+// eslint-disable-next-line sonarjs/super-linear-regex
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const BARE_DOMAIN_REGEX = /^[\w-]+(\.[\w-]+)+(\/.*)?$/;
 
@@ -9,7 +9,6 @@ export function normalizeLinkUrl(raw: string): string {
 
   const lower = trimmed.toLowerCase();
 
-  // вже має схему — нічого не міняємо
   if (lower.startsWith("mailto:") || lower.startsWith("tel:") || lower.includes("://")) {
     return trimmed;
   }

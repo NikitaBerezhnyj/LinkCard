@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { useCurrentUser } from "@/hooks/dashboard/useCurrentUser";
 import { useAuthStore } from "@/stores/authStore";
-import { DashboardNav } from "@/components/dashboard/DashboardNav";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import styles from "./dashboard-layout.module.scss";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -20,7 +20,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [isError, clearAuth, router]);
 
   if (isLoading) {
-    return <div className={styles.loading}>Завантаження...</div>;
+    return (
+      <div className={styles.loading} role="status">
+        <span className={styles.spinner} aria-hidden />
+        Завантаження...
+      </div>
+    );
   }
 
   if (!user) {

@@ -1,9 +1,9 @@
 @use "../../../../styles/variables" as *;
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .selectField {
@@ -17,35 +17,4 @@
   font-size: 13px;
   font-weight: 600;
   color: $color-ink-soft;
-}
-
-.select {
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid $color-line;
-  border-radius: $radius-sm;
-  background: $color-surface;
-  color: $color-ink;
-  font-family: var(--font-manrope);
-  font-size: 14px;
-
-  &:focus-visible {
-    outline: none;
-    border-color: $color-pine;
-  }
-}
-
-.subheading {
-  font-family: var(--font-manrope);
-  font-size: 13px;
-  font-weight: 600;
-  color: $color-ink-soft;
-  margin: 4px 0 -4px;
-}
-
-.hint {
-  font-family: var(--font-manrope);
-  font-size: 13px;
-  color: $color-ink-soft;
-  margin: 0;
 }
